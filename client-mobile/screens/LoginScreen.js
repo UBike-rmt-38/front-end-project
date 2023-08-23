@@ -1,22 +1,28 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
+import { FontAwesome } from '@expo/vector-icons';
 
-export default function LoginScreen({ navigation }) {
+export default function LoginScreen() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
 
   const handleLogin = () => {
     if (!email || !password) {
       setError('Please fill in all fields');
-    } else {
-      navigation.navigate('Home');
-    }
+    } 
+    // else {
+    //   navigation.navigate('Home');
+    // }
+    console.log(email);
+    console.log(password);
   };
 
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Welcome Back!</Text>
+      {error ? <Text style={styles.errorText}>{error}</Text> : null}
       <View style={styles.inputContainer}>
         <TextInput
           style={styles.input}
@@ -24,15 +30,22 @@ export default function LoginScreen({ navigation }) {
           value={email}
           onChangeText={setEmail}
         />
-        <TextInput
-          style={styles.input}
-          placeholder="Password"
-          secureTextEntry={true}
-          value={password}
-          onChangeText={setPassword}
-        />
+        <View style={styles.passwordContainer}>
+          <TextInput
+            style={styles.input}
+            placeholder="Password"
+            secureTextEntry={!showPassword} 
+            value={password}
+            onChangeText={setPassword}
+          />
+          <TouchableOpacity
+            style={styles.eyeIcon}
+            onPress={() => setShowPassword(!showPassword)}
+          >
+            <FontAwesome name={showPassword ? 'eye-slash' : 'eye'} size={20} color="grey"/>
+          </TouchableOpacity>
+        </View>
       </View>
-      {error ? <Text style={styles.errorText}>{error}</Text> : null}
       <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
         <Text style={styles.buttonText}>Log In</Text>
       </TouchableOpacity>
@@ -66,6 +79,14 @@ const styles = StyleSheet.create({
     borderColor: '#ddd',
     borderRadius: 8,
   },
+  passwordContainer: {
+    position: 'relative',
+  },
+  eyeIcon: {
+    position: 'absolute',
+    top: 8,
+    right: 15,
+  },
   loginButton: {
     backgroundColor: '#006241',
     paddingVertical: 12,
@@ -81,6 +102,6 @@ const styles = StyleSheet.create({
   errorText: {
     color: 'red',
     marginBottom: 10,
-    fontWeight: 'bold'
+    fontWeight: 'bold'  
   },
 });
