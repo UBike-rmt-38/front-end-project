@@ -1,18 +1,11 @@
-import React from 'react';
-import { NavigationContainer } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack';
-import Payment from './screens/PaymentScreen';
-import LoginScreen from './screens/LoginScreen';
+import { StatusBar } from 'expo-status-bar';
+import { Image, ImageBackground, StyleSheet, Text, View } from 'react-native';
+import SignUpScreen from './screens/SignUpScreen';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import styles from './styles/style';
 
-const Stack = createStackNavigator();
+import AppNavigator from "./navigators/AppNavigator";
 
 export default function App() {
-  return (
-    <NavigationContainer>
-      <Stack.Navigator initialRouteName="Login">
-        <Stack.Screen name="Login" component={LoginScreen} />
-        <Stack.Screen name="Payment" component={Payment} />  
-      </Stack.Navigator>
-    </NavigationContainer>
-  );
+  return <AppNavigator/>;
 }
