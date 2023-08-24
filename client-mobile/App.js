@@ -1,5 +1,5 @@
-import OnboardingScreen from "./screens/OnboardingScreen";
+import AppNavigator from "./navigators/AppNavigator";
 
 export default function App() {
-  return <OnboardingScreen />;
+  return <AppNavigator/>;
 }
