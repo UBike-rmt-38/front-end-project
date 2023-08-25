@@ -1,14 +1,22 @@
-import { useState } from 'react';
-import { View, Text, TouchableOpacity, Modal, StyleSheet, TextInput } from 'react-native';
-import { FontAwesome } from '@expo/vector-icons';
-import Scanner from '../components/Scanner';
+import { useState } from "react";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  Modal,
+  StyleSheet,
+  TextInput,
+  TouchableHighlight,
+} from "react-native";
+import { FontAwesome } from "@expo/vector-icons";
+import Scanner from "../components/Scanner";
 
-export default function LoginScreen() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+export default function LoginScreen({ navigation }) {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [error, setError] = useState('');
-  
+  const [error, setError] = useState("");
+
   //ini scanner
   const [showScanner, setShowScanner] = useState(false);
   const openScanner = () => {
@@ -21,14 +29,18 @@ export default function LoginScreen() {
 
   const handleLogin = () => {
     if (!email || !password) {
-      setError('Please fill in all fields');
-    } 
+      setError("Please fill in all fields");
+    }
     // else {
     //   navigation.navigate('Home');
     // }
     console.log(email);
     console.log(password);
   };
+
+  const navigateToSignUp = () => {
+    navigation.navigate("SignUp");
+  }
 
   return (
     <View style={styles.container}>
@@ -45,7 +57,7 @@ export default function LoginScreen() {
           <TextInput
             style={styles.input}
             placeholder="Password"
-            secureTextEntry={!showPassword} 
+            secureTextEntry={!showPassword}
             value={password}
             onChangeText={setPassword}
           />
@@ -53,22 +65,29 @@ export default function LoginScreen() {
             style={styles.eyeIcon}
             onPress={() => setShowPassword(!showPassword)}
           >
-            <FontAwesome name={showPassword ? 'eye-slash' : 'eye'} size={20} color="grey"/>
+            <FontAwesome
+              name={showPassword ? "eye-slash" : "eye"}
+              size={20}
+              color="grey"
+            />
           </TouchableOpacity>
         </View>
-      <TouchableOpacity style={styles.button} onPress={openScanner}>
-        <Text style={styles.buttonText}>Scan Here</Text>
-      </TouchableOpacity>
+        <TouchableHighlight style={styles.button} onPress={openScanner}>
+          <Text style={styles.buttonText}>Scan Here</Text>
+        </TouchableHighlight>
 
-      <Modal visible={showScanner} animationType="slide" transparent={false}>
-        <View style={styles.scannerModal}>
-          <Scanner onCloseScanner={closeScanner} />
-        </View>
-      </Modal>
-      <TouchableOpacity style={styles.button} onPress={handleLogin}>
-        <Text style={styles.buttonText}>Log In</Text>
-      </TouchableOpacity>
-    </View>
+        <Modal visible={showScanner} animationType="slide" transparent={false}>
+          <View style={styles.scannerModal}>
+            <Scanner onCloseScanner={closeScanner} />
+          </View>
+        </Modal>
+        <TouchableHighlight style={styles.button} onPress={handleLogin}>
+          <Text style={styles.buttonText}>Log In</Text>
+        </TouchableHighlight>
+      </View>
+      <TouchableHighlight onPress={navigateToSignUp}>
+        <Text>Sign up</Text>
+      </TouchableHighlight>
     </View>
   );
 }
@@ -76,16 +95,16 @@ export default function LoginScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     paddingHorizontal: 20,
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
   },
   title: {
     fontSize: 24,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginBottom: 20,
-    color: '#006241',
+    color: "#006241",
   },
 
   input: {
@@ -93,45 +112,44 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     paddingHorizontal: 15,
     borderWidth: 1,
-    borderColor: '#ddd',
+    borderColor: "#ddd",
     borderRadius: 8,
   },
   eyeIcon: {
-    position: 'absolute',
+    position: "absolute",
     top: 8,
     right: 15,
   },
   buttonText: {
-    color: '#fff',
+    color: "#fff",
     fontSize: 18,
-    fontWeight: 'bold',
-    textAlign: 'center',
+    fontWeight: "bold",
+    textAlign: "center",
   },
   errorText: {
-    color: 'red',
+    color: "red",
     marginBottom: 10,
-    fontWeight: 'bold'  
+    fontWeight: "bold",
   },
   button: {
-    backgroundColor: '#006241',
+    backgroundColor: "#006241",
     paddingVertical: 12,
     paddingHorizontal: 20,
     borderRadius: 8,
     marginVertical: 10,
     marginHorizontal: 80,
-    borderRadius: 40
-  
+    borderRadius: 40,
   },
   buttonText: {
-    color: '#fff',
+    color: "#fff",
     fontSize: 18,
-    fontWeight: 'bold',
-    textAlign: 'center',
+    fontWeight: "bold",
+    textAlign: "center",
   },
   scannerModal: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#006241',  
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#006241",
   },
 });

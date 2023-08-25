@@ -1,11 +1,14 @@
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import OnboardingScreen from "../screens/OnboardingScreen";
+import LoginScreen from "../screens/LoginScreen";
+import SignUpScreen from "../screens/SignUpScreen";
 
 const Stack = createNativeStackNavigator();
 
 export default function AuthStackNavigator() {
   return (
     <Stack.Navigator
+      initialRouteName="Onboarding"
       screenOptions={{
         headerTransparent: true,
         headerTitleAlign: "center",
@@ -17,7 +20,10 @@ export default function AuthStackNavigator() {
         name="Onboarding"
         component={OnboardingScreen}
       />
+      <Stack.Screen name="Login" component={LoginScreen} />
+      <Stack.Screen name="SignUp" component={SignUpScreen} />
       {/* letakkan screen yang sudah kalian buat di sini */}
+
     </Stack.Navigator>
   );
 }
