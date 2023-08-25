@@ -1,11 +1,11 @@
-import { Platform, StyleSheet, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import MapView, { PROVIDER_GOOGLE } from "react-native-maps";
 
 export default function MapsScreen() {
   return (
     <View style={styles.container}>
       <MapView
-        provider={Platform.OS == "android" ? PROVIDER_GOOGLE : ""}
+        provider={PROVIDER_GOOGLE}
         mapType={"standard"}
         style={styles.map}
         initialRegion={{
