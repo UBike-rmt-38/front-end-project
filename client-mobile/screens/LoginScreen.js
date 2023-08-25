@@ -28,14 +28,12 @@ export default function LoginScreen({ navigation }) {
   };
 
   const handleLogin = () => {
-    if (!email || !password) {
-      setError("Please fill in all fields");
-    }
-    // else {
-    //   navigation.navigate('Home');
+    // if (!email || !password) {
+    //   return setError("Please fill in all fields");
     // }
-    console.log(email);
-    console.log(password);
+    navigation.replace("Maps");
+    // console.log(email);
+    // console.log(password);
   };
 
   const navigateToSignUp = () => {

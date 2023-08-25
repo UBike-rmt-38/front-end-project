@@ -1,5 +1,4 @@
-import { Platform, View } from "react-native";
-import styles from "../style";
+import { Platform, StyleSheet, View } from "react-native";
 import MapView, { PROVIDER_GOOGLE } from "react-native-maps";
 
 export default function MapsScreen() {
@@ -22,3 +21,15 @@ export default function MapsScreen() {
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  map: {
+    width: "100%",
+    height: "100%",
+  },
+});
