@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, Button, Text } from 'react-native';
 import { BarCodeScanner } from 'expo-barcode-scanner';
-import { useNavigation } from '@react-navigation/native'; 
+// import { useNavigation } from '@react-navigation/native'; 
 
 export default function Scanner({ onCloseScanner }) {
   const [hasCameraPermission, setHasCameraPermission] = useState(null);
-  const navigation = useNavigation();  
+  // const navigation = useNavigation();  
 
   useEffect(() => {
     const getCameraPermission = async () => {
@@ -17,9 +17,9 @@ export default function Scanner({ onCloseScanner }) {
   }, []);
 
   const handleBarCodeScanned = ({ type, data }) => {
-    navigation.navigate('Payment');
+    // navigation.navigate('Payment');
     onCloseScanner();
-    // alert(`Bar code with type ${type} and data ${data} has been scanned!`);
+    alert(`Bar code with type ${type} and data ${data} has been scanned!`);
 
   };
 
