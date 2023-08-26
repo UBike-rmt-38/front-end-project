@@ -8,14 +8,14 @@ import * as SecureStore from 'expo-secure-store';
 import { useNavigation } from "@react-navigation/native";
 import Auth from "../hooks/Auth";
 
-
 export default function MapsScreen() {
   const [stations, setStations] = useState([]);
   const [search, setSearch] = useState("");
   const [showScanner, setShowScanner] = useState(false);
   const [showFlatList, setShowFlatList] = useState(false);
+  const [nearestStations, setNearestStations] = useState([]);
   const mapRef = useRef(null);
-  const navigation = useNavigation()
+  const navigation = useNavigation();
 
   const openScanner = () => {
     setShowScanner(true);
@@ -23,6 +23,35 @@ export default function MapsScreen() {
 
   const closeScanner = () => {
     setShowScanner(false);
+  };
+
+  const calculateDistance = (lat1, lon1, lat2, lon2) => {
+    const R = 6371;
+    const dLat = toRad(lat2 - lat1);
+    const dLon = toRad(lon2 - lon1);
+    const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) *
+      Math.sin(dLon / 2) * Math.sin(dLon / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    const distance = R * c;
+    return distance;
+  };
+
+  const toRad = (angle) => {
+    return angle * (Math.PI / 180);
+  };
+
+  const updateNearestStations = (userLat, userLon) => {
+    const stationsWithDistances = stations.map(station => {
+      const distance = calculateDistance(
+        userLat, userLon,
+        station.latitude, station.longitude
+      );
+      return { ...station, distance };
+    });
+
+    const sortedStations = stationsWithDistances.sort((a, b) => a.distance - b.distance);
+    setNearestStations(sortedStations);
   };
 
   const userLocation = async () => {
@@ -33,33 +62,23 @@ export default function MapsScreen() {
         const location = await Location.getCurrentPositionAsync();
         const { latitude, longitude } = location.coords;
         
+        updateNearestStations(latitude, longitude);
+        
         mapRef.current.animateToRegion({
-          latitude,
-          longitude,
+          latitude, 
+          longitude, 
           latitudeDelta: 0.0022,
           longitudeDelta: 0.0021,
         });
-        console.log(latitude);
-        console.log(longitude);
       }
     } catch (error) {
       alert("Error getting current location: " + error.message);
     }
   };
 
-  const { isSignedIn, setIsSignedIn } =  Auth()
-  
-  const handleLogout = async () => {
-    await SecureStore.deleteItemAsync('accessToken');
-    setIsSignedIn(false)
-    navigation.navigate('Login');
-  };
-  
-// const apiUrl = `http://192.168.0.56:3000/stations`;
-const apiUrl = `http://localhost:3000/stations`;
+  const apiUrl = `http://192.168.0.56:3000/stations`;
 
   useEffect(() => {
-    
     fetch(apiUrl)
       .then((response) => response.json())
       .then((data) => setStations(data))
@@ -67,10 +86,10 @@ const apiUrl = `http://localhost:3000/stations`;
   }, []);
 
   const filteredStations = search
-    ? stations.filter((station) =>
-        station.name.toLowerCase().includes(search.toLowerCase())
-      )
-    : stations;
+  ? nearestStations.filter((station) =>
+      station.name.toLowerCase().includes(search.toLowerCase())
+    )
+  : nearestStations;
 
   const listStations = (station) => {
     setSearch(station.name);
@@ -83,37 +102,47 @@ const apiUrl = `http://localhost:3000/stations`;
     
     setShowFlatList(false);
   }
+
+  const { isSignedIn, setIsSignedIn } = Auth();
+  
+  const handleLogout = async () => {
+    await SecureStore.deleteItemAsync('accessToken');
+    setIsSignedIn(false);
+    navigation.navigate('Login');
+  };
+  
+
+
   return (
     <View style={styles.container}>
-
-    <View style={styles.searchContainer}>
-      <TextInput
-        style={styles.searchInput}
-        placeholder={"Search stations..."}
-        value={search}
-        onChangeText={(text) => setSearch(text)}
-        onFocus={() => setShowFlatList(true)}
-      />
+      <View style={styles.searchContainer}>
+        <TextInput
+          style={styles.searchInput}
+          placeholder={"Search stations..."}
+          value={search}
+          onChangeText={(text) => setSearch(text)}
+          onFocus={() => setShowFlatList(true)}
+        />
         <TouchableOpacity style={styles.locationButton} onPress={userLocation}>
           <Text style={styles.buttonText}>Go to My Location</Text>
         </TouchableOpacity>
-    </View>
-      
-    {showFlatList && (
-      <View style={styles.flatListContainer}>
-        <Text>"{search}"</Text>
-        <FlatList
-          data={filteredStations.slice(0, 4)}
-          keyExtractor={(item) => item.id.toString()}
-          renderItem={({ item }) => (
-            <TouchableOpacity onPress={() => listStations(item)}>
-              <Text>{item.name}</Text>
-            </TouchableOpacity>
-          )}
-        />
       </View>
-    )}
-    
+
+      {showFlatList && (
+        <View style={styles.flatListContainer}>
+          <Text>"{search}"</Text>
+          <FlatList
+            data={filteredStations.slice(0, 4)}
+            keyExtractor={(item) => item.id.toString()}
+            renderItem={({ item }) => (
+              <TouchableOpacity onPress={() => listStations(item)}>
+                <Text>{item.name} - {item.distance.toFixed(2)} km</Text>
+              </TouchableOpacity>
+            )}
+          />
+        </View>
+      )}
+      
       <MapView
         ref={mapRef}
         provider={PROVIDER_GOOGLE}
@@ -138,6 +167,7 @@ const apiUrl = `http://localhost:3000/stations`;
           />
         ))}
       </MapView>
+
       <TouchableOpacity style={styles.button} onPress={openScanner}>
         <Text style={styles.buttonText}>Scan Here</Text>
       </TouchableOpacity>
