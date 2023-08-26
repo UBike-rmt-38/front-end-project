@@ -5,32 +5,13 @@ import MapsScreen from "../screens/MapsScreen";
 import LoginScreen from "../screens/LoginScreen";
 import * as SecureStore from 'expo-secure-store'; 
 import Auth from "../hooks/Auth";
+import HomeScreen from "../screens/HomeScreen";
+import DrawerNavigation from "./DrawerNavigator";
 
 
 const Stack = createNativeStackNavigator();
 
 export default function AuthStackNavigator() {
-  // const [isSignedIn, setIsSignedIn] = useState(false);  
-
-  // useEffect(() => {
-  //   const getIsSignedIn = async () => {
-  //     try {
-  //       const accessToken = await SecureStore.getItemAsync("accessToken");
-  //       if (accessToken) {
-  //         setIsSignedIn(true);
-  //       } 
-  //       else {
-  //         setIsSignedIn(false);
-  //       }
-  //     } catch (error) {
-  //       console.log(error);
-  //     }
-  //   };
-
-  //   getIsSignedIn();
-  // }, [isSignedIn]);
-  
-  const { isSignedIn, setIsSignedIn } = Auth()
 
   return (
     <Stack.Navigator
@@ -41,26 +22,33 @@ export default function AuthStackNavigator() {
         headerTintColor: "white",
       }}
     >
-    {isSignedIn ? (
-      <Stack.Screen
+      
+    {/* {isSignedIn ? ( */}
+    <Stack.Screen
+          options={{ headerShown: false }}
+          name="Home"
+          // component={DrawerNavigation}
+          component={HomeScreen}
+        />
+      {/* <Stack.Screen
         options={{ headerShown: false }}
         name="Maps"
         component={MapsScreen}
-      />
-    ) : (
-      <>
-        {/* <Stack.Screen
+      /> */}
+    {/* ) : ( */}
+      {/* <>
+        <Stack.Screen
           options={{ headerShown: false }}
           name="Onboarding"
           component={OnboardingScreen}
-        /> */}
+        /> 
         <Stack.Screen
           options={{ headerShown: false }}
           name="Login"
           component={LoginScreen}
         />
-      </>
-    )}
+      </> */}
+    {/* )} */}
 
     </Stack.Navigator>
   );
