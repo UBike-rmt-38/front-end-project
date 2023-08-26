@@ -1,5 +1,12 @@
-import AppNavigator from "./navigators/AppNavigator";
+import { NavigationContainer } from '@react-navigation/native';
+import LoginScreen from './screens/LoginScreen';
+import AuthStackNavigator from './navigators/AuthStackNavigator'
 
 export default function App() {
-  return <AppNavigator />;
+  return (
+    <NavigationContainer>
+      {/* ... Your app content here */}
+      <AuthStackNavigator />
+    </NavigationContainer>
+  );
 }
