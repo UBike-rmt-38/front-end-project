@@ -1,0 +1,10 @@
+@import url('https://fonts.googleapis.com/css?family=Karla:400,700&display=swap');
+
+#sidebar {
+  font-family: 'Karla';
+}
+
+#sidebar a.active {
+  background: teal;
+  opacity: 1
+}

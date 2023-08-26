@@ -2,10 +2,30 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import App from "./App.jsx";
 import "./index.css";
-import { ApolloClient, ApolloProvider, InMemoryCache } from "@apollo/client";
+import { ApolloClient, ApolloProvider, InMemoryCache, createHttpLink } from "@apollo/client";
+import { setContext } from "@apollo/client/link/context"
+
+const httpLink = createHttpLink({
+  uri: 'http://localhost:4000',
+});
+
+const getAuthToken = () => {
+  return localStorage.getItem('access_token');
+};
+
+const authLink = setContext((_, { headers }) => {
+  const access_token = getAuthToken();
+  return {
+    headers: {
+      ...headers,
+      authorization: access_token ? `${access_token}` : '', // sekarang begini baru valid & aman
+    },
+  };
+});
+
 
 const client = new ApolloClient({
-  uri: "https://flyby-router-demo.herokuapp.com/",
+  link: authLink.concat(httpLink),
   cache: new InMemoryCache(),
 });
 

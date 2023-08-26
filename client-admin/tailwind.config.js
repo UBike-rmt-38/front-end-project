@@ -7,6 +7,7 @@ export default {
       colors: {
         RoyalBlue: "#3d68ff",
         CeruleanBlue: "#1947ee",
+        BrightMint: "#4FFFB0"
       },
     },
   },
