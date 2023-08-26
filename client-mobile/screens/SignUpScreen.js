@@ -1,5 +1,5 @@
 import React from 'react'
-import { View, Text, TextInput, ImageBackground, TouchableOpacity, StyleSheet } from 'react-native'
+import { View, Text, TextInput, ImageBackground, TouchableOpacity, StyleSheet, StatusBar } from 'react-native'
 import { LinearGradient } from 'expo-linear-gradient'
 // import styles from '../styles/style'
 const image = require('../assets/background.png')
@@ -7,6 +7,9 @@ const image = require('../assets/background.png')
 export default function SignUpScreen() {
   return (
     <View style={styles.container}>
+       <StatusBar
+        backgroundColor="#000"
+        />
       <ImageBackground source={image} resizeMode="cover" style={styles.image}>
         <View style={styles.box}>
           <LinearGradient
