@@ -1,7 +1,6 @@
 import {
   Image,
   ImageBackground,
-  StatusBar,
   StyleSheet,
   Text,
   TouchableHighlight,
