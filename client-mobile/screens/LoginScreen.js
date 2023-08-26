@@ -30,8 +30,6 @@ export default function LoginScreen({ navigation }) {
   
   const dispatch = useDispatch();
 
-  // const navigation = useNavigation()
-
   const handleLogin = async () => {
     try {
       if (!email || !password) {
