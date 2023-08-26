@@ -6,6 +6,7 @@ import TableRowLoading from "../components/TableRowLoading";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import { gql, useQuery } from "@apollo/client";
+import Plus from "../components/icons/Plus";
 
 const GET_STATIONS = gql`
   query GetStations {
@@ -30,12 +31,20 @@ const GET_STATIONS = gql`
 `;
 
 export default function HomePage() {
+  const navigate = useNavigate()
+
+  const handleAddProductClick = () => {
+    navigate("/addstation")
+  }
   const { data, loading: isLoading, error } = useQuery(GET_STATIONS);
   if (error) return `Error! ${error.message}`;
 
   return (
     <>
       <ToastContainer />
+      <button onClick={handleAddProductClick} className="w-40 mb-8 bg-white text-teal-600 font-semibold py-2 mt-5 rounded-br-lg rounded-bl-lg rounded-tr-lg shadow-lg hover:shadow-xl hover:bg-gray-300 flex items-center justify-center">
+        <i className="mr-3"><Plus /></i> Add Station
+      </button>
       <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
         <table className="min-w-full leading-normal w-full text-sm text-left text-gray-500 dark:text-gray-400">
           <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
