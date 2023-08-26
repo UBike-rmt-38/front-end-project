@@ -6,7 +6,7 @@ export default function Sidebar() {
   const navigate = useNavigate()
 
   const handleAddProductClick = () => {
-    navigate("/addproduct")
+    navigate("/addstation")
   }
 
   return (

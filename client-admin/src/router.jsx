@@ -2,6 +2,7 @@ import { createBrowserRouter, redirect } from "react-router-dom";
 import LoginPage from "./views/LoginPage";
 import Layout from "./components/Layout";
 import HomePage from "./views/HomePage";
+import AddProductPage from "./views/AddStationPage";
 
 const router = createBrowserRouter([
   {
@@ -15,6 +16,10 @@ const router = createBrowserRouter([
       {
         path: "/",
         element: <HomePage />,
+      },
+      {
+        path: "/addstation",
+        element: <AddProductPage />,
       },
     ],
   },
