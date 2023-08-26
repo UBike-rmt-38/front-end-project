@@ -1,12 +1,21 @@
 import { useEffect, useState, useRef } from "react";
-import { View, TextInput, FlatList, Text, TouchableOpacity, StyleSheet, Modal } from "react-native";
+import {
+  View,
+  TextInput,
+  FlatList,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  Modal,
+} from "react-native";
 import MapView, { PROVIDER_GOOGLE } from "react-native-maps";
 import MapsPin from "../components/MapsPin";
 import Scanner from "../components/Scanner";
-import * as Location from 'expo-location';  
-import * as SecureStore from 'expo-secure-store';
+import * as Location from "expo-location";
+import * as SecureStore from "expo-secure-store";
 import { useNavigation } from "@react-navigation/native";
-import Auth from "../hooks/Auth";
+import { useDispatch } from "react-redux";
+import { setIsSignedIn } from "../stores/reducers/authSlice";
 
 export default function MapsScreen() {
   const [stations, setStations] = useState([]);
@@ -15,7 +24,9 @@ export default function MapsScreen() {
   const [showFlatList, setShowFlatList] = useState(false);
   const [nearestStations, setNearestStations] = useState([]);
   const mapRef = useRef(null);
-  const navigation = useNavigation();
+  // const navigation = useNavigation();
+
+  const dispatch = useDispatch();
 
   const openScanner = () => {
     setShowScanner(true);
@@ -57,8 +68,8 @@ export default function MapsScreen() {
   const userLocation = async () => {
     try {
       const { status } = await Location.requestForegroundPermissionsAsync();
-      
-      if (status === 'granted') {
+
+      if (status === "granted") {
         const location = await Location.getCurrentPositionAsync();
         const { latitude, longitude } = location.coords;
         
@@ -76,7 +87,17 @@ export default function MapsScreen() {
     }
   };
 
-  const apiUrl = `http://192.168.0.56:3000/stations`;
+  const handleLogout = async () => {
+    try {
+      await SecureStore.deleteItemAsync("accessToken");
+      dispatch(setIsSignedIn(false))
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  // const apiUrl = `http://192.168.0.56:3000/stations`;
+  const apiUrl = `http://localhost:3000/stations`;
 
   useEffect(() => {
     fetch(apiUrl)
@@ -99,20 +120,9 @@ export default function MapsScreen() {
       latitudeDelta: 0.0022,
       longitudeDelta: 0.0021,
     });
-    
+
     setShowFlatList(false);
-  }
-
-  const { isSignedIn, setIsSignedIn } = Auth();
-  
-  const handleLogout = async () => {
-    await SecureStore.deleteItemAsync('accessToken');
-    setIsSignedIn(false);
-    navigation.navigate('Login');
   };
-  
-
-
   return (
     <View style={styles.container}>
       <View style={styles.searchContainer}>
@@ -142,7 +152,6 @@ export default function MapsScreen() {
           />
         </View>
       )}
-      
       <MapView
         ref={mapRef}
         provider={PROVIDER_GOOGLE}
@@ -190,39 +199,38 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   searchContainer: {
-    position: 'absolute',
+    position: "absolute",
     top: 80,
     left: 40,
     right: 40,
     paddingHorizontal: 20,
     zIndex: 1,
-    backgroundColor: 'white',
+    backgroundColor: "white",
     borderRadius: 30,
-    borderColor: 'grey',  
-    borderWidth: 1,         
+    borderColor: "grey",
+    borderWidth: 1,
   },
   searchInput: {
     height: 40,
     paddingHorizontal: 10,
   },
   flatListContainer: {
-    position: 'absolute',
-    top: 125,   
+    position: "absolute",
+    top: 125,
     left: 50,
     right: 50,
-    backgroundColor: 'white',
+    backgroundColor: "white",
     paddingHorizontal: 20,
     zIndex: 1,
-    backgroundColor: 'white',
+    backgroundColor: "white",
     borderRadius: 10,
-    borderColor: 'grey',  
-    borderWidth: 1,      
-
+    borderColor: "grey",
+    borderWidth: 1,
   },
   locationButton: {
-    position: 'absolute',  
-    top: 50,  
-    backgroundColor: 'blue',
+    position: "absolute",
+    top: 50,
+    backgroundColor: "blue",
     borderRadius: 40,
     paddingVertical: 10,
     paddingHorizontal: 20,
@@ -231,23 +239,23 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   button: {
-    position: 'absolute',  
-    bottom: 50,  
-    backgroundColor: 'blue',
+    position: "absolute",
+    bottom: 50,
+    backgroundColor: "blue",
     borderRadius: 40,
     paddingVertical: 10,
     paddingHorizontal: 20,
   },
   buttonText: {
-    color: '#fff',
+    color: "#fff",
     fontSize: 18,
-    fontWeight: 'bold',
-    textAlign: 'center',
+    fontWeight: "bold",
+    textAlign: "center",
   },
   scannerModal: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#006241',  
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#006241",
   },
 });
