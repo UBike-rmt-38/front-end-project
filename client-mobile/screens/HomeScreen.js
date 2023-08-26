@@ -9,7 +9,7 @@ export default function HomeScreen() {
 
   const fetchStations = async () => {
     try {
-      const response = await fetch('http://192.168.18.15:3000/stations');
+      const response = await fetch('http://192.168.0.56:3000/stations');
       const data = await response.json();
       setStations(data);
     } catch (error) {
