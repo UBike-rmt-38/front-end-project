@@ -1,4 +1,3 @@
-import { NavigationContainer } from "@react-navigation/native";
 import AuthStackNavigator from "./AuthStackNavigator";
 
 export default function AppNavigator() {
