@@ -1,6 +1,4 @@
 import { useEffect } from "react";
-// import { deleteProduct, fetchProducts } from "../stores/actions/actionCreator";
-// import { useDispatch, useSelector } from "react-redux";
 import TableRow from "../components/TableRow";
 import TableRowLoading from "../components/TableRowLoading";
 import { useNavigate } from "react-router-dom";
@@ -37,6 +35,7 @@ export default function HomePage() {
     navigate("/addstation")
   }
   const { data, loading: isLoading, error } = useQuery(GET_STATIONS);
+  console.log(data);
   if (error) return `Error! ${error.message}`;
 
   return (
