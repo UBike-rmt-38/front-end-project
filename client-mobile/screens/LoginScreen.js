@@ -13,10 +13,10 @@ import { useNavigation } from "@react-navigation/native";
 import { useDispatch } from "react-redux";
 import { setIsSignedIn } from "../stores/reducers/authSlice";
 
-async function saveAccessToken(accessToken) {
+async function saveAccessToken(access_token) {
   try {
-    await SecureStore.setItemAsync("accessToken", accessToken);
-    console.log(accessToken);
+    await SecureStore.setItemAsync("access_token", access_token);
+    console.log(access_token);
   } catch (error) {
     console.log(error);
   }
@@ -27,7 +27,7 @@ export default function LoginScreen({ navigation }) {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
-  
+
   const dispatch = useDispatch();
 
   const handleLogin = async () => {
@@ -35,7 +35,9 @@ export default function LoginScreen({ navigation }) {
       if (!email || !password) {
         setError("Please fill in all fields");
       } else {
-        await saveAccessToken("initoken");
+        await saveAccessToken(
+          "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJ1c2VyMUBtYWlsLmNvbSIsInVzZXJuYW1lIjoidXNlcjEiLCJyb2xlIjoiVXNlciIsImlhdCI6MTY5MzEzNTEyN30.HJXQqkPOdbHNFuvbFcMLsZMFi45S1KaPk_ng1MxjfLQ"
+        );
         dispatch(setIsSignedIn(true));
       }
       console.log(email);

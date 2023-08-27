@@ -1,27 +1,23 @@
-import { useEffect, useState } from "react";  
+import { useEffect } from "react";  
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import OnboardingScreen from "../screens/OnboardingScreen";
 import MapsScreen from "../screens/MapsScreen";
 import LoginScreen from "../screens/LoginScreen";
 import * as SecureStore from 'expo-secure-store'; 
-import { useSelector, useDispatch } from "react-redux"
+import { useSelector, useDispatch } from "react-redux";
 import { setIsSignedIn } from "../stores/reducers/authSlice";
+import { getValueFor } from "../helpers/secureStoreAction";
 
 const Stack = createNativeStackNavigator();
 
-async function getValueFor(key) {
-  return result = await SecureStore.getItemAsync(key);
-}
-
 export default function AuthStackNavigator() {
-  // const [isSignedIn, setIsSignedIn] = useState(false);  
   const dispatch = useDispatch();
   const isSignedIn = useSelector((state) => state.auth.isSignedIn);
   const getIsSignedIn = async () => {
     try {
-      const accessToken = await getValueFor("accessToken")
-      console.log(accessToken)
-      if (accessToken) {
+      const access_token = await getValueFor("access_token")
+      console.log(access_token)
+      if (access_token) {
         dispatch(setIsSignedIn(true));
       } 
       else {

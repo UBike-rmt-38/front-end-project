@@ -16,6 +16,8 @@ import * as SecureStore from "expo-secure-store";
 import { useNavigation } from "@react-navigation/native";
 import { useDispatch } from "react-redux";
 import { setIsSignedIn } from "../stores/reducers/authSlice";
+import { useQuery } from "@apollo/client";
+import { GET_STATIONS } from "../constants/query";
 
 export default function MapsScreen() {
   const [stations, setStations] = useState([]);
@@ -25,6 +27,16 @@ export default function MapsScreen() {
   const [nearestStations, setNearestStations] = useState([]);
   const mapRef = useRef(null);
   // const navigation = useNavigation();
+
+  const { data, loading, error } = useQuery(GET_STATIONS, {
+    onCompleted: (data) => {
+      setStations(data.getStations);
+    }
+  });
+
+  useEffect(() => {
+    updateNearestStations()
+  }, [stations]);
 
   const dispatch = useDispatch();
 
@@ -89,22 +101,12 @@ export default function MapsScreen() {
 
   const handleLogout = async () => {
     try {
-      await SecureStore.deleteItemAsync("accessToken");
+      await SecureStore.deleteItemAsync("access_token");
       dispatch(setIsSignedIn(false))
     } catch (error) {
       console.log(error);
     }
   };
-
-  // const apiUrl = `http://192.168.0.56:3000/stations`;
-  const apiUrl = `http://localhost:3000/stations`;
-
-  useEffect(() => {
-    fetch(apiUrl)
-      .then((response) => response.json())
-      .then((data) => setStations(data))
-      .catch((error) => console.error(error));
-  }, []);
 
   const filteredStations = search
   ? nearestStations.filter((station) =>
