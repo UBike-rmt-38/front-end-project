@@ -1,32 +1,10 @@
-import { useEffect } from "react";
 import TableRow from "../components/TableRow";
 import TableRowLoading from "../components/TableRowLoading";
 import { useNavigate } from "react-router-dom";
-import { ToastContainer, toast } from "react-toastify";
-import { gql, useQuery } from "@apollo/client";
+import { ToastContainer } from "react-toastify";
+import { useQuery } from "@apollo/client";
 import Plus from "../components/icons/Plus";
-
-const GET_STATIONS = gql`
-  query GetStations {
-    getStations {
-      id
-      name
-      address
-      latitude
-      longtitude
-      Bicycles {
-        id
-        name
-        feature
-        imageURL
-        description
-        price
-        StationId
-        status
-      }
-    }
-  }
-`;
+import { GET_STATIONS } from "../constants/query";
 
 export default function HomePage() {
   const navigate = useNavigate()
