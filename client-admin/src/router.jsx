@@ -3,6 +3,8 @@ import LoginPage from "./views/LoginPage";
 import Layout from "./components/Layout";
 import HomePage from "./views/HomePage";
 import AddProductPage from "./views/AddStationPage";
+import BicyclesListPage from "./views/BicyclesListPage";
+import AddBicyclePage from "./views/AddBicyclePage";
 
 const router = createBrowserRouter([
   {
@@ -21,6 +23,14 @@ const router = createBrowserRouter([
         path: "/addstation",
         element: <AddProductPage />,
       },
+      {
+        path: "/bicycles",
+        element: <BicyclesListPage />
+      },
+      {
+        path: "/addbicycle",
+        element: <AddBicyclePage />
+      }
     ],
   },
   {
