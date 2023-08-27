@@ -24,17 +24,17 @@ export default function AuthStackNavigator() {
     >
       
     {/* {isSignedIn ? ( */}
-    <Stack.Screen
+    {/* <Stack.Screen
           options={{ headerShown: false }}
           name="Home"
           // component={DrawerNavigation}
           component={HomeScreen}
-        />
-      {/* <Stack.Screen
+        /> */}
+      <Stack.Screen
         options={{ headerShown: false }}
         name="Maps"
         component={MapsScreen}
-      /> */}
+      />
     {/* ) : ( */}
       {/* <>
         <Stack.Screen

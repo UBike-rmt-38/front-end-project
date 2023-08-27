@@ -7,6 +7,7 @@ import * as Location from 'expo-location';
 import * as SecureStore from 'expo-secure-store';
 import { useNavigation } from "@react-navigation/native";
 import Auth from "../hooks/Auth";
+import { Distance } from "../components/Distance";
 
 export default function MapsScreen() {
   const [stations, setStations] = useState([]);
@@ -25,73 +26,61 @@ export default function MapsScreen() {
     setShowScanner(false);
   };
 
-  const calculateDistance = (lat1, lon1, lat2, lon2) => {
-    const R = 6371;
-    const dLat = toRad(lat2 - lat1);
-    const dLon = toRad(lon2 - lon1);
-    const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-      Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) *
-      Math.sin(dLon / 2) * Math.sin(dLon / 2);
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-    const distance = R * c;
-    return distance;
-  };
-
-  const toRad = (angle) => {
-    return angle * (Math.PI / 180);
-  };
-
-  const updateNearestStations = (userLat, userLon) => {
-    const stationsWithDistances = stations.map(station => {
-      const distance = calculateDistance(
-        userLat, userLon,
-        station.latitude, station.longitude
-      );
-      return { ...station, distance };
-    });
-
-    const sortedStations = stationsWithDistances.sort((a, b) => a.distance - b.distance);
-    setNearestStations(sortedStations);
+  const formatDistance = distance => {
+    return distance > 999 ? `${(distance / 1000).toFixed(2)} km` : `${distance.toFixed()} m`;
   };
 
   const userLocation = async () => {
     try {
       const { status } = await Location.requestForegroundPermissionsAsync();
-      
+
       if (status === 'granted') {
-        const location = await Location.getCurrentPositionAsync();
+        const location = await Location.getCurrentPositionAsync({});
         const { latitude, longitude } = location.coords;
-        
+
         updateNearestStations(latitude, longitude);
-        
+
         mapRef.current.animateToRegion({
-          latitude, 
-          longitude, 
+          latitude,
+          longitude,
           latitudeDelta: 0.0022,
           longitudeDelta: 0.0021,
         });
       }
     } catch (error) {
-      alert("Error getting current location: " + error.message);
+      alert('Error getting current location: ' + error.message);
     }
   };
 
-  const apiUrl = `http://192.168.0.56:3000/stations`;
+  const updateNearestStations = (userLat, userLon) => {
+    const stationsWithDistances = stations.map(station => ({
+      ...station,
+      distance: Distance(userLat, userLon, station.latitude, station.longitude)
+    }));
+
+    const sortedStations = stationsWithDistances.sort((a, b) => a.distance - b.distance);
+    setNearestStations(sortedStations);
+  };
+
+  const apiUrl = `http://localhost:3000/stations`;
 
   useEffect(() => {
     fetch(apiUrl)
-      .then((response) => response.json())
-      .then((data) => setStations(data))
-      .catch((error) => console.error(error));
+      .then(response => response.json())
+      .then(data => {
+        setStations(data);
+        userLocation();
+      })
+      .catch(error => console.error(error));
   }, []);
 
   const filteredStations = search
-  ? nearestStations.filter((station) =>
-      station.name.toLowerCase().includes(search.toLowerCase())
-    )
-  : nearestStations;
+    ? nearestStations.filter(station =>
+        station.name.toLowerCase().includes(search.toLowerCase())
+      )
+    : nearestStations;
 
-  const listStations = (station) => {
+  const listStations = station => {
     setSearch(station.name);
     mapRef.current.animateToRegion({
       latitude: station.latitude,
@@ -99,18 +88,17 @@ export default function MapsScreen() {
       latitudeDelta: 0.0022,
       longitudeDelta: 0.0021,
     });
-    
-    setShowFlatList(false);
-  }
+
+    setShowFlatList(true);
+  };
 
   const { isSignedIn, setIsSignedIn } = Auth();
-  
+
   const handleLogout = async () => {
     await SecureStore.deleteItemAsync('accessToken');
     setIsSignedIn(false);
     navigation.navigate('Login');
   };
-  
 
 
   return (
@@ -133,10 +121,12 @@ export default function MapsScreen() {
           <Text>"{search}"</Text>
           <FlatList
             data={filteredStations.slice(0, 4)}
-            keyExtractor={(item) => item.id.toString()}
+            keyExtractor={item => item.id.toString()}
             renderItem={({ item }) => (
               <TouchableOpacity onPress={() => listStations(item)}>
-                <Text>{item.name} - {item.distance.toFixed(2)} km</Text>
+                <Text>
+                  {item.name} - {formatDistance(item.distance)}
+                </Text>
               </TouchableOpacity>
             )}
           />
@@ -184,6 +174,7 @@ export default function MapsScreen() {
     </View>
   );
 }
+
 
 const styles = StyleSheet.create({
   container: {
