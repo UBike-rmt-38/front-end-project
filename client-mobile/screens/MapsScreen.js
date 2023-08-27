@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   StyleSheet,
   Modal,
+  TouchableHighlight,
 } from "react-native";
 import MapView, { PROVIDER_GOOGLE } from "react-native-maps";
 import MapsPin from "../components/MapsPin";
@@ -18,6 +19,7 @@ import { useDispatch } from "react-redux";
 import { setIsSignedIn } from "../stores/reducers/authSlice";
 import { useQuery } from "@apollo/client";
 import { GET_STATIONS } from "../constants/query";
+import Ionicons from "@expo/vector-icons/Ionicons";
 
 export default function MapsScreen() {
   const [stations, setStations] = useState([]);
@@ -31,11 +33,11 @@ export default function MapsScreen() {
   const { data, loading, error } = useQuery(GET_STATIONS, {
     onCompleted: (data) => {
       setStations(data.getStations);
-    }
+    },
   });
 
   useEffect(() => {
-    updateNearestStations()
+    updateNearestStations();
   }, [stations]);
 
   const dispatch = useDispatch();
@@ -52,9 +54,12 @@ export default function MapsScreen() {
     const R = 6371;
     const dLat = toRad(lat2 - lat1);
     const dLon = toRad(lon2 - lon1);
-    const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-      Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) *
-      Math.sin(dLon / 2) * Math.sin(dLon / 2);
+    const a =
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos(toRad(lat1)) *
+        Math.cos(toRad(lat2)) *
+        Math.sin(dLon / 2) *
+        Math.sin(dLon / 2);
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
     const distance = R * c;
     return distance;
@@ -65,15 +70,19 @@ export default function MapsScreen() {
   };
 
   const updateNearestStations = (userLat, userLon) => {
-    const stationsWithDistances = stations.map(station => {
+    const stationsWithDistances = stations.map((station) => {
       const distance = calculateDistance(
-        userLat, userLon,
-        station.latitude, station.longitude
+        userLat,
+        userLon,
+        station.latitude,
+        station.longitude
       );
       return { ...station, distance };
     });
 
-    const sortedStations = stationsWithDistances.sort((a, b) => a.distance - b.distance);
+    const sortedStations = stationsWithDistances.sort(
+      (a, b) => a.distance - b.distance
+    );
     setNearestStations(sortedStations);
   };
 
@@ -84,12 +93,12 @@ export default function MapsScreen() {
       if (status === "granted") {
         const location = await Location.getCurrentPositionAsync();
         const { latitude, longitude } = location.coords;
-        
+
         updateNearestStations(latitude, longitude);
-        
+
         mapRef.current.animateToRegion({
-          latitude, 
-          longitude, 
+          latitude,
+          longitude,
           latitudeDelta: 0.0022,
           longitudeDelta: 0.0021,
         });
@@ -102,17 +111,17 @@ export default function MapsScreen() {
   const handleLogout = async () => {
     try {
       await SecureStore.deleteItemAsync("access_token");
-      dispatch(setIsSignedIn(false))
+      dispatch(setIsSignedIn(false));
     } catch (error) {
       console.log(error);
     }
   };
 
   const filteredStations = search
-  ? nearestStations.filter((station) =>
-      station.name.toLowerCase().includes(search.toLowerCase())
-    )
-  : nearestStations;
+    ? nearestStations.filter((station) =>
+        station.name.toLowerCase().includes(search.toLowerCase())
+      )
+    : nearestStations;
 
   const listStations = (station) => {
     setSearch(station.name);
@@ -135,10 +144,15 @@ export default function MapsScreen() {
           onChangeText={(text) => setSearch(text)}
           onFocus={() => setShowFlatList(true)}
         />
-        <TouchableOpacity style={styles.locationButton} onPress={userLocation}>
+        {/* <TouchableOpacity style={styles.locationButton} onPress={userLocation}>
           <Text style={styles.buttonText}>Go to My Location</Text>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
       </View>
+      <TouchableHighlight
+        style={{ height: 50, width: 50, zIndex: 1, position: "absolute", right: 20, top: 140, backgroundColor: "white", borderRadius: 90, alignItems: "center", justifyContent: "center" }}
+      >
+        <Ionicons onPress={userLocation} name="locate" size={40} color="skyblue" />
+      </TouchableHighlight>
 
       {showFlatList && (
         <View style={styles.flatListContainer}>
@@ -148,7 +162,9 @@ export default function MapsScreen() {
             keyExtractor={(item) => item.id.toString()}
             renderItem={({ item }) => (
               <TouchableOpacity onPress={() => listStations(item)}>
-                <Text>{item.name} - {item.distance.toFixed(2)} km</Text>
+                <Text>
+                  {item.name} - {item.distance.toFixed(2)} km
+                </Text>
               </TouchableOpacity>
             )}
           />
