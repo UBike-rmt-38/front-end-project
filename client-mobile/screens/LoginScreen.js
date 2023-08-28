@@ -35,7 +35,7 @@ export default function LoginScreen() {
         setError("Please fill in all fields");
       } else {
         await saveAccessToken(
-          "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJ1c2VyMUBtYWlsLmNvbSIsInVzZXJuYW1lIjoidXNlcjEiLCJyb2xlIjoiVXNlciIsImlhdCI6MTY5MzE5NjY3Nn0.38u4fQcd8HLgBFb55L66UayVEzs1JgeO02Sf0vX9Q4c"
+          "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJ1c2VyMUBtYWlsLmNvbSIsInVzZXJuYW1lIjoidXNlcjEiLCJyb2xlIjoiVXNlciIsImlhdCI6MTY5MzE5NTE4OH0.XtSiVaJd2jjHW6Zs6R5Q-GbuaQzIQnl1nXi1H4ObH4o"
         );
         dispatch(setIsSignedIn(true));
       }
