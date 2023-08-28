@@ -1,8 +1,29 @@
 import { View, Text, StyleSheet, StatusBar, Image, ScrollView, TouchableOpacity } from 'react-native'
-import React from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { setContext } from "@apollo/client/link/context";
+import { useQuery } from '@apollo/client';
+import { GET_USERS_DETAIL } from '../constants/query';
+
 
 export default function ProfileScreen() {
+
+  const auth = setContext(async (_, { headers }) => {
+    const token = await AsyncStorage.getItem('access_token'); 
+    return {
+      headers: {
+        ...headers,
+        Authorization: token,
+      },
+    };
+  });
+  
+  const { loading, error, data } = useQuery(GET_USERS_DETAIL);
+
+if (loading) return <Text>Loading...</Text>;
+if (error) return <Text>Error: {error.message}</Text>;
+
+const user = data.getUsersDetails;
   return (
     <>
       <StatusBar
@@ -14,7 +35,7 @@ export default function ProfileScreen() {
           <View style={styles.profile_box}>
             <View style={{ alignItems: "center" }}>
               <View style={{ marginBottom: 80, alignItems: 'center', borderBottomWidth: 2, borderBottomColor: '#80FFCC' }}>
-                <Text style={styles.profile_text}>Hi, Username</Text>
+                <Text style={styles.profile_text}>Hi, {user.username}</Text>
               </View>
               <View>
                 <Image source={require('../assets/dummy_user.png')} style={styles.image} />
@@ -27,7 +48,7 @@ export default function ProfileScreen() {
                 <View style={{ paddingHorizontal: 30 }}>
                 </View>
                 <View style={{ alignItems: "center" }}>
-                  <Text style={styles.profile_distance_text}>123,000 km</Text>
+                  <Text style={styles.profile_distance_text}>{user.Rentals.travelledDistance}</Text>
                   <Text style={styles.profile_distance}>Totally Rided</Text>
                 </View>
               </View>
@@ -35,7 +56,7 @@ export default function ProfileScreen() {
             <View style={{ marginTop: 30 }}>
               <Text style={{ color: '#80FFCC', fontSize: 20 }}>My Balance</Text>
               <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
-                <Text style={{ color: 'white', fontSize: 20 }}>Rp 1000.000,00</Text>
+                <Text style={{ color: 'white', fontSize: 20 }}>Rp {user.balance}</Text>
                 <TouchableOpacity>
                   <Text style={{ fontSize: 15, backgroundColor: '#80FFCC', paddingHorizontal: 5, paddingVertical: 3, borderRadius: 20, fontWeight: "500" }}>TOP UP</Text>
                 </TouchableOpacity>
@@ -43,11 +64,11 @@ export default function ProfileScreen() {
             </View>
             <View style={{ marginTop: 30 }}>
               <Text style={{ color: '#80FFCC', fontSize: 20 }}>Fullname</Text>
-              <Text style={{ color: 'white', fontSize: 20 }}>user full name</Text>
+              <Text style={{ color: 'white', fontSize: 20 }}>{user.username}</Text>
             </View>
             <View style={{ marginTop: 30 }}>
               <Text style={{ color: '#80FFCC', fontSize: 20 }}>Email</Text>
-              <Text style={{ color: 'white', fontSize: 20 }}>User@mail.com</Text>
+              <Text style={{ color: 'white', fontSize: 20 }}>{user.email}</Text>
             </View>
             <View style={{ marginTop: 30 }}>
               <Text style={{ color: '#80FFCC', fontSize: 20 }}>Phone</Text>

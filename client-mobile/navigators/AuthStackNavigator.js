@@ -7,6 +7,7 @@ import * as SecureStore from 'expo-secure-store';
 import { useSelector, useDispatch } from "react-redux";
 import { setIsSignedIn } from "../stores/reducers/authSlice";
 import { getValueFor } from "../helpers/secureStoreAction";
+import ProfileScreen from "../screens/ProfileScreen";
 
 const Stack = createNativeStackNavigator();
 
@@ -42,11 +43,19 @@ export default function AuthStackNavigator() {
       }}
     >
     {isSignedIn ? (
-      <Stack.Screen
+      <>
+      {/* <Stack.Screen
         options={{ headerShown: false }}
         name="Maps"
         component={MapsScreen}
+      /> */}
+      <Stack.Screen
+      options={{ headerShown: false }}
+      name="Profile"
+      component={ProfileScreen}
       />
+      </>
+      
     ) : (
       <>
         {/* <Stack.Screen
