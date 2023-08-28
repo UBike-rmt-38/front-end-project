@@ -15,7 +15,7 @@ import Scanner from "../components/Scanner";
 import * as Location from "expo-location";
 import * as SecureStore from "expo-secure-store";
 import { useNavigation } from "@react-navigation/native";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { setIsSignedIn } from "../stores/reducers/authSlice";
 import { useQuery } from "@apollo/client";
 import { GET_STATIONS } from "../constants/query";
@@ -48,6 +48,7 @@ export default function MapsScreen() {
   const [userLocation, setUserLocation] = useState(null);
   const [showConfirmationModal, setShowConfirmationModal] = useState(false);
   const [selectedStation, setSelectedStation] = useState(null);
+  const isRenting = useSelector((state) => state.auth.isRenting);
 
   const openConfirmationModal = (station) => {
     setSelectedStation(station);
@@ -97,6 +98,9 @@ export default function MapsScreen() {
   const { data, loading, error } = useQuery(GET_STATIONS, {
     onCompleted: (data) => {
       setStations(data.getStations);
+    },
+    onError: (data) => {
+      alert(`${error.message}`);
     },
   });
 
@@ -291,10 +295,15 @@ export default function MapsScreen() {
           </Marker>
         )}
       </MapView>
-
-      <TouchableOpacity style={styles.button} onPress={openScanner}>
-        <Text style={styles.buttonText}>Scan Here</Text>
-      </TouchableOpacity>
+      {isRenting ? (
+        <View style={styles.rentingStatus}>
+          <Text style={{ color: "white" }}>renting</Text>
+        </View>
+      ) : (
+        <TouchableOpacity style={styles.scanButton} onPress={openScanner}>
+          <Text style={styles.buttonText}>Rent Bike</Text>
+        </TouchableOpacity>
+      )}
 
       <Modal visible={showScanner} animationType="slide" transparent={false}>
         <View style={styles.scannerModal}>
@@ -302,8 +311,8 @@ export default function MapsScreen() {
         </View>
       </Modal>
 
-      <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
-        <Text style={styles.button}>Logout</Text>
+      <TouchableOpacity style={styles.button} onPress={handleLogout}>
+        <Text style={styles.buttonText}>Logout</Text>
       </TouchableOpacity>
       <Modal
         visible={showConfirmationModal}
@@ -331,7 +340,6 @@ export default function MapsScreen() {
     </View>
   );
 }
-
 
 const styles = StyleSheet.create({
   container: {
@@ -381,6 +389,24 @@ const styles = StyleSheet.create({
     position: "absolute",
     bottom: 50,
     backgroundColor: "blue",
+    borderRadius: 40,
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+  },
+  scanButton: {
+    position: "absolute",
+    bottom: 50,
+    left: 125,
+    backgroundColor: "blue",
+    borderRadius: 40,
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+  },
+  rentingStatus: {
+    position: "absolute",
+    bottom: 50,
+    left: 125,
+    backgroundColor: "green",
     borderRadius: 40,
     paddingVertical: 10,
     paddingHorizontal: 20,
