@@ -55,7 +55,7 @@ export default function AuthStackNavigator() {
           <Stack.Screen
             name="TopUp"
             component={TopUpScreen}
-            options={{ headerShown: false, title: "Top Up" }}
+            options={{ title: "Top Up", headerTintColor: "black" }}
           />
 
           <Stack.Screen
@@ -77,7 +77,7 @@ export default function AuthStackNavigator() {
             component={LoginScreen}
           />
           <Stack.Screen
-            options={{ headerShown: false }}
+            options={{ headerTitle: "Sign Up" }}
             name="SignUp"
             component={SignUpScreen}
           />
