@@ -43,37 +43,43 @@ export default function AuthStackNavigator() {
         headerTintColor: "white",
       }}
     >
-    {isSignedIn ? (
-      // <Stack.Screen
-      //   options={{ headerShown: false }}
-      //   name="Maps"
-      //   component={MapsScreen}
-      // />
-      // <Stack.Screen
-      //   options={{ headerShown: false }}
-      //   name="Home"
-      //   component={HomeScreen}
-      // />
-      <Stack.Screen
-        name="TopUp"
-        component={TopUpScreen}
-        options={{ headerShown: false, title: 'Top Up' }}
-      />
-
-    ) : (
-      <>
-        {/* <Stack.Screen
-          options={{ headerShown: false }}
-          name="Onboarding"
-          component={OnboardingScreen}
-        /> */}
-        <Stack.Screen
-          options={{ headerShown: false }}
-          name="Login"
-          component={LoginScreen}
-        />
-      </>
-    )}
+      {isSignedIn ? (
+        <>
+          <Stack.Screen
+            options={{ headerShown: false }}
+            name="Home"
+            component={HomeScreen}
+            key="HomeScreen"
+          />
+          <Stack.Screen
+            name="TopUp"
+            component={TopUpScreen}
+            options={{ headerShown: false, title: 'Top Up' }}
+            key="TopUpScreen"
+          />
+          <Stack.Screen
+            options={{ headerShown: false }}
+            name="Maps"
+            component={MapsScreen}
+            key="MapsScreen"
+          /> 
+        </>
+      ) : (
+        <>
+          <Stack.Screen
+            options={{ headerShown: false }}
+            name="Onboarding"
+            component={OnboardingScreen}
+            key="OnboardingScreen"
+          />
+          <Stack.Screen
+            options={{ headerShown: false }}
+            name="Login"
+            component={LoginScreen}
+            key="LoginScreen"
+          />
+        </>
+      )}
     </Stack.Navigator>
   );
 }
