@@ -9,14 +9,14 @@ import {
   Modal,
   TouchableHighlight,
 } from "react-native";
-import MapView, { Marker, PROVIDER_GOOGLE } from "react-native-maps";
+import MapView, { Marker, PROVIDER_GOOGLE, Polyline } from "react-native-maps";
 import MapsPin from "../components/MapsPin";
 import Scanner from "../components/Scanner";
 import * as Location from "expo-location";
 import * as SecureStore from "expo-secure-store";
 import { useNavigation } from "@react-navigation/native";
-import { useDispatch } from "react-redux";
-import { setIsSignedIn } from "../stores/reducers/authSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { setIsRenting, setIsSignedIn } from "../stores/reducers/authSlice";
 import { useQuery } from "@apollo/client";
 import { GET_STATIONS } from "../constants/query";
 import Ionicons from "@expo/vector-icons/Ionicons";
@@ -26,6 +26,11 @@ import Animated, {
   withTiming,
   Easing,
 } from "react-native-reanimated";
+import { getValueFor } from "../helpers/secureStoreAction";
+import axios from "axios";
+import { ROUTES_API } from "../constants/baseURL";
+import GOOGLE_API_KEY from "../constants/apiKey.js";
+import decodePolyline from "../helpers/polylineDecoder";
 
 const startLatLng = {
   latitude: 0,
@@ -48,6 +53,21 @@ export default function MapsScreen() {
   const [userLocation, setUserLocation] = useState(null);
   const [showConfirmationModal, setShowConfirmationModal] = useState(false);
   const [selectedStation, setSelectedStation] = useState(null);
+  const isRenting = useSelector((state) => state.auth.isRenting);
+  const [route, setRoute] = useState([]);
+
+  const getIsRenting = async () => {
+    try {
+      const renting_status = await getValueFor("renting_status");
+      if (renting_status) {
+        dispatch(setIsRenting(true));
+      } else {
+        dispatch(setIsRenting(false));
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   const openConfirmationModal = (station) => {
     setSelectedStation(station);
@@ -98,10 +118,15 @@ export default function MapsScreen() {
     onCompleted: (data) => {
       setStations(data.getStations);
     },
+    onError: (data) => {
+      alert(`${error.message}`);
+    },
   });
 
   useEffect(() => {
     updateNearestStations();
+    getIsRenting();
+    getRoutes();
   }, [stations]);
 
   const dispatch = useDispatch();
@@ -199,6 +224,62 @@ export default function MapsScreen() {
     });
     setShowFlatList(false);
   };
+
+  const getRoutes = async () => {
+    const requestBody = {
+      origin: {
+        location: {
+          latLng: {
+            latitude: -6.174221210471815,
+            longitude: 106.8270276424257,
+          },
+        },
+      },
+      destination: {
+        location: {
+          latLng: {
+            latitude: -6.195083314541013,
+            longitude: 106.82305164875585,
+          },
+        },
+      },
+      travelMode: "DRIVE",
+      routingPreference: "TRAFFIC_AWARE",
+      computeAlternativeRoutes: false,
+      routeModifiers: {
+        avoidTolls: false,
+        avoidHighways: false,
+        avoidFerries: false,
+      },
+      languageCode: "en-US",
+      units: "IMPERIAL",
+    };
+
+    try {
+      const response = await axios.post(ROUTES_API, requestBody, {
+        headers: {
+          "Content-Type": "application/json",
+          "X-Goog-Api-Key": GOOGLE_API_KEY,
+          "X-Goog-FieldMask":
+            "routes.duration,routes.distanceMeters,routes.polyline.encodedPolyline",
+        },
+      });
+      // console.log(response);
+      // console.log(response.data.routes);
+      const decodedCoordinates = decodePolyline(
+        response.data.routes[0].polyline.encodedPolyline
+      );
+      // console.log(decodedCoordinates);
+      const formattedRoute = decodedCoordinates.map(([latitude, longitude]) => ({
+        latitude,
+        longitude
+      }))
+      setRoute(formattedRoute);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.searchContainer}>
@@ -290,11 +371,33 @@ export default function MapsScreen() {
             </View>
           </Marker>
         )}
-      </MapView>
+        {route && (
+          <>
+            {/* Menggambar Polyline menggunakan route */}
+            <Polyline coordinates={route} strokeWidth={8} strokeColor="#00d4ff" />
 
-      <TouchableOpacity style={styles.button} onPress={openScanner}>
-        <Text style={styles.buttonText}>Scan Here</Text>
-      </TouchableOpacity>
+            {/* Menampilkan marker di setiap koordinat */}
+            {/* {route.map((coordinate, index) => (
+              <Marker
+                key={index}
+                coordinate={{
+                  latitude: coordinate[0],
+                  longitude: coordinate[1],
+                }}
+              />
+            ))} */}
+          </>
+        )}
+      </MapView>
+      {isRenting ? (
+        <View style={styles.rentingStatus}>
+          <Text style={{ color: "white" }}>renting</Text>
+        </View>
+      ) : (
+        <TouchableOpacity style={styles.scanButton} onPress={openScanner}>
+          <Text style={styles.buttonText}>Rent Bike</Text>
+        </TouchableOpacity>
+      )}
 
       <Modal visible={showScanner} animationType="slide" transparent={false}>
         <View style={styles.scannerModal}>
@@ -302,8 +405,8 @@ export default function MapsScreen() {
         </View>
       </Modal>
 
-      <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
-        <Text style={styles.button}>Logout</Text>
+      <TouchableOpacity style={styles.button} onPress={handleLogout}>
+        <Text style={styles.buttonText}>Logout</Text>
       </TouchableOpacity>
       <Modal
         visible={showConfirmationModal}
@@ -331,7 +434,6 @@ export default function MapsScreen() {
     </View>
   );
 }
-
 
 const styles = StyleSheet.create({
   container: {
@@ -381,6 +483,24 @@ const styles = StyleSheet.create({
     position: "absolute",
     bottom: 50,
     backgroundColor: "blue",
+    borderRadius: 40,
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+  },
+  scanButton: {
+    position: "absolute",
+    bottom: 50,
+    left: 125,
+    backgroundColor: "blue",
+    borderRadius: 40,
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+  },
+  rentingStatus: {
+    position: "absolute",
+    bottom: 50,
+    left: 125,
+    backgroundColor: "green",
     borderRadius: 40,
     paddingVertical: 10,
     paddingHorizontal: 20,
