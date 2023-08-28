@@ -1,38 +1,50 @@
-import { useState } from 'react';
-import { View, Text, TouchableOpacity, Modal, StyleSheet, TextInput } from 'react-native';
-import { FontAwesome } from '@expo/vector-icons';
-import * as SecureStore from 'expo-secure-store';
-import { useNavigation } from '@react-navigation/native';
-import Auth from '../hooks/Auth';
+import { useState } from "react";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  Modal,
+  StyleSheet,
+  TextInput,
+} from "react-native";
+import { FontAwesome } from "@expo/vector-icons";
+import * as SecureStore from "expo-secure-store";
+import { useNavigation } from "@react-navigation/native";
+import { useDispatch } from "react-redux";
+import { setIsSignedIn } from "../stores/reducers/authSlice";
+
+async function saveAccessToken(access_token) {
+  try {
+    await SecureStore.setItemAsync("access_token", access_token);
+    console.log(access_token);
+  } catch (error) {
+    console.log(error);
+  }
+}
 
 export default function LoginScreen() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
-
-  const navigation = useNavigation()
+  const dispatch = useDispatch();
 
   const handleLogin = async () => {
-    if (!email || !password) {
-      setError('Please fill in all fields');
-    } else {
-      await saveAccessToken("initoken");
-      navigation.navigate('Maps');
+    try {
+      if (!email || !password) {
+        setError("Please fill in all fields");
+      } else {
+        await saveAccessToken(
+          "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJ1c2VyMUBtYWlsLmNvbSIsInVzZXJuYW1lIjoidXNlcjEiLCJyb2xlIjoiVXNlciIsImlhdCI6MTY5MzEzNTEyN30.HJXQqkPOdbHNFuvbFcMLsZMFi45S1KaPk_ng1MxjfLQ"
+        );
+        dispatch(setIsSignedIn(true));
+      }
+      console.log(email);
+      console.log(password);
+    } catch (error) {
+      console.log(error);
     }
-    console.log(email);
-    console.log(password);
   };
-
-  const { isSignedIn, setIsSignedIn } = Auth()
-
-  async function saveAccessToken(accessToken) {
-    await SecureStore.setItemAsync('accessToken', accessToken);
-    setIsSignedIn(true)
-    console.log(accessToken);
-
-  }
-
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Welcome Back!</Text>
@@ -63,11 +75,10 @@ export default function LoginScreen() {
             />
           </TouchableOpacity>
         </View>
-
-      <TouchableOpacity style={styles.button} onPress={handleLogin}>
-        <Text style={styles.buttonText}>Log In</Text>
-      </TouchableOpacity>
-    </View>
+        <TouchableOpacity style={styles.button} onPress={handleLogin}>
+          <Text style={styles.buttonText}>Log In</Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 }
@@ -117,7 +128,6 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     marginVertical: 10,
     marginHorizontal: 80,
-    borderRadius: 40
-  
-  }
+    borderRadius: 40,
+  },
 });

@@ -1,17 +1,36 @@
-import { useEffect, useState } from "react";  
+import { useEffect } from "react";  
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import OnboardingScreen from "../screens/OnboardingScreen";
 import MapsScreen from "../screens/MapsScreen";
 import LoginScreen from "../screens/LoginScreen";
 import * as SecureStore from 'expo-secure-store'; 
-import Auth from "../hooks/Auth";
-import HomeScreen from "../screens/HomeScreen";
-import DrawerNavigation from "./DrawerNavigator";
-
+import { useSelector, useDispatch } from "react-redux";
+import { setIsSignedIn } from "../stores/reducers/authSlice";
+import { getValueFor } from "../helpers/secureStoreAction";
 
 const Stack = createNativeStackNavigator();
 
 export default function AuthStackNavigator() {
+  const dispatch = useDispatch();
+  const isSignedIn = useSelector((state) => state.auth.isSignedIn);
+  const getIsSignedIn = async () => {
+    try {
+      const access_token = await getValueFor("access_token")
+      console.log(access_token)
+      if (access_token) {
+        dispatch(setIsSignedIn(true));
+      } 
+      else {
+        dispatch(setIsSignedIn(false));
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    getIsSignedIn();
+  }, []);
 
   return (
     <Stack.Navigator
@@ -22,34 +41,26 @@ export default function AuthStackNavigator() {
         headerTintColor: "white",
       }}
     >
-      
-    {/* {isSignedIn ? ( */}
-    <Stack.Screen
-          options={{ headerShown: false }}
-          name="Home"
-          // component={DrawerNavigation}
-          component={HomeScreen}
-        />
-      {/* <Stack.Screen
+    {isSignedIn ? (
+      <Stack.Screen
         options={{ headerShown: false }}
         name="Maps"
         component={MapsScreen}
-      /> */}
-    {/* ) : ( */}
-      {/* <>
-        <Stack.Screen
+      />
+    ) : (
+      <>
+        {/* <Stack.Screen
           options={{ headerShown: false }}
           name="Onboarding"
           component={OnboardingScreen}
-        /> 
+        /> */}
         <Stack.Screen
           options={{ headerShown: false }}
           name="Login"
           component={LoginScreen}
         />
-      </> */}
-    {/* )} */}
-
+      </>
+    )}
     </Stack.Navigator>
   );
 }
