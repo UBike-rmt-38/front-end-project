@@ -37,6 +37,9 @@ export default function SignUpScreen({ navigation }) {
 
   return (
     <View style={styles.container}>
+       <StatusBar
+        backgroundColor="#000"
+        />
       <ImageBackground source={image} resizeMode="cover" style={styles.image}>
         <View style={styles.box}>
           <LinearGradient
