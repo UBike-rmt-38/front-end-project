@@ -15,7 +15,7 @@ export default function TableRow({
         { key: "name" },
         { key: "address" },
         { key: "latitude" },
-        { key: "longtitude" },
+        { key: "longitude" },
         { key: "createdAt" },
         { key: "updatedAt" },
       ];
