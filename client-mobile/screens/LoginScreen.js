@@ -1,43 +1,36 @@
-import { useState } from "react";
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  Modal,
-  StyleSheet,
-  TextInput,
-  TouchableHighlight,
-} from "react-native";
-import { FontAwesome } from "@expo/vector-icons";
-import Scanner from "../components/Scanner";
+import { useState } from 'react';
+import { View, Text, TouchableOpacity, Modal, StyleSheet, TextInput } from 'react-native';
+import { FontAwesome } from '@expo/vector-icons';
+import * as SecureStore from 'expo-secure-store';
+import { useNavigation } from '@react-navigation/native';
+import Auth from '../hooks/Auth';
 
-export default function LoginScreen({ navigation }) {
+export default function LoginScreen() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [error, setError] = useState("");
+  const [error, setError] = useState('');
 
-  //ini scanner
-  const [showScanner, setShowScanner] = useState(false);
-  const openScanner = () => {
-    setShowScanner(true);
+  const navigation = useNavigation()
+
+  const handleLogin = async () => {
+    if (!email || !password) {
+      setError('Please fill in all fields');
+    } else {
+      await saveAccessToken("initoken");
+      navigation.navigate('Maps');
+    }
+    console.log(email);
+    console.log(password);
   };
 
-  const closeScanner = () => {
-    setShowScanner(false);
-  };
+  const { isSignedIn, setIsSignedIn } = Auth()
 
-  const handleLogin = () => {
-    // if (!email || !password) {
-    //   return setError("Please fill in all fields");
-    // }
-    navigation.replace("Maps");
-    // console.log(email);
-    // console.log(password);
-  };
+  async function saveAccessToken(accessToken) {
+    await SecureStore.setItemAsync('accessToken', accessToken);
+    setIsSignedIn(true)
+    console.log(accessToken);
 
-  const navigateToSignUp = () => {
-    navigation.navigate("SignUp");
   }
 
   return (
@@ -70,22 +63,11 @@ export default function LoginScreen({ navigation }) {
             />
           </TouchableOpacity>
         </View>
-        <TouchableHighlight style={styles.button} onPress={openScanner}>
-          <Text style={styles.buttonText}>Scan Here</Text>
-        </TouchableHighlight>
 
-        <Modal visible={showScanner} animationType="slide" transparent={false}>
-          <View style={styles.scannerModal}>
-            <Scanner onCloseScanner={closeScanner} />
-          </View>
-        </Modal>
-        <TouchableHighlight style={styles.button} onPress={handleLogin}>
-          <Text style={styles.buttonText}>Log In</Text>
-        </TouchableHighlight>
-      </View>
-      <TouchableHighlight onPress={navigateToSignUp}>
-        <Text>Sign up</Text>
-      </TouchableHighlight>
+      <TouchableOpacity style={styles.button} onPress={handleLogin}>
+        <Text style={styles.buttonText}>Log In</Text>
+      </TouchableOpacity>
+    </View>
     </View>
   );
 }
@@ -104,7 +86,6 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     color: "#006241",
   },
-
   input: {
     marginBottom: 10,
     paddingVertical: 10,
@@ -136,18 +117,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     marginVertical: 10,
     marginHorizontal: 80,
-    borderRadius: 40,
-  },
-  buttonText: {
-    color: "#fff",
-    fontSize: 18,
-    fontWeight: "bold",
-    textAlign: "center",
-  },
-  scannerModal: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "#006241",
-  },
+    borderRadius: 40
+  
+  }
 });
