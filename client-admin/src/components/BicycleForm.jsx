@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useMutation, useQuery } from "@apollo/client";
-import { ADD_BICYCLE, GET_CATEGORIES, GET_STATIONS } from "../constants/query";
+import { GET_CATEGORIES, GET_STATIONS } from "../constants/query";
+import { ADD_BICYCLE } from "../constants/mutation";
 
 
 

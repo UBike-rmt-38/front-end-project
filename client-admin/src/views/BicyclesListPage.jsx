@@ -23,6 +23,7 @@ export default function BicyclesListPage() {
   const navigate = useNavigate()
   const { data, loading: isLoading, error } = useQuery(GET_BICYCLES);
   if (error) return `Error! ${error.message}`;
+
   
   const handleAdd = () => {
     navigate("/addbicycle")
