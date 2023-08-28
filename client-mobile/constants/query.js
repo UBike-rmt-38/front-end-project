@@ -2,28 +2,28 @@ import { gql } from "@apollo/client";
 
 export const GET_STATIONS = gql`
   query Query {
-  getStations {
-    id
-    name
-    address
-    latitude
-    longitude
-    Bicycles {
+    getStations {
       id
       name
-      feature
-      imageURL
-      description
-      price
-      StationId
-      status
+      address
+      latitude
+      longitude
+      Bicycles {
+        id
+        name
+        feature
+        imageURL
+        description
+        price
+        StationId
+        status
+        createdAt
+        updatedAt
+      }
       createdAt
       updatedAt
     }
-    createdAt
-    upatedAt
   }
-}
 `;
 
 export const GET_USERS = gql`
