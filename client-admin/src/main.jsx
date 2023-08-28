@@ -18,7 +18,7 @@ const authLink = setContext((_, { headers }) => {
   return {
     headers: {
       ...headers,
-      authorization: access_token ? `${access_token}` : '', // sekarang begini baru valid & aman
+      authorization: access_token ? `${access_token}` : '',
     },
   };
 });

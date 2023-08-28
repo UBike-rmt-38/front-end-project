@@ -22,12 +22,11 @@ async function saveAccessToken(access_token) {
   }
 }
 
-export default function LoginScreen({ navigation }) {
+export default function LoginScreen() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [error, setError] = useState("");
-
+  const [error, setError] = useState('');
   const dispatch = useDispatch();
 
   const handleLogin = async () => {
@@ -46,7 +45,6 @@ export default function LoginScreen({ navigation }) {
       console.log(error);
     }
   };
-
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Welcome Back!</Text>
@@ -77,7 +75,6 @@ export default function LoginScreen({ navigation }) {
             />
           </TouchableOpacity>
         </View>
-
         <TouchableOpacity style={styles.button} onPress={handleLogin}>
           <Text style={styles.buttonText}>Log In</Text>
         </TouchableOpacity>

@@ -1,8 +1,6 @@
 import { gql, useMutation } from "@apollo/client";
 import { useState } from "react";
-// import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
-// import { postLogin } from "../stores/actions/actionCreator";
 import { ToastContainer, toast } from "react-toastify";
 
 export default function LoginPage() {
@@ -11,7 +9,6 @@ export default function LoginPage() {
     password: "",
   });
   const navigate = useNavigate();
-  // const dispatch = useDispatch();
 
   const onLoginInput = (event) => {
     const value = event.target.value;
@@ -25,23 +22,37 @@ export default function LoginPage() {
     }
   `;
 
-  const [login, { data, loading, error }] = useMutation(LOGIN);
+  const [login, { data, loading, error }] = useMutation(LOGIN, {
+    onCompleted: (data) => {
+      if (data.login) {
+        localStorage.setItem("access_token", data.login);
+        setFormLogin({
+          username: "",
+          password: "",
+        });
+        toast.success("login success!", {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+        });
+      }
+      setTimeout(() => {
+        navigate("/");
+      }, 3000);
+    },
+  });
 
   const handleSubmit = async (event) => {
     try {
       event.preventDefault();
-      // const { statusText, status, message } = await dispatch(
-      //   postLogin(formLogin)
-      // );
-      // console.log("ketrigger")
       await login({ variables: formLogin });
-      localStorage.setItem("access_token", data.login);
-      console.log(data);
-      setFormLogin({
-        username: "",
-        password: "",
-      });
-      toast.success("login success!", {
+    } catch (error) {
+      toast.error(error.message, {
         position: "top-right",
         autoClose: 3000,
         hideProgressBar: false,
@@ -51,28 +62,8 @@ export default function LoginPage() {
         progress: undefined,
         theme: "light",
       });
-      setTimeout(() => {
-        navigate("/");
-      }, 3000);
-    } catch (error) {
-      // const { statusText, status, message } = error;
-      console.log(error);
     }
   };
-
-  if (error) {
-    console.log(error)
-    toast.error(error, {
-      position: "top-right",
-      autoClose: 3000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-      theme: "light",
-    });
-  }
 
   return (
     <>

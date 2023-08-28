@@ -189,7 +189,6 @@ export default function MapsScreen() {
         station.name.toLowerCase().includes(search.toLowerCase())
       )
     : nearestStations;
-
   const listStations = (station) => {
     setSearch(station.name);
     mapRef.current.animateToRegion({
@@ -198,7 +197,6 @@ export default function MapsScreen() {
       latitudeDelta: 0.0022,
       longitudeDelta: 0.0021,
     });
-
     setShowFlatList(false);
   };
   return (
@@ -333,6 +331,7 @@ export default function MapsScreen() {
     </View>
   );
 }
+
 
 const styles = StyleSheet.create({
   container: {
