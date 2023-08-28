@@ -39,19 +39,6 @@ export const GET_USERS = gql`
 }
 `;
 
-export const GET_USERS = gql`
-  query Query {
-    getUsers {
-      id
-      username
-      role
-      email
-      password
-      balance
-    }
-  }
-`;
-
 export const GET_USERS_DETAIL = gql`
 query GetUsersDetails {
   getUsersDetails {
