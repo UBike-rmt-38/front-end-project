@@ -10,21 +10,37 @@ import {
 } from "react-native";
 import * as Location from "expo-location";
 import { Distance } from "../components/Distance";
+import { useNavigation } from "@react-navigation/native";
+import { useQuery, gql } from '@apollo/client';
+import { GET_USERS, GET_STATIONS } from '../constants/query'
+
+
 
 export default function HomeScreen() {
   const [userLocation, setUserLocation] = useState(null);
-  const [stations, setStations] = useState([]);
 
   const [currentTime, setCurrentTime] = useState(new Date());
+  const navigation = useNavigation()
+  const { loading: usersLoading, error: usersError, data } = useQuery(GET_USERS);
+  const { loading: stationsLoading, error: stationsError, data: stationsData } = useQuery(GET_STATIONS);
+
+
+  const userBalance = data?.getUsers[2]?.balance || 0;
+
+  console.log(userBalance);
+
+  const getUserLocation = async () => {
+    const { status } = await Location.requestForegroundPermissionsAsync();
+    if (status === 'granted') {
+      const location = await Location.getCurrentPositionAsync({});
+      setUserLocation(location);
+    } else {
+      console.error('Permission to access location was denied');
+    }
+  };
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentTime(new Date());
-    }, 1000);
-
-    return () => {
-      clearInterval(interval);
-    };
+    getUserLocation();
   }, []);
 
   const daysOfWeek = [
@@ -44,50 +60,44 @@ export default function HomeScreen() {
     month < 10 ? "0" + month : month
   }`;
 
-  const apiUrl = `http://192.168.0.56:3000/Stations`;
-
-  const fetchStations = async () => {
-    try {
-      const response = await fetch(apiUrl);
-      const data = await response.json();
-      setStations(data);
-    } catch (error) {
-      console.error("Error fetching stations:", error);
-    }
-  };
-
-  const getUserLocation = async () => {
-    const { status } = await Location.requestForegroundPermissionsAsync();
-    if (status === "granted") {
-      const location = await Location.getCurrentPositionAsync({});
-      setUserLocation(location);
-    } else {
-      console.error("Permission to access location was denied");
-    }
-  };
-
   useEffect(() => {
+    const getUserLocation = async () => {
+      const { status } = await Location.requestForegroundPermissionsAsync();
+      if (status === "granted") {
+        const location = await Location.getCurrentPositionAsync({});
+        setUserLocation(location);
+      } else {
+        console.error("Permission to access location was denied");
+      }
+    };
+
     getUserLocation();
-    fetchStations();
   }, []);
 
-  if (!userLocation) {
-    return <Text>Loading...</Text>;
-  }
+  if (usersLoading || stationsLoading) return <Text>Loading...</Text>;
+  if (usersError || stationsError) return <Text>Error: {usersError?.message || stationsError?.message}</Text>;
 
-  const calculateDistance = (latitude, longitude) => {
-    return Distance(
-      userLocation.coords.latitude,
-      userLocation.coords.longitude,
-      latitude,
-      longitude
-    );
+  const calculateDistance = (lat, lon) => {
+    if (userLocation) {
+      const distance = Distance(
+        userLocation.coords.latitude,
+        userLocation.coords.longitude,
+        lat,
+        lon
+      );
+      return distance;
+    }
+    return null;
   };
-
+  
+  const stations = stationsData.getStations || [];
   const nearbyStations = stations.filter((station) => {
     const distance = calculateDistance(station.latitude, station.longitude);
     return distance !== null && distance < 900;
   });
+
+
+  console.log(nearbyStations);
 
   const getGreeting = () => {
     const currentHour = new Date().getHours();
@@ -104,6 +114,10 @@ export default function HomeScreen() {
     "https://png.pngtree.com/thumb_back/fw800/background/20210417/pngtree-world-bicycle-day-background-with-sun-rays-image_633284.jpg",
     "https://c8.alamy.com/comp/KNW1HR/lets-ride-bicycle-sport-transport-retro-banner-design-KNW1HR.jpg",
   ];
+
+  const handleTopupPress = () => {
+    navigation.navigate('TopUp');
+  };
 
   return (
     <ImageBackground
@@ -143,8 +157,8 @@ export default function HomeScreen() {
         <View style={styles.container}>
           <View style={styles.box}>
             <Text style={styles.header}>Balance</Text>
-            <Text style={styles.balance}>$100.00</Text>
-            <TouchableOpacity style={styles.topUpButton}>
+            <Text style={styles.balance}>Rp. {userBalance.toFixed()}</Text>
+            <TouchableOpacity style={styles.topUpButton} onPress={handleTopupPress}>
               <Text style={styles.buttonText}>Top Up</Text>
             </TouchableOpacity>
           </View>
@@ -157,26 +171,25 @@ export default function HomeScreen() {
               />
             ))}
           </ScrollView>
-
           <View style={styles.overlay}>
-            <Text style={styles.header}>Stations near me:</Text>
-            <ScrollView>
-              {nearbyStations.map((item) => (
-                <View key={item.id} style={styles.stationContainer}>
-                  <Text style={styles.stationName}>{item.name}</Text>
-                  <Text style={styles.stationDistance}>
+      <Text style={styles.header}>Stations near me:</Text>
+      <ScrollView>
+        {userLocation && nearbyStations.map((item) => (
+          <View key={item.id} style={styles.stationContainer}>
+            <Text style={styles.stationName}>{item.name}</Text>
+            <Text style={styles.stationDistance}>
                     {` ${calculateDistance(
                       item.latitude,
                       item.longitude
                     ).toFixed()} m`}
-                  </Text>
-                  <Text style={styles.stationCategory}>
-                    Available bikes: Kategori A
-                  </Text>
-                </View>
-              ))}
-            </ScrollView>
+            </Text>
+            <Text style={styles.bicyclesCategory}>
+              Available bikes: {item.Bicycles.name}
+            </Text>
           </View>
+        ))}
+      </ScrollView>
+    </View>
         </View>
       </ScrollView>
     </ImageBackground>
@@ -249,7 +262,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: "#666666",
   },
-  stationCategory: {
+  bicyclesCategory: {
     fontSize: 14,
     color: "green",
     marginTop: 8,

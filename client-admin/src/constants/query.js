@@ -7,7 +7,7 @@ export const GET_STATIONS = gql`
       name
       address
       latitude
-      longtitude
+      longitude
       Bicycles {
         id
         name
