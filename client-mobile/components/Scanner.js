@@ -1,11 +1,27 @@
 import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, Button, Text } from 'react-native';
 import { BarCodeScanner } from 'expo-barcode-scanner';
+import { useMutation } from '@apollo/client';
+import { CREATE_RENTAL } from '../constants/mutation';
+import { useDispatch } from 'react-redux';
+import { setIsRenting } from '../stores/reducers/authSlice';
 // import { useNavigation } from '@react-navigation/native'; 
 
 export default function Scanner({ onCloseScanner }) {
   const [hasCameraPermission, setHasCameraPermission] = useState(null);
+  const dispatch = useDispatch();
+
   // const navigation = useNavigation();  
+  const [createRental, { data, loading, error }] = useMutation(CREATE_RENTAL, {
+    onCompleted: (data) => {
+      alert(`${data}`);
+      dispatch(setIsRenting(true));
+    },
+    onError: (error) => {
+      alert(`${error.message}`);
+      console.log(error);
+    }
+  });
 
   useEffect(() => {
     const getCameraPermission = async () => {
@@ -16,11 +32,11 @@ export default function Scanner({ onCloseScanner }) {
     getCameraPermission();
   }, []);
 
-  const handleBarCodeScanned = ({ type, data }) => {
+  const handleBarCodeScanned = async ({ type, data }) => {
     // navigation.navigate('Payment');
+    // alert(`Bar code with type ${type} and data ${data} has been scanned!`);
+    createRental({ variables: { bicycleToken: data } });
     onCloseScanner();
-    alert(`Bar code with type ${type} and data ${data} has been scanned!`);
-
   };
 
   return (
