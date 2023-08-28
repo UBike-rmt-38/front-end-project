@@ -16,7 +16,7 @@ import * as Location from "expo-location";
 import * as SecureStore from "expo-secure-store";
 import { useNavigation } from "@react-navigation/native";
 import { useDispatch, useSelector } from "react-redux";
-import { setIsSignedIn } from "../stores/reducers/authSlice";
+import { setIsRenting, setIsSignedIn } from "../stores/reducers/authSlice";
 import { useQuery } from "@apollo/client";
 import { GET_STATIONS } from "../constants/query";
 import Ionicons from "@expo/vector-icons/Ionicons";
@@ -26,6 +26,7 @@ import Animated, {
   withTiming,
   Easing,
 } from "react-native-reanimated";
+import { getValueFor } from "../helpers/secureStoreAction";
 
 const startLatLng = {
   latitude: 0,
@@ -49,6 +50,19 @@ export default function MapsScreen() {
   const [showConfirmationModal, setShowConfirmationModal] = useState(false);
   const [selectedStation, setSelectedStation] = useState(null);
   const isRenting = useSelector((state) => state.auth.isRenting);
+
+  const getIsRenting = async () => {
+    try {
+      const renting_status = await getValueFor("renting_status");
+      if (renting_status) {
+        dispatch(setIsRenting(true));
+      } else {
+        dispatch(setIsRenting(false));
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
 
   const openConfirmationModal = (station) => {
     setSelectedStation(station);
@@ -106,6 +120,7 @@ export default function MapsScreen() {
 
   useEffect(() => {
     updateNearestStations();
+    getIsRenting();
   }, [stations]);
 
   const dispatch = useDispatch();

@@ -12,15 +12,9 @@ import * as SecureStore from "expo-secure-store";
 import { useNavigation } from "@react-navigation/native";
 import { useDispatch } from "react-redux";
 import { setIsSignedIn } from "../stores/reducers/authSlice";
+import { saveAccessToken } from "../helpers/secureStoreAction";
 
-async function saveAccessToken(access_token) {
-  try {
-    await SecureStore.setItemAsync("access_token", access_token);
-    console.log(access_token);
-  } catch (error) {
-    console.log(error);
-  }
-}
+
 
 export default function LoginScreen() {
   const [email, setEmail] = useState("");

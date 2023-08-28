@@ -5,6 +5,7 @@ import { useMutation } from '@apollo/client';
 import { CREATE_RENTAL } from '../constants/mutation';
 import { useDispatch } from 'react-redux';
 import { setIsRenting } from '../stores/reducers/authSlice';
+import { saveRentingStatus } from '../helpers/secureStoreAction';
 // import { useNavigation } from '@react-navigation/native'; 
 
 export default function Scanner({ onCloseScanner }) {
@@ -16,6 +17,7 @@ export default function Scanner({ onCloseScanner }) {
     onCompleted: (data) => {
       alert(`${data}`);
       dispatch(setIsRenting(true));
+      saveRentingStatus(false)
     },
     onError: (error) => {
       alert(`${error.message}`);

@@ -18,10 +18,10 @@ export const GET_STATIONS = gql`
         StationId
         status
         createdAt
-        upatedAt
+        updatedAt
       }
       createdAt
-      upatedAt
+      updatedAt
     }
   }
 `;
