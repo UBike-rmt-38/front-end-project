@@ -5,6 +5,7 @@ import HomePage from "./views/HomePage";
 import AddProductPage from "./views/AddStationPage";
 import BicyclesListPage from "./views/BicyclesListPage";
 import AddBicyclePage from "./views/AddBicyclePage";
+import QRcode from "./views/QRcode";
 
 const router = createBrowserRouter([
   {
@@ -30,6 +31,10 @@ const router = createBrowserRouter([
       {
         path: "/addbicycle",
         element: <AddBicyclePage />
+      },
+      {
+        path: "/qrcode",
+        element: <QRcode/>
       }
     ],
   },
