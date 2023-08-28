@@ -13,28 +13,31 @@ import { useNavigation } from "@react-navigation/native";
 import { useDispatch } from "react-redux";
 import { setIsSignedIn } from "../stores/reducers/authSlice";
 import { saveAccessToken } from "../helpers/secureStoreAction";
-
-
+import { useMutation } from "@apollo/client";
+import { LOGIN } from "../constants/mutation";
 
 export default function LoginScreen() {
-  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [error, setError] = useState('');
+  // const [error, setError] = useState('');
   const dispatch = useDispatch();
+  const [login, { error }] = useMutation(LOGIN, {
+    onError: (error) => {
+      console.log(error);
+    },
+  });
 
   const handleLogin = async () => {
     try {
-      if (!email || !password) {
-        setError("Please fill in all fields");
-      } else {
-        await saveAccessToken(
-          "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJ1c2VyMUBtYWlsLmNvbSIsInVzZXJuYW1lIjoidXNlcjEiLCJyb2xlIjoiVXNlciIsImlhdCI6MTY5MzIwODM5MH0._clAPelkiPp3PSsXGwSOHoYAlyZX5qdSAo0tGmOAF18"
-        );
+      const response = await login({
+        variables: { username: username, password: password },
+      });
+      if (response.errors) throw response.errors;
+      else {
+        await saveAccessToken(response.data.login);
         dispatch(setIsSignedIn(true));
       }
-      console.log(email);
-      console.log(password);
     } catch (error) {
       console.log(error);
     }
@@ -42,13 +45,13 @@ export default function LoginScreen() {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Welcome Back!</Text>
-      {error ? <Text style={styles.errorText}>{error}</Text> : null}
+      {error ? <Text style={styles.errorText}>{error.message}</Text> : null}
       <View>
         <TextInput
           style={styles.input}
-          placeholder="Email"
-          value={email}
-          onChangeText={setEmail}
+          placeholder="username"
+          value={username}
+          onChangeText={setUsername}
         />
         <View>
           <TextInput

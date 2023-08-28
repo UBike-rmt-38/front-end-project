@@ -5,3 +5,9 @@ export const CREATE_RENTAL = gql`
     createRental(bicycleToken: $bicycleToken)
   }
 `;
+
+export const LOGIN = gql`
+  mutation Mutation($username: String!, $password: String!) {
+    login(username: $username, password: $password)
+  }
+`;
