@@ -43,21 +43,22 @@ export default function AuthStackNavigator() {
     >
       {isSignedIn ? (
         <>
-          {/* <Stack.Screen
+          <Stack.Screen
             options={{ headerShown: false }}
             name="Home"
             component={HomeScreen}
-          /> */}
-          {/* <Stack.Screen
+          />
+          <Stack.Screen
             name="TopUp"
             component={TopUpScreen}
-            options={{ headerShown: false, title: "Top Up" }}
-          /> */}
+            options={{ headerShown: false, title: 'Top Up' }}
+          />
+
           <Stack.Screen
             options={{ headerShown: false }}
             name="Maps"
             component={MapsScreen}
-          />
+          /> 
         </>
       ) : (
         <>
@@ -65,11 +66,13 @@ export default function AuthStackNavigator() {
             options={{ headerShown: false }}
             name="Onboarding"
             component={OnboardingScreen}
+
           />
           <Stack.Screen
             options={{ headerShown: false }}
             name="Login"
             component={LoginScreen}
+
           />
         </>
       )}

@@ -25,3 +25,19 @@ export const GET_STATIONS = gql`
     }
   }
 `;
+
+export const GET_USERS = gql`
+  query Query {
+    getUsers {
+    id
+    username
+    role
+    email
+    password
+    balance
+  }
+}
+`;
+
+
+

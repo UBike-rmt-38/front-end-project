@@ -3,7 +3,6 @@ import { View, Text, TextInput, Button, StyleSheet } from 'react-native';
 import { WebView } from 'react-native-webview';
 import { useQuery, useMutation } from '@apollo/client';
 import gql from 'graphql-tag';
-import { useNavigation } from '@react-navigation/native';
 
 const QUERY_BALANCE = gql`
   query Query {

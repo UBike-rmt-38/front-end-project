@@ -22,6 +22,7 @@ export default function LoginScreen() {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const dispatch = useDispatch();
+  const navigation = useNavigation()
 
   const handleLogin = async () => {
     try {
@@ -35,6 +36,8 @@ export default function LoginScreen() {
       }
       console.log(email);
       console.log(password);
+      navigation.navigate("Home")
+
     } catch (error) {
       console.log(error);
     }
