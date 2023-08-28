@@ -8,19 +8,16 @@ import {
   TextInput,
 } from "react-native";
 import { FontAwesome } from "@expo/vector-icons";
-import * as SecureStore from "expo-secure-store";
-import { useNavigation } from "@react-navigation/native";
 import { useDispatch } from "react-redux";
 import { setIsSignedIn } from "../stores/reducers/authSlice";
 import { saveAccessToken } from "../helpers/secureStoreAction";
 import { useMutation } from "@apollo/client";
 import { LOGIN } from "../constants/mutation";
 
-export default function LoginScreen() {
+export default function LoginScreen({ navigation }) {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  // const [error, setError] = useState('');
   const dispatch = useDispatch();
   const [login, { error }] = useMutation(LOGIN, {
     onError: (error) => {
@@ -42,6 +39,11 @@ export default function LoginScreen() {
       console.log(error);
     }
   };
+
+  const navigateToSignUp = () => {
+    navigation.navigate("SignUp");
+  };
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Welcome Back!</Text>
@@ -74,6 +76,15 @@ export default function LoginScreen() {
         </View>
         <TouchableOpacity style={styles.button} onPress={handleLogin}>
           <Text style={styles.buttonText}>Log In</Text>
+        </TouchableOpacity>
+      </View>
+      <View>
+        <Text style={styles.regularText}>Don't have an account?</Text>
+        <TouchableOpacity
+          style={{ alignItems: "center" }}
+          onPress={navigateToSignUp}
+        >
+          <Text style={styles.signUpText}>Sign up</Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -126,5 +137,14 @@ const styles = StyleSheet.create({
     marginVertical: 10,
     marginHorizontal: 80,
     borderRadius: 40,
+  },
+  regularText: {
+    fontSize: 20,
+    fontWeight: "normal",
+  },
+  signUpText: {
+    color: "#4FFFB0",
+    fontSize: 20,
+    fontWeight: "800",
   },
 });

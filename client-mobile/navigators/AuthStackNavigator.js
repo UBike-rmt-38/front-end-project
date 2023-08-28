@@ -3,12 +3,12 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import OnboardingScreen from "../screens/OnboardingScreen";
 import MapsScreen from "../screens/MapsScreen";
 import LoginScreen from "../screens/LoginScreen";
-import * as SecureStore from "expo-secure-store";
 import { useSelector, useDispatch } from "react-redux";
 import { setIsSignedIn } from "../stores/reducers/authSlice";
 import { getValueFor } from "../helpers/secureStoreAction";
 import HomeScreen from "../screens/HomeScreen";
 import TopUpScreen from "../screens/TopUpScreen";
+import SignUpScreen from "../screens/SignUpScreen";
 
 const Stack = createNativeStackNavigator();
 
@@ -49,14 +49,14 @@ export default function AuthStackNavigator() {
           <Stack.Screen
             name="TopUp"
             component={TopUpScreen}
-            options={{ headerShown: false, title: 'Top Up' }}
+            options={{ headerShown: false, title: "Top Up" }}
           />
 
           <Stack.Screen
             options={{ headerShown: false }}
             name="Maps"
             component={MapsScreen}
-          /> 
+          />
         </>
       ) : (
         <>
@@ -64,13 +64,16 @@ export default function AuthStackNavigator() {
             options={{ headerShown: false }}
             name="Onboarding"
             component={OnboardingScreen}
-
           />
           <Stack.Screen
             options={{ headerShown: false }}
             name="Login"
             component={LoginScreen}
-
+          />
+          <Stack.Screen
+            options={{ headerShown: false }}
+            name="SignUp"
+            component={SignUpScreen}
           />
         </>
       )}
