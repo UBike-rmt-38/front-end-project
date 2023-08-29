@@ -16,23 +16,26 @@ query GetStations {
       description
       price
       StationId
+      CategoryId
       status
       createdAt
-      upatedAt
+      updatedAt
     }
     createdAt
-    upatedAt
+    updatedAt
   }
 }
-  
 `;
 export const GET_CATEGORIES = gql`
-  query GetCategories {
-    getCategories {
-      id
-      name
-    }
+query GetCategories {
+  getCategories {
+    id
+    name
+    description
+    createdAt
+    updatedAt
   }
+}
 `;
 
  
@@ -46,6 +49,7 @@ query GetBicycles {
     description
     price
     StationId
+    CategoryId
     status
     createdAt
     updatedAt
@@ -54,8 +58,8 @@ query GetBicycles {
 `;
 
 export const GET_BICYCLE_BY_ID = gql`
-query GetBicycleById {
-  getBicycleById {
+query Query($bicycleId: Int) {
+  getBicycleById(bicycleId: $bicycleId) {
     id
     name
     feature
@@ -66,23 +70,13 @@ query GetBicycleById {
     CategoryId
     status
     Station {
-      id
       name
-      address
-      latitude
-      longitude
-      createdAt
-      upatedAt
     }
     Category {
-      id
       name
-      description
-      createdAt
-      upatedAt
     }
     createdAt
-    upatedAt
+    updatedAt
   }
 }
 `;

@@ -1,9 +1,14 @@
-import { useState } from "react";
+/* eslint-disable no-unused-vars */
+import { useEffect, useState } from "react";
 import { useMutation, useQuery } from "@apollo/client";
-import { ADD_BICYCLE } from "../constants/mutation";
-import { GET_CATEGORIES, GET_STATIONS } from "../constants/query";
+import { ADD_BICYCLE, EDIT_BICYCLE } from "../constants/mutation";
+import { GET_BICYCLE_BY_ID, GET_CATEGORIES, GET_STATIONS } from "../constants/query";
+import { useNavigate, useParams } from "react-router-dom";
 
 export default function BicycleForm() {
+  const { id } = useParams();
+  const navigate = useNavigate()
+  console.log(id);
   const bicycle = {
     name: "",
     feature: "",
@@ -13,50 +18,85 @@ export default function BicycleForm() {
     stationId: "",
     categoryId: "",
   };
-
+  
   const [input, setInput] = useState(bicycle);
   const [addBicycle] = useMutation(ADD_BICYCLE);
-  const { loading, error, data } = useQuery(GET_CATEGORIES);
-  const {
-    loading: stationLoading,
-    error: stationError,
-    data: stationData,
-  } = useQuery(GET_STATIONS);
+  const [editBicycle] = useMutation(EDIT_BICYCLE);
+  
+  const { loading: categoriesLoading, error: categoriesError, data: categoriesData } = useQuery(GET_CATEGORIES);
+  const { loading: stationsLoading, error: stationsError, data: stationsData } = useQuery(GET_STATIONS);
+
+  const { loading: bicycleLoading, error: bicycleError, data: bicycleData } = useQuery(GET_BICYCLE_BY_ID, {
+    variables: { 
+      bicycleId: +id },
+    });
+    
+  console.log(categoriesData, "list categories"); "<< ini kebaca"
+  console.log(stationsData, "list stations"); "<< ini undefined"
+  console.log(bicycleData, "get bicycle");
+  console.log(stationsError);
+  console.log(bicycleError);
+
+
+
+  useEffect(() => {
+    if (id && bicycleData) {
+      const updateBicycle = bicycleData.getBicycleById;
+      setInput(updateBicycle);
+    }
+    console.log(">>>>>", bicycleData);
+  }, [id]);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
-      console.log(input);
-      const { data, errors } = await addBicycle({
-        variables: {
-          ...input,
-          price: parseInt(input.price),
-          stationId: parseInt(input.stationId),
-          categoryId: parseInt(input.categoryId),
-        },
-      });
-      console.log("Bicycle added:", data);
-      console.log(errors);
+      const inputData = {
+        ...input,
+        price: Number(input.price),
+        stationId: Number(input.stationId),
+        categoryId: Number(input.categoryId),
+      };
+      const bicycleId = Number(id)
+      console.log(typeof bicycleId, "<<<<<<< ini id");
+      if (id) {
+        await editBicycle({
+          variables: {
+            bicycleId,
+            ...inputData,
+          },
+
+        });
+      } else {
+        await addBicycle({
+          variables: {
+            ...inputData,
+          },
+        });
+      }
+
       setInput(bicycle);
+      navigate('/bicycles');
+
     } catch (error) {
-      console.log("Error adding bicycle:", error);
+      console.log("Error:", error);
     }
   };
-  
 
   const handleInputChange = (event) => {
-    let { name, value } = event.target;
-    if(name === 'price') Number(value)
-    console.log(value);
-    setInput((input) => ({
-      ...input,
+    const { name, value } = event.target;
+    setInput((prevInput) => ({
+      ...prevInput,
       [name]: value,
     }));
   };
 
+
   return (
     <form onSubmit={handleSubmit} className="p-10 bg-white rounded shadow-xl">
       <h1 className="w-full text-3xl text-black pb-6"></h1>
+      <h2 className="text-2xl font-semibold mb-4 text-center">
+          { id ? 'Edit Bicycle' : 'Add Bicycle'}
+      </h2>
       <div className="relative z-0 w-full mb-6 group">
         <input
           onChange={handleInputChange}
@@ -157,17 +197,17 @@ export default function BicycleForm() {
           className="block w-full mt-1 py-2.5 px-0 text-sm text-gray-900 bg-transparent border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-teal-500 focus:outline-none focus:ring-0 focus:border-teal-600 peer"
           required
         >
-          <option value="" disabled>
+          <option value="" disabled >
             Select a station
           </option>
-          {stationLoading ? (
+          {stationsLoading ? (
             <option>Loading stations...</option>
-          ) : stationError ? (
+          ) : stationsError ? (
             <option>Error loading stations</option>
           ) : (
-            stationData.getStations.map((station) => (
-              <option key={station.id} value={station.id}>
-                {station.name}
+            stationsData?.getStations.map((station) => (
+              <option key={station?.id} value={station?.id}>
+                {station?.name}
               </option>
             ))
           )}
@@ -191,12 +231,12 @@ export default function BicycleForm() {
           <option value="" disabled>
             Select a category
           </option>
-          {loading ? (
+          {categoriesLoading ? (
             <option>Loading categories...</option>
-          ) : error ? (
+          ) : categoriesError ? (
             <option>Error loading categories</option>
           ) : (
-            data.getCategories.map((category) => (
+            categoriesData.getCategories.map((category) => (
               <option key={category.id} value={category.id}>
                 {category.name}
               </option>
@@ -208,7 +248,7 @@ export default function BicycleForm() {
         type="submit"
         className="w-40 mb-8 bg-white text-teal-600 font-semibold py-2 mt-5 rounded-br-lg rounded-bl-lg rounded-tr-lg shadow-lg hover:shadow-xl hover:bg-gray-300 flex items-center justify-center"
       >
-        Add Bicycle
+          { id ? 'Edit Bicycle' : 'Add Bicycle'}      
       </button>
     </form>
   );
