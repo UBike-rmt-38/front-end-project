@@ -1,7 +1,6 @@
 import {
   Image,
   ImageBackground,
-  StatusBar,
   StyleSheet,
   Text,
   TouchableHighlight,
@@ -87,9 +86,5 @@ const styles = StyleSheet.create({
     textAlign: "left",
     fontWeight: "bold",
     fontSize: 20,
-  },
-  map: {
-    width: "100%",
-    height: "100%",
   },
 });
