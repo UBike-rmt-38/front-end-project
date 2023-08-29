@@ -6,41 +6,34 @@ import {
   Text,
   TouchableOpacity,
   StyleSheet,
-  Modal,
   TouchableHighlight,
+  Dimensions,
+  Image,
+  Animated,
 } from "react-native";
-import MapView, { Marker, PROVIDER_GOOGLE, Polyline } from "react-native-maps";
+import MapView, {
+  PROVIDER_GOOGLE,
+  Polyline,
+  AnimatedRegion,
+  MarkerAnimated,
+} from "react-native-maps";
 import MapsPin from "../components/MapsPin";
 import Scanner from "../components/Scanner";
 import * as Location from "expo-location";
 import * as SecureStore from "expo-secure-store";
-import { useNavigation } from "@react-navigation/native";
 import { useDispatch, useSelector } from "react-redux";
 import { setIsRenting, setIsSignedIn } from "../stores/reducers/authSlice";
 import { useQuery } from "@apollo/client";
 import { GET_STATIONS } from "../constants/query";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import Animated, {
-  useSharedValue,
-  useAnimatedStyle,
-  withTiming,
-  Easing,
-} from "react-native-reanimated";
 import { getValueFor } from "../helpers/secureStoreAction";
 import axios from "axios";
 import { ROUTES_API } from "../constants/baseURL";
 import GOOGLE_API_KEY from "../constants/apiKey.js";
 import decodePolyline from "../helpers/polylineDecoder";
+import Modal from "react-native-modal";
 
-const startLatLng = {
-  latitude: 0,
-  longitude: 0,
-};
-
-const endLatLng = {
-  latitude: 0,
-  longitude: 0,
-};
+const { height, width } = Dimensions.get("screen");
 
 export default function MapsScreen() {
   const [stations, setStations] = useState([]);
@@ -49,7 +42,6 @@ export default function MapsScreen() {
   const [showFlatList, setShowFlatList] = useState(false);
   const [nearestStations, setNearestStations] = useState([]);
   const mapRef = useRef(null);
-  // const navigation = useNavigation();
   const [userLocation, setUserLocation] = useState(null);
   const [showConfirmationModal, setShowConfirmationModal] = useState(false);
   const [selectedStation, setSelectedStation] = useState(null);
@@ -70,64 +62,91 @@ export default function MapsScreen() {
   };
 
   const openConfirmationModal = (station) => {
+    // console.log(station.latitude, station.longitude);
     setSelectedStation(station);
+    // console.log(station, "<<< selected")
+    if (userLocation) {
+      getRoutes(station.latitude, station.longitude);
+    }
     setShowConfirmationModal(true);
   };
 
   const closeConfirmationModal = () => {
     setShowConfirmationModal(false);
-    setSelectedStation(null);
+    // setSelectedStation(null);
   };
 
-  const animationValue = useSharedValue(0);
-
-  const animatedStyles = useAnimatedStyle(() => {
-    const interpolatedLatitude =
-      startLatLng.latitude +
-      animationValue.value * (endLatLng.latitude - startLatLng.latitude);
-    const interpolatedLongitude =
-      startLatLng.longitude +
-      animationValue.value * (endLatLng.longitude - startLatLng.longitude);
-
-    return {
-      latitude: interpolatedLatitude,
-      longitude: interpolatedLongitude,
-    };
-  });
+  useEffect(() => {
+    getUserLocation();
+    updateNearestStations();
+    getIsRenting();
+  }, [stations]);
 
   const moveToSelectedStation = () => {
-    const { latitude, longitude } = selectedStation;
-    console.log(latitude, longitude, "<<< selected");
-    const duration = 5000;
-    startLatLng.latitude = userLocation.latitude;
-    startLatLng.longitude = userLocation.longitude;
-    endLatLng.latitude = latitude;
-    endLatLng.longitude = longitude;
+    if (userLocation && selectedStation && route.length > 0) {
+      // Calculate the bounding box that contains both userLocation and selectedStation
 
-    // animationValue.value = withTiming(0, { duration, easing: Easing.linear });
+      const animationDuration = 10; // Adjust animation duration as needed
 
-    // Trigger animation
-    animationValue.value = withTiming(1, {
-      duration,
-      easing: Easing.linear,
-      useNativeDriver: false,
-    });
+      const animations = route.map((coordinate, index) => {
+        const { latitude, longitude } = coordinate;
+        return userLocation.timing({
+          latitude,
+          longitude,
+          duration: animationDuration,
+          // delay: index * animationDuration, // Delay each animation by index * animationDuration
+        });
+      });
+
+      // Execute animations in sequence
+      Animated.sequence(animations).start(() => {
+        // Animation sequence complete
+      });
+
+      closeConfirmationModal();
+
+      const minLat =
+        userLocation.latitude < selectedStation.latitude
+          ? userLocation.latitude
+          : selectedStation.latitude;
+      const maxLat =
+        userLocation.latitude > selectedStation.latitude
+          ? userLocation.latitude
+          : selectedStation.latitude;
+      const minLon =
+        userLocation.longitude < selectedStation.longitude
+          ? userLocation.longitude
+          : selectedStation.longitude;
+      const maxLon =
+        userLocation.longitude > selectedStation.longitude
+          ? userLocation.longitude
+          : selectedStation.longitude;
+
+      // Calculate map's new latitudeDelta and longitudeDelta
+      const latDelta = maxLat - minLat + 0.0922; // Add some padding
+      const lonDelta = maxLon - minLon + 0.0421; // Add some padding
+
+      // Animate the map to show the bounding box
+      mapRef.current.animateToRegion(
+        {
+          latitude: (minLat + maxLat) / 2,
+          longitude: (minLon + maxLon) / 2,
+          latitudeDelta: latDelta,
+          longitudeDelta: lonDelta,
+        },
+        1000
+      ); // Adjust duration as needed
+    }
   };
 
   const { data, loading, error } = useQuery(GET_STATIONS, {
     onCompleted: (data) => {
       setStations(data.getStations);
     },
-    onError: (data) => {
+    onError: (error) => {
       alert(`${error.message}`);
     },
   });
-
-  useEffect(() => {
-    updateNearestStations();
-    getIsRenting();
-    getRoutes();
-  }, [stations]);
 
   const dispatch = useDispatch();
 
@@ -181,13 +200,9 @@ export default function MapsScreen() {
       if (status === "granted") {
         const location = await Location.getCurrentPositionAsync();
         const { latitude, longitude } = location.coords;
-        const heading = location.coords.heading;
-        console.log(heading);
-
-        setUserLocation({ latitude, longitude, heading });
-
+        // const heading = location.coords.heading;
+        setUserLocation(new AnimatedRegion({ latitude, longitude }));
         updateNearestStations(latitude, longitude);
-
         mapRef.current.animateToRegion({
           latitude,
           longitude,
@@ -216,30 +231,33 @@ export default function MapsScreen() {
     : nearestStations;
   const listStations = (station) => {
     setSearch(station.name);
-    mapRef.current.animateToRegion({
-      latitude: station.latitude,
-      longitude: station.longitude,
-      latitudeDelta: 0.0022,
-      longitudeDelta: 0.0021,
-    });
+    mapRef.current.animateToRegion(
+      {
+        latitude: station.latitude,
+        longitude: station.longitude,
+        latitudeDelta: 0.0022,
+        longitudeDelta: 0.0021,
+      },
+      5000
+    );
     setShowFlatList(false);
   };
 
-  const getRoutes = async () => {
+  const getRoutes = async (destinationLat, destinationLong) => {
     const requestBody = {
       origin: {
         location: {
           latLng: {
-            latitude: -6.174221210471815,
-            longitude: 106.8270276424257,
+            latitude: userLocation.latitude,
+            longitude: userLocation.longitude,
           },
         },
       },
       destination: {
         location: {
           latLng: {
-            latitude: -6.195083314541013,
-            longitude: 106.82305164875585,
+            latitude: destinationLat,
+            longitude: destinationLong,
           },
         },
       },
@@ -270,10 +288,12 @@ export default function MapsScreen() {
         response.data.routes[0].polyline.encodedPolyline
       );
       // console.log(decodedCoordinates);
-      const formattedRoute = decodedCoordinates.map(([latitude, longitude]) => ({
-        latitude,
-        longitude
-      }))
+      const formattedRoute = decodedCoordinates.map(
+        ([latitude, longitude]) => ({
+          latitude,
+          longitude,
+        })
+      );
       setRoute(formattedRoute);
     } catch (error) {
       console.log(error);
@@ -345,6 +365,16 @@ export default function MapsScreen() {
         }}
         onPress={() => setShowFlatList(false)}
       >
+        {userLocation && (
+          <MarkerAnimated
+            style={{ zIndex: 10 }}
+            coordinate={userLocation}
+            title="My Location"
+            // ref={(marker) => {
+            //   setMyMarker(marker);
+            // }}
+          />
+        )}
         {filteredStations.map((station) => (
           <MapsPin
             key={station.id}
@@ -357,32 +387,22 @@ export default function MapsScreen() {
             onPress={() => openConfirmationModal(station)}
           />
         ))}
-        {userLocation && (
-          <Marker coordinate={userLocation} title="My Location">
-            <View>
-              <Ionicons
-                style={{
-                  transform: [{ rotate: `${userLocation.heading}deg` }],
-                }}
-                name="navigate-circle-outline"
-                size={40}
-                color="blue"
-              />
-            </View>
-          </Marker>
-        )}
         {route && (
           <>
             {/* Menggambar Polyline menggunakan route */}
-            <Polyline coordinates={route} strokeWidth={8} strokeColor="#00d4ff" />
+            <Polyline
+              coordinates={route}
+              strokeWidth={8}
+              strokeColor="#00d4ff"
+            />
 
             {/* Menampilkan marker di setiap koordinat */}
             {/* {route.map((coordinate, index) => (
               <Marker
                 key={index}
                 coordinate={{
-                  latitude: coordinate[0],
-                  longitude: coordinate[1],
+                  latitude: coordinate.latitude,
+                  longitude: coordinate.longitude,
                 }}
               />
             ))} */}
@@ -408,29 +428,54 @@ export default function MapsScreen() {
       <TouchableOpacity style={styles.button} onPress={handleLogout}>
         <Text style={styles.buttonText}>Logout</Text>
       </TouchableOpacity>
-      <Modal
-        visible={showConfirmationModal}
-        animationType="slide"
-        transparent={true}
-      >
-        <View style={styles.modalContainer}>
+      {selectedStation && (
+        <Modal
+          isVisible={showConfirmationModal}
+          swipeDirection={["down"]}
+          onSwipeComplete={closeConfirmationModal}
+          onBackButtonPress={closeConfirmationModal}
+          animationIn="slideInUp"
+          animationOut="slideOutDown"
+          avoidKeyboard={true}
+          backdropColor="rgba(0, 0, 0, 0.5)"
+          backdropOpacity={0}
+          style={styles.modalContainer}
+        >
+          {/* <View style={styles.modalContainer}> */}
           <View style={styles.modalContent}>
-            <Text>Move to {selectedStation?.name}?</Text>
-            <TouchableOpacity
-              style={styles.modalButtonYes}
-              onPress={moveToSelectedStation}
-            >
-              <Text>Yes</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.modalButtonNo}
-              onPress={closeConfirmationModal}
-            >
-              <Text>No</Text>
-            </TouchableOpacity>
+            <View style={{ flexDirection: "row" }}>
+              <Text>Move to {selectedStation?.name}?</Text>
+              <TouchableOpacity
+                style={styles.modalButtonYes}
+                onPress={moveToSelectedStation}
+              >
+                <Text>Yes</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.modalButtonNo}
+                onPress={closeConfirmationModal}
+              >
+                <Text>No</Text>
+              </TouchableOpacity>
+            </View>
+            <FlatList
+              data={selectedStation.Bicycles}
+              keyExtractor={(item) => item.id}
+              renderItem={({ item }) => (
+                <View style={{ alignItems: "center", marginVertical: 5 }}>
+                  <Text>{item.name}</Text>
+                  <Image
+                    source={{ uri: item.imageURL }}
+                    style={{ width: 300, height: 200 }}
+                  />
+                  <Text>Price: {item.price}</Text>
+                </View>
+              )}
+            />
           </View>
-        </View>
-      </Modal>
+          {/* </View> */}
+        </Modal>
+      )}
     </View>
   );
 }
@@ -519,15 +564,18 @@ const styles = StyleSheet.create({
   },
   modalContainer: {
     flex: 1,
-    justifyContent: "center",
+    justifyContent: "flex-end",
     alignItems: "center",
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    // backgroundColor: "black"
+    // backgroundColor: "rgba(0, 0, 0, 0.5)",
   },
   modalContent: {
     backgroundColor: "white",
     padding: 20,
     borderRadius: 10,
     alignItems: "center",
+    height: "50%",
+    width: width,
   },
   modalButtonYes: {
     marginTop: 10,
