@@ -42,12 +42,12 @@ export default function AuthStackNavigator() {
     >
       {isSignedIn ? (
         <>
-          <Stack.Screen
+          {/* <Stack.Screen
             options={{ headerShown: false }}
             name="Home"
             component={HomeScreen}
-          />
-          <Stack.Screen
+          /> */}
+          {/* <Stack.Screen
             options={{ headerShown: false }}
             name="Profile"
             component={ProfileScreen}
@@ -56,7 +56,7 @@ export default function AuthStackNavigator() {
             name="TopUp"
             component={TopUpScreen}
             options={{ title: "Top Up", headerTintColor: "black" }}
-          />
+          /> */}
 
           <Stack.Screen
             options={{ headerShown: false }}
