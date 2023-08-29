@@ -8,53 +8,52 @@ import {
   TextInput,
 } from "react-native";
 import { FontAwesome } from "@expo/vector-icons";
-import * as SecureStore from "expo-secure-store";
-import { useNavigation } from "@react-navigation/native";
 import { useDispatch } from "react-redux";
 import { setIsSignedIn } from "../stores/reducers/authSlice";
+import { saveAccessToken } from "../helpers/secureStoreAction";
+import { useMutation } from "@apollo/client";
+import { LOGIN } from "../constants/mutation";
 
-async function saveAccessToken(access_token) {
-  try {
-    await SecureStore.setItemAsync("access_token", access_token);
-    console.log(access_token);
-  } catch (error) {
-    console.log(error);
-  }
-}
-
-export default function LoginScreen() {
-  const [email, setEmail] = useState("");
+export default function LoginScreen({ navigation }) {
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [error, setError] = useState('');
   const dispatch = useDispatch();
+  const [login, { error }] = useMutation(LOGIN, {
+    onError: (error) => {
+      console.log(error);
+    },
+  });
 
   const handleLogin = async () => {
     try {
-      if (!email || !password) {
-        setError("Please fill in all fields");
-      } else {
-        await saveAccessToken(
-          "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJ1c2VyMUBtYWlsLmNvbSIsInVzZXJuYW1lIjoidXNlcjEiLCJyb2xlIjoiVXNlciIsImlhdCI6MTY5MzEzNTEyN30.HJXQqkPOdbHNFuvbFcMLsZMFi45S1KaPk_ng1MxjfLQ"
-        );
+      const response = await login({
+        variables: { username: username, password: password },
+      });
+      if (response.errors) throw response.errors;
+      else {
+        await saveAccessToken(response.data.login);
         dispatch(setIsSignedIn(true));
       }
-      console.log(email);
-      console.log(password);
     } catch (error) {
       console.log(error);
     }
   };
+
+  const navigateToSignUp = () => {
+    navigation.navigate("SignUp");
+  };
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Welcome Back!</Text>
-      {error ? <Text style={styles.errorText}>{error}</Text> : null}
+      {error ? <Text style={styles.errorText}>{error.message}</Text> : null}
       <View>
         <TextInput
           style={styles.input}
-          placeholder="Email"
-          value={email}
-          onChangeText={setEmail}
+          placeholder="username"
+          value={username}
+          onChangeText={setUsername}
         />
         <View>
           <TextInput
@@ -77,6 +76,15 @@ export default function LoginScreen() {
         </View>
         <TouchableOpacity style={styles.button} onPress={handleLogin}>
           <Text style={styles.buttonText}>Log In</Text>
+        </TouchableOpacity>
+      </View>
+      <View>
+        <Text style={styles.regularText}>Don't have an account?</Text>
+        <TouchableOpacity
+          style={{ alignItems: "center" }}
+          onPress={navigateToSignUp}
+        >
+          <Text style={styles.signUpText}>Sign up</Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -129,5 +137,14 @@ const styles = StyleSheet.create({
     marginVertical: 10,
     marginHorizontal: 80,
     borderRadius: 40,
+  },
+  regularText: {
+    fontSize: 20,
+    fontWeight: "normal",
+  },
+  signUpText: {
+    color: "#4FFFB0",
+    fontSize: 20,
+    fontWeight: "800",
   },
 });

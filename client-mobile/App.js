@@ -8,7 +8,7 @@ import {
   createHttpLink,
 } from "@apollo/client";
 import { setContext } from "@apollo/client/link/context";
-import baseURL from "./constants/baseURL";
+import { baseURL } from "./constants/baseURL";
 import { getValueFor } from "./helpers/secureStoreAction";
 
 const httpLink = createHttpLink({

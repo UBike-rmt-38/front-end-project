@@ -6,6 +6,10 @@ import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 
 export default function CardBicycle({ bicycle }) {
+
+  const [editItem, setEditItem] = useState(null);
+
+
   const [deleteBicycle] = useMutation(DELETE_BICYCLES);
   const handleDelete = () => {
     deleteBicycle({ variables: { bicycleId: bicycle.id } })
@@ -16,6 +20,10 @@ export default function CardBicycle({ bicycle }) {
         console.log("Error deleting bicycle:", error);
       });
   };
+  const handleEditClick = () => {
+    setEditItem(bicycle.id);
+    // console.log(bicycle);
+};
 
   return (
     <>
@@ -31,6 +39,7 @@ export default function CardBicycle({ bicycle }) {
             <Link
               to={`/form/${bicycle.id}`}
               className="btn bg-purple text-white"
+              onClick={handleEditClick} 
             >
               Edit
             </Link>

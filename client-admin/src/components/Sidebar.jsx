@@ -33,6 +33,9 @@ export default function Sidebar() {
           <NavLink to="/report" className="flex items-center text-white opacity-75 hover:opacity-100 py-4 pl-6 hover:bg-teal-600">
             <i className="fas fa-tachometer-alt mr-3"></i>
             Weekly Report
+          <NavLink to="/qrcode" className="flex items-center text-white opacity-75 hover:opacity-100 py-4 pl-6 hover:bg-teal-600">
+            <i className="fas fa-tachometer-alt mr-3"></i>
+            QRcode
           </NavLink>
         </nav>
       </aside>

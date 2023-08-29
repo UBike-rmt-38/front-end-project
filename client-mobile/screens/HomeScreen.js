@@ -10,12 +10,14 @@ import {
 } from "react-native";
 import * as Location from "expo-location";
 import { Distance } from "../components/Distance";
+import { useNavigation } from "@react-navigation/native";
 
-export default function HomeScreen() {
+export default function HomeScreen({ navigation }) {
   const [userLocation, setUserLocation] = useState(null);
   const [stations, setStations] = useState([]);
 
   const [currentTime, setCurrentTime] = useState(new Date());
+  // const navigation = useNavigation();
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -105,6 +107,14 @@ export default function HomeScreen() {
     "https://c8.alamy.com/comp/KNW1HR/lets-ride-bicycle-sport-transport-retro-banner-design-KNW1HR.jpg",
   ];
 
+  const handleTopupPress = () => {
+    navigation.navigate("TopUp");
+  };
+
+  const navigateToMaps = () => {
+    navigation.navigate("Maps");
+  };
+
   return (
     <ImageBackground
       source={require("../assets/background.png")}
@@ -144,7 +154,10 @@ export default function HomeScreen() {
           <View style={styles.box}>
             <Text style={styles.header}>Balance</Text>
             <Text style={styles.balance}>$100.00</Text>
-            <TouchableOpacity style={styles.topUpButton}>
+            <TouchableOpacity
+              style={styles.topUpButton}
+              onPress={handleTopupPress}
+            >
               <Text style={styles.buttonText}>Top Up</Text>
             </TouchableOpacity>
           </View>
@@ -178,6 +191,11 @@ export default function HomeScreen() {
             </ScrollView>
           </View>
         </View>
+        <TouchableOpacity onPress={navigateToMaps} style={styles.button}>
+          <View>
+            <Text style={styles.buttonText}>Go to Stations</Text>
+          </View>
+        </TouchableOpacity>
       </ScrollView>
     </ImageBackground>
   );
@@ -223,6 +241,14 @@ const styles = StyleSheet.create({
     padding: 10,
     borderRadius: 8,
     alignItems: "center",
+  },
+  button: {
+    justifyContent: "center",
+    backgroundColor: "#808080",
+    padding: 15,
+    width: 330,
+    height: 60,
+    borderRadius: 90,
   },
   buttonText: {
     color: "white",
