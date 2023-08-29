@@ -8,12 +8,9 @@ import TransactionScreen from "../screens/TransactionScreen";
 export default function AppNavigator() {
   return (
     <NavigationContainer>
-      {/* <AuthStackNavigator/> */}
+      <AuthStackNavigator/>
       {/* jika ada penambahan Navigator baru ( tabs / drawer / dll), letakkan di sini yaaa */}
-      {/* <HistoryScreen /> */}
-      <TransactionScreen />
-      {/* <HomeScreen /> */}
-      {/* <LoginScreen /> */}
+
     </NavigationContainer>
   );
 }

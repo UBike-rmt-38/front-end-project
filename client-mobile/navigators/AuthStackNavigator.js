@@ -48,8 +48,8 @@ export default function AuthStackNavigator() {
             options={{ headerShown: false }}
             name="Home"
             component={HomeScreen}
-          /> */}
-          {/* <Stack.Screen
+          />
+          <Stack.Screen
             options={{ headerShown: false }}
             name="Profile"
             component={ProfileScreen}
@@ -58,7 +58,7 @@ export default function AuthStackNavigator() {
             name="TopUp"
             component={TopUpScreen}
             options={{ title: "Top Up", headerTintColor: "black" }}
-          /> */}
+          />
           <Stack.Screen
             options={{ headerShown: false }}
             name="Transaction"
@@ -68,7 +68,7 @@ export default function AuthStackNavigator() {
             options={{ headerShown: false }}
             name="History"
             component={HistoryScreen}
-          />
+          /> */}
           <Stack.Screen
             options={{ headerShown: false }}
             name="Maps"

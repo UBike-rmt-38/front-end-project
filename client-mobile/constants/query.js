@@ -29,93 +29,116 @@ export const GET_STATIONS = gql`
 export const GET_USERS = gql`
   query Query {
     getUsers {
-    id
-    username
-    role
-    email
-    password
-    balance
+      id
+      username
+      role
+      email
+      password
+      balance
+    }
   }
-}
 `;
 
 export const GET_USERS_DETAIL = gql`
-query GetUsersDetails {
-  getUsersDetails {
-    id
-    username
-    role
-    email
-    password
-    balance
-    Rentals {
-      travelledDistance
-      BicycleId
-      UserId
+  query GetUsersDetails {
+    getUsersDetails {
       id
-      status
-      totalPrice
-      transaction
-      createdAt
-      updatedAt
-    }
-    Transactions {
-      User {
-        Transactions {
-          UserId
-          action
-          amount
-          id
+      username
+      role
+      email
+      password
+      balance
+      Rentals {
+        travelledDistance
+        BicycleId
+        UserId
+        id
+        status
+        totalPrice
+        transaction
+        createdAt
+        updatedAt
+      }
+      Transactions {
+        User {
+          Transactions {
+            UserId
+            action
+            amount
+            id
+          }
         }
       }
     }
   }
-}
 `;
 
 export const GET_BICYCLES = gql`
-query GetBicycles {
-  getBicycles {
-    id
-    name
-    feature
-    imageURL
-    description
-    price
-    StationId
-    CategoryId
-    status
-    Station {
+  query GetBicycles {
+    getBicycles {
       id
       name
-      address
-      latitude
-      longitude
-      createdAt
-      updatedAt
-    }
-    Category {
-      id
-      name
+      feature
+      imageURL
       description
+      price
+      StationId
+      CategoryId
+      status
+      Station {
+        id
+        name
+        address
+        latitude
+        longitude
+        createdAt
+        updatedAt
+      }
+      Category {
+        id
+        name
+        description
+        createdAt
+        updatedAt
+      }
       createdAt
       updatedAt
     }
-    createdAt
-    updatedAt
   }
-}
-`
+`;
 export const GET_USERS_DETAILS = gql`
-query GetUsersDetails {
-  getUsersDetails {
-    id
-    username
-    role
-    email
-    password
-    balance
-    Rentals {
+  query GetUsersDetails {
+    getUsersDetails {
+      id
+      username
+      role
+      email
+      password
+      balance
+      Rentals {
+        id
+        status
+        travelledDistance
+        totalPrice
+        UserId
+        BicycleId
+        transaction
+        createdAt
+        updatedAt
+      }
+      Transactions {
+        id
+        action
+        amount
+        UserId
+      }
+    }
+  }
+`;
+
+export const GET_RENTALS = gql`
+  query GetRentals {
+    getRentals {
       id
       status
       travelledDistance
@@ -126,28 +149,34 @@ query GetUsersDetails {
       createdAt
       updatedAt
     }
-    Transactions {
-      id
-      action
-      amount
-      UserId
+  }
+`;
+
+export const CHECK_RENTALS = gql`
+  query GetUsersDetails {
+    getUsersDetails {
+      Rentals {
+        id
+        status
+        travelledDistance
+        totalPrice
+        UserId
+        BicycleId
+        transaction
+        createdAt
+        updatedAt
+      }
+      balance
     }
   }
-}
-`
+`;
 
-export const GET_RENTALS = gql`
-query GetRentals {
-  getRentals {
-    id
-    status
-    travelledDistance
-    totalPrice
-    UserId
-    BicycleId
-    transaction
-    createdAt
-    updatedAt
+export const GET_BICYCLE_BY_ID = gql`
+  query GetBicycleById($bicycleId: Int) {
+    getBicycleById(bicycleId: $bicycleId) {
+      id
+      price
+      StationId
+    }
   }
-}
-`
+`;
