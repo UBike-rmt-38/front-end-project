@@ -43,16 +43,10 @@ export const GET_BICYCLES = gql`
 query GetBicycles {
   getBicycles {
     id
+    imageURL
     name
     feature
-    imageURL
-    description
-    price
-    StationId
-    CategoryId
     status
-    createdAt
-    upatedAt
   }
 }
 `;
