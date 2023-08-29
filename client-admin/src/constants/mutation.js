@@ -43,3 +43,8 @@ mutation DeleteBicycle($bicycleId: Int!) {
   deleteBicycle(bicycleId: $bicycleId)
 }
 `;
+
+export const DELETE_STATION = gql`
+mutation DeleteStation($stationId: Int!) {
+  deleteStation(stationId: $stationId)
+}`;

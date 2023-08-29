@@ -57,3 +57,21 @@ export const GET_CATEGORIES = gql`
   }
 `;
 
+export const GET_STATION_DETAIL = gql`
+  query GetStations($stationId: Int) {
+  getStationsById(stationId: $stationId) {
+    id
+    name
+    address
+    latitude
+    longitude
+    Bicycles {
+      id
+      name
+      imageURL
+      status
+    }
+  }
+}
+`
+
