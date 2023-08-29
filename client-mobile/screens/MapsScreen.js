@@ -50,8 +50,8 @@ export default function MapsScreen() {
   const [showConfirmationModal, setShowConfirmationModal] = useState(false);
   const [selectedStation, setSelectedStation] = useState(null);
   const isRenting = useSelector((state) => state.auth.isRenting);
-  const [route, setRoute] = useState([]); // <=== masuk ke sini
-  const [BicycleId, setBicycleId] = useState(null);
+  const [route, setRoute] = useState([]); 
+  const [BicycleId, setBicycleId] = useState(null); // <=== masuk ke sini
   const [travelledDistance, setTravelledDistance] = useState(0);
   const [estimatedTimeOfArrival, setEstimatedTimeOfArrival] = useState(null);
   const [balance, setBalance] = useState(0);
