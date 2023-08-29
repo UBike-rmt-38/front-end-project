@@ -4,8 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import { useQuery } from "@apollo/client";
 import Plus from "../components/icons/Plus";
-import { GET_STATIONS } from "../constants/query";
-
+import {GET_STATIONS} from '../constants/query'
 export default function HomePage() {
   const navigate = useNavigate()
 
@@ -13,7 +12,6 @@ export default function HomePage() {
     navigate("/addstation")
   }
   const { data, loading: isLoading, error } = useQuery(GET_STATIONS);
-  console.log(data);
   if (error) return `Error! ${error.message}`;
 
   return (
