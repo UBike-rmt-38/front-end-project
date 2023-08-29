@@ -48,7 +48,7 @@ query GetBicycles {
     StationId
     status
     createdAt
-    updatedAt
+    upatedAt
   }
 }
 `;
@@ -87,3 +87,31 @@ query GetBicycleById {
 }
 `;
 
+export const GET_RENTAL_REPORT = gql`
+  query GetRentalReport {
+    getRentalReport {
+      id
+      status
+      travelledDistance
+      totalPrice
+      UserId
+      BicycleId
+      transaction
+      createdAt
+      upatedAt
+    }
+  }
+`;
+
+export const GET_USERS = gql`
+query GetUsers {
+  getUsers {
+    id
+    username
+    role
+    email
+    password
+    balance
+  }
+}
+`;

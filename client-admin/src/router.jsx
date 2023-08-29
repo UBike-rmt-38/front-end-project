@@ -5,6 +5,7 @@ import HomePage from "./views/HomePage";
 import AddProductPage from "./views/AddStationPage";
 import BicyclesListPage from "./views/BicyclesListPage";
 import AddBicyclePage from "./views/AddBicyclePage";
+import WeeklyReportPage from "./views/WeeklyReportPage";
 
 const router = createBrowserRouter([
   {
@@ -34,6 +35,10 @@ const router = createBrowserRouter([
       {
         path: "/form/:id",
         element: <AddBicyclePage />
+      },
+      {
+        path: "/report",
+        element: <WeeklyReportPage />
       }
 
     ],

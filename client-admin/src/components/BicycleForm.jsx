@@ -23,16 +23,26 @@ export default function BicycleForm() {
     data: stationData,
   } = useQuery(GET_STATIONS);
 
+
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
       console.log(input);
+      const newInput = {
+        ...input,
+        price: Number(input.price),
+        stationId: Number(input.stationId),
+        categoryId: Number(input.categoryId),
+      }
+
+      console.log(newInput);
+      
       const { data, errors } = await addBicycle({
         variables: {
           ...input,
-          price: parseInt(input.price),
-          stationId: parseInt(input.stationId),
-          categoryId: parseInt(input.categoryId),
+          price: Number(input.price),
+          stationId: Number(input.stationId),
+          categoryId: Number(input.categoryId),
         },
       });
       console.log("Bicycle added:", data);
