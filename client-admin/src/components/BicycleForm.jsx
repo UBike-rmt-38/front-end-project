@@ -1,11 +1,14 @@
-import { useState } from "react";
+/* eslint-disable no-unused-vars */
+import { useEffect, useState } from "react";
 import { useMutation, useQuery } from "@apollo/client";
-import { GET_CATEGORIES, GET_STATIONS } from "../constants/query";
-import { ADD_BICYCLE } from "../constants/mutation";
-
-
+import { ADD_BICYCLE, EDIT_BICYCLE } from "../constants/mutation";
+import { GET_BICYCLE_BY_ID, GET_CATEGORIES, GET_STATIONS } from "../constants/query";
+import { useNavigate, useParams } from "react-router-dom";
 
 export default function BicycleForm() {
+  const { id } = useParams();
+  const navigate = useNavigate()
+  console.log(id);
   const bicycle = {
     name: "",
     feature: "",
@@ -15,37 +18,79 @@ export default function BicycleForm() {
     stationId: "",
     categoryId: "",
   };
-
+  
   const [input, setInput] = useState(bicycle);
   const [addBicycle] = useMutation(ADD_BICYCLE);
-  const { loading, error, data } = useQuery(GET_CATEGORIES);
-  const {
-    loading: stationLoading,
-    error: stationError,
-    data: stationData,
-  } = useQuery(GET_STATIONS);
+  const [editBicycle] = useMutation(EDIT_BICYCLE);
+  
+  const { loading: categoriesLoading, error: categoriesError, data: categoriesData } = useQuery(GET_CATEGORIES);
+  const { loading: stationsLoading, error: stationsError, data: stationsData } = useQuery(GET_STATIONS);
+
+  const { loading: bicycleLoading, error: bicycleError, data: bicycleData } = useQuery(GET_BICYCLE_BY_ID, {
+    variables: { 
+      bicycleId: +id },
+    });
+    
+  useEffect(() => {
+    if (id && bicycleData) {
+      const updateBicycle = bicycleData.getBicycleById;
+      setInput(updateBicycle);
+    }
+    console.log(">>>>>", bicycleData);
+  }, [bicycleData, id]);
+
 
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
-      console.log(input);
-      const { data, errors } = await addBicycle({
-        variables: input,
-      });
-      console.log("Bicycle added:", data);
-      console.log(errors);
+      const inputData = {
+        ...input,
+        price: Number(input.price),
+        stationId: Number(input.stationId),
+        categoryId: Number(input.categoryId),
+      };
+      const bicycleId = Number(id)
+      console.log(typeof bicycleId, "<<<<<<< ini id");
+      if (id) {
+        await editBicycle({
+          variables: {
+            bicycleId,
+            ...inputData,
+          },
+
+        });
+      } else {
+        await addBicycle({
+          variables: {
+            ...inputData,
+          },
+        });
+      }
       setInput(bicycle);
+      navigate('/bicycles');
     } catch (error) {
-      console.error("Error adding bicycle:", error);
+      console.log("Error:", error);
     }
   };
 
+  const handleInputChange = (event) => {
+    const { name, value } = event.target;
+    setInput((prevInput) => ({
+      ...prevInput,
+      [name]: value,
+    }));
+  };
+
+
   return (
     <form onSubmit={handleSubmit} className="p-10 bg-white rounded shadow-xl">
-      <h1 className="w-full text-3xl text-black pb-6">Add Bicycle</h1>
+      <h1 className="w-full text-3xl text-black pb-6"></h1>
+      <h2 className="text-2xl font-semibold mb-4 text-center">
+          { id ? 'Edit Bicycle' : 'Add Bicycle'}
+      </h2>
       <div className="relative z-0 w-full mb-6 group">
         <input
-          onChange={(event) => setInput({ ...input, name: event.target.value })}
+          onChange={handleInputChange}
           value={input.name || ""}
           type="text"
           name="name"
@@ -62,9 +107,7 @@ export default function BicycleForm() {
       </div>
       <div className="relative z-0 w-full mb-6 group">
         <input
-          onChange={(event) =>
-            setInput({ ...input, feature: event.target.value })
-          }
+          onChange={handleInputChange}
           value={input.feature || ""}
           type="text"
           name="feature"
@@ -81,9 +124,7 @@ export default function BicycleForm() {
       </div>
       <div className="relative z-0 w-full mb-6 group">
         <input
-          onChange={(event) =>
-            setInput({ ...input, imageUrl: event.target.value })
-          }
+          onChange={handleInputChange}
           value={input.imageUrl || ""}
           type="text"
           name="imageUrl"
@@ -100,9 +141,7 @@ export default function BicycleForm() {
       </div>
       <div className="relative z-0 w-full mb-6 group">
         <input
-          onChange={(event) =>
-            setInput({ ...input, description: event.target.value })
-          }
+          onChange={handleInputChange}
           value={input.description || ""}
           type="text"
           name="description"
@@ -119,9 +158,7 @@ export default function BicycleForm() {
       </div>
       <div className="relative z-0 w-full mb-6 group">
         <input
-          onChange={(event) =>
-            setInput({ ...input, price: parseInt(event.target.value) })
-          }
+          onChange={handleInputChange}
           value={input.price}
           type="number"
           name="price"
@@ -146,22 +183,22 @@ export default function BicycleForm() {
         <select
           id="stationId"
           name="stationId"
-          onChange={(event) =>
-            setInput({ ...input, stationId: parseInt(event.target.value) })
-          }
+          onChange={handleInputChange}
           value={input.stationId || ""}
           className="block w-full mt-1 py-2.5 px-0 text-sm text-gray-900 bg-transparent border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-teal-500 focus:outline-none focus:ring-0 focus:border-teal-600 peer"
           required
         >
-          <option value="">Select a station</option>
-          {stationLoading ? (
+          <option value="" disabled >
+            Select a station
+          </option>
+          {stationsLoading ? (
             <option>Loading stations...</option>
-          ) : stationError ? (
+          ) : stationsError ? (
             <option>Error loading stations</option>
           ) : (
-            stationData.getStations.map((station) => (
-              <option key={station.id} value={station.id}>
-                {station.name}
+            stationsData?.getStations.map((station) => (
+              <option key={station?.id} value={station?.id}>
+                {station?.name}
               </option>
             ))
           )}
@@ -177,9 +214,7 @@ export default function BicycleForm() {
         <select
           id="categoryId"
           name="categoryId"
-          onChange={(event) =>
-            setInput({ ...input, categoryId: parseInt(event.target.value) })
-          }
+          onChange={handleInputChange}
           value={input.categoryId || ""}
           className="block w-full mt-1 py-2.5 px-0 text-sm text-gray-900 bg-transparent border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-teal-500 focus:outline-none focus:ring-0 focus:border-teal-600 peer"
           required
@@ -187,12 +222,12 @@ export default function BicycleForm() {
           <option value="" disabled>
             Select a category
           </option>
-          {loading ? (
+          {categoriesLoading ? (
             <option>Loading categories...</option>
-          ) : error ? (
+          ) : categoriesError ? (
             <option>Error loading categories</option>
           ) : (
-            data.getCategories.map((category) => (
+            categoriesData.getCategories.map((category) => (
               <option key={category.id} value={category.id}>
                 {category.name}
               </option>
@@ -204,7 +239,7 @@ export default function BicycleForm() {
         type="submit"
         className="w-40 mb-8 bg-white text-teal-600 font-semibold py-2 mt-5 rounded-br-lg rounded-bl-lg rounded-tr-lg shadow-lg hover:shadow-xl hover:bg-gray-300 flex items-center justify-center"
       >
-        Add Bicycle
+          { id ? 'Edit Bicycle' : 'Add Bicycle'}      
       </button>
     </form>
   );
