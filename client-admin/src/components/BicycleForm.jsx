@@ -39,6 +39,7 @@ export default function BicycleForm() {
     console.log(">>>>>", bicycleData);
   }, [bicycleData, id]);
 
+
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
@@ -65,10 +66,8 @@ export default function BicycleForm() {
           },
         });
       }
-
       setInput(bicycle);
       navigate('/bicycles');
-
     } catch (error) {
       console.log("Error:", error);
     }

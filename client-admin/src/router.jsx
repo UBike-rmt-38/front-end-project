@@ -5,6 +5,7 @@ import HomePage from "./views/HomePage";
 import AddProductPage from "./views/AddStationPage";
 import BicyclesListPage from "./views/BicyclesListPage";
 import AddBicyclePage from "./views/AddBicyclePage";
+import WeeklyReportPage from "./views/WeeklyReportPage";
 import QRcode from "./views/QRcode";
 
 const router = createBrowserRouter([
@@ -37,6 +38,8 @@ const router = createBrowserRouter([
         element: <AddBicyclePage />
       },
       {
+        path: "/report",
+        element: <WeeklyReportPage />
         path: "/qrcode",
         element: <QRcode/>
       }
