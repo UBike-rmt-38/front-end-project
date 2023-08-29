@@ -38,8 +38,31 @@ export const ADD_BICYCLE = gql`
   }
 `;
 
+export const EDIT_BICYCLE = gql`
+  mutation Mutation(
+    $bicycleId: Int!
+    $name: String!
+    $feature: String!
+    $imageUrl: String!
+    $description: String!
+    $price: Int!
+    $stationId: Int!
+    $categoryId: Int!
+  ) {
+    editBicycle(
+      bicycleId: $bicycleId
+      name: $name
+      feature: $feature
+      imageURL: $imageUrl
+      description: $description
+      price: $price
+      StationId: $stationId
+      CategoryId: $categoryId
+    )
+  }
+`;
 export const DELETE_BICYCLES = gql`
-mutation DeleteBicycle($bicycleId: Int!) {
-  deleteBicycle(bicycleId: $bicycleId)
-}
+  mutation DeleteBicycle($bicycleId: Int!) {
+    deleteBicycle(bicycleId: $bicycleId)
+  }
 `;

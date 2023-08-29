@@ -3,8 +3,6 @@ import { useMutation, useQuery } from "@apollo/client";
 import { GET_CATEGORIES, GET_STATIONS } from "../constants/query";
 import { ADD_BICYCLE } from "../constants/mutation";
 
-
-
 export default function BicycleForm() {
   const bicycle = {
     name: "",
@@ -30,22 +28,36 @@ export default function BicycleForm() {
     try {
       console.log(input);
       const { data, errors } = await addBicycle({
-        variables: input,
+        variables: {
+          ...input,
+          price: parseInt(input.price),
+          stationId: parseInt(input.stationId),
+          categoryId: parseInt(input.categoryId),
+        },
       });
       console.log("Bicycle added:", data);
       console.log(errors);
       setInput(bicycle);
     } catch (error) {
-      console.error("Error adding bicycle:", error);
+      console.log("Error adding bicycle:", error);
     }
+  };
+  
+
+  const handleInputChange = (event) => {
+    const { name, value } = event.target;
+    setInput((setInput) => ({
+      ...setInput,
+      [name]: value,
+    }));
   };
 
   return (
     <form onSubmit={handleSubmit} className="p-10 bg-white rounded shadow-xl">
-      <h1 className="w-full text-3xl text-black pb-6">Add Bicycle</h1>
+      <h1 className="w-full text-3xl text-black pb-6"></h1>
       <div className="relative z-0 w-full mb-6 group">
         <input
-          onChange={(event) => setInput({ ...input, name: event.target.value })}
+          onChange={handleInputChange}
           value={input.name || ""}
           type="text"
           name="name"
@@ -62,9 +74,7 @@ export default function BicycleForm() {
       </div>
       <div className="relative z-0 w-full mb-6 group">
         <input
-          onChange={(event) =>
-            setInput({ ...input, feature: event.target.value })
-          }
+          onChange={handleInputChange}
           value={input.feature || ""}
           type="text"
           name="feature"
@@ -81,9 +91,7 @@ export default function BicycleForm() {
       </div>
       <div className="relative z-0 w-full mb-6 group">
         <input
-          onChange={(event) =>
-            setInput({ ...input, imageUrl: event.target.value })
-          }
+          onChange={handleInputChange}
           value={input.imageUrl || ""}
           type="text"
           name="imageUrl"
@@ -100,9 +108,7 @@ export default function BicycleForm() {
       </div>
       <div className="relative z-0 w-full mb-6 group">
         <input
-          onChange={(event) =>
-            setInput({ ...input, description: event.target.value })
-          }
+          onChange={handleInputChange}
           value={input.description || ""}
           type="text"
           name="description"
@@ -119,9 +125,7 @@ export default function BicycleForm() {
       </div>
       <div className="relative z-0 w-full mb-6 group">
         <input
-          onChange={(event) =>
-            setInput({ ...input, price: parseInt(event.target.value) })
-          }
+          onChange={handleInputChange}
           value={input.price}
           type="number"
           name="price"
@@ -146,14 +150,14 @@ export default function BicycleForm() {
         <select
           id="stationId"
           name="stationId"
-          onChange={(event) =>
-            setInput({ ...input, stationId: parseInt(event.target.value) })
-          }
+          onChange={handleInputChange}
           value={input.stationId || ""}
           className="block w-full mt-1 py-2.5 px-0 text-sm text-gray-900 bg-transparent border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-teal-500 focus:outline-none focus:ring-0 focus:border-teal-600 peer"
           required
         >
-          <option value="">Select a station</option>
+          <option value="" disabled>
+            Select a station
+          </option>
           {stationLoading ? (
             <option>Loading stations...</option>
           ) : stationError ? (
@@ -177,9 +181,7 @@ export default function BicycleForm() {
         <select
           id="categoryId"
           name="categoryId"
-          onChange={(event) =>
-            setInput({ ...input, categoryId: parseInt(event.target.value) })
-          }
+          onChange={handleInputChange}
           value={input.categoryId || ""}
           className="block w-full mt-1 py-2.5 px-0 text-sm text-gray-900 bg-transparent border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-teal-500 focus:outline-none focus:ring-0 focus:border-teal-600 peer"
           required

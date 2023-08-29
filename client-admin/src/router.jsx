@@ -28,9 +28,14 @@ const router = createBrowserRouter([
         element: <BicyclesListPage />
       },
       {
-        path: "/addbicycle",
+        path: "/form",
+        element: <AddBicyclePage />
+      },
+      {
+        path: "/form/:id",
         element: <AddBicyclePage />
       }
+
     ],
   },
   {

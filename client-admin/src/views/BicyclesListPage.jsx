@@ -26,7 +26,7 @@ export default function BicyclesListPage() {
 
   
   const handleAdd = () => {
-    navigate("/addbicycle")
+    navigate("/form")
   }
   return (
     <>
