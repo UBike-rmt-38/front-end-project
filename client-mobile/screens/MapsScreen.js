@@ -12,17 +12,15 @@ import {
   Animated,
 } from "react-native";
 import MapView, {
-  Marker,
   PROVIDER_GOOGLE,
   Polyline,
   AnimatedRegion,
-  MarkerAnimated
+  MarkerAnimated,
 } from "react-native-maps";
 import MapsPin from "../components/MapsPin";
 import Scanner from "../components/Scanner";
 import * as Location from "expo-location";
 import * as SecureStore from "expo-secure-store";
-import { useNavigation } from "@react-navigation/native";
 import { useDispatch, useSelector } from "react-redux";
 import { setIsRenting, setIsSignedIn } from "../stores/reducers/authSlice";
 import { useQuery } from "@apollo/client";
@@ -37,16 +35,6 @@ import Modal from "react-native-modal";
 
 const { height, width } = Dimensions.get("screen");
 
-const startLatLng = {
-  latitude: 0,
-  longitude: 0,
-};
-
-const endLatLng = {
-  latitude: 0,
-  longitude: 0,
-};
-
 export default function MapsScreen() {
   const [stations, setStations] = useState([]);
   const [search, setSearch] = useState("");
@@ -54,18 +42,11 @@ export default function MapsScreen() {
   const [showFlatList, setShowFlatList] = useState(false);
   const [nearestStations, setNearestStations] = useState([]);
   const mapRef = useRef(null);
-  // const navigation = useNavigation();
   const [userLocation, setUserLocation] = useState(null);
   const [showConfirmationModal, setShowConfirmationModal] = useState(false);
   const [selectedStation, setSelectedStation] = useState(null);
   const isRenting = useSelector((state) => state.auth.isRenting);
   const [route, setRoute] = useState([]);
-  const [animatedUserLocation, setAnimatedUserLocation] = useState(
-    new Animated.ValueXY({
-      x: 0,
-      y: 0,
-    })
-  );
 
   const getIsRenting = async () => {
     try {
@@ -84,46 +65,78 @@ export default function MapsScreen() {
     // console.log(station.latitude, station.longitude);
     setSelectedStation(station);
     // console.log(station, "<<< selected")
-    if (userLocation) getRoutes(station.latitude, station.longitude);
+    if (userLocation) {
+      getRoutes(station.latitude, station.longitude);
+    }
     setShowConfirmationModal(true);
   };
 
   const closeConfirmationModal = () => {
     setShowConfirmationModal(false);
-    setSelectedStation(null);
+    // setSelectedStation(null);
   };
 
   useEffect(() => {
+    getUserLocation();
     updateNearestStations();
     getIsRenting();
-    getUserLocation();
   }, [stations]);
 
   const moveToSelectedStation = () => {
-    const { latitude, longitude } = selectedStation;
+    if (userLocation && selectedStation && route.length > 0) {
+      // Calculate the bounding box that contains both userLocation and selectedStation
 
-    setUserLocation({ latitude, longitude });
+      const animationDuration = 10; // Adjust animation duration as needed
 
-    mapRef.current.animateToRegion({
-      latitude,
-      longitude,
-      latitudeDelta: 0.0022,
-      longitudeDelta: 0.0021,
-    });
+      const animations = route.map((coordinate, index) => {
+        const { latitude, longitude } = coordinate;
+        return userLocation.timing({
+          latitude,
+          longitude,
+          duration: animationDuration,
+          // delay: index * animationDuration, // Delay each animation by index * animationDuration
+        });
+      });
 
-    const animationDuration = 10000;
+      // Execute animations in sequence
+      Animated.sequence(animations).start(() => {
+        // Animation sequence complete
+      });
 
-    const animationConfig = {
-      duration: animationDuration,
-      useNativeDriver: false,
-    };
+      closeConfirmationModal();
 
-    Animated.timing(animatedUserLocation, {
-      toValue: { latitude, longitude },
-      ...animationConfig,
-    }).start();
+      const minLat =
+        userLocation.latitude < selectedStation.latitude
+          ? userLocation.latitude
+          : selectedStation.latitude;
+      const maxLat =
+        userLocation.latitude > selectedStation.latitude
+          ? userLocation.latitude
+          : selectedStation.latitude;
+      const minLon =
+        userLocation.longitude < selectedStation.longitude
+          ? userLocation.longitude
+          : selectedStation.longitude;
+      const maxLon =
+        userLocation.longitude > selectedStation.longitude
+          ? userLocation.longitude
+          : selectedStation.longitude;
 
-    closeConfirmationModal();
+      // Calculate map's new latitudeDelta and longitudeDelta
+      const latDelta = maxLat - minLat + 0.0922; // Add some padding
+      const lonDelta = maxLon - minLon + 0.0421; // Add some padding
+
+      // Animate the map to show the bounding box
+      mapRef.current.animateToRegion(
+        {
+          latitude: (minLat + maxLat) / 2,
+          longitude: (minLon + maxLon) / 2,
+          latitudeDelta: latDelta,
+          longitudeDelta: lonDelta,
+        },
+        1000
+      ); // Adjust duration as needed
+    }
   };
 
   const { data, loading, error } = useQuery(GET_STATIONS, {
@@ -187,13 +200,9 @@ export default function MapsScreen() {
       if (status === "granted") {
         const location = await Location.getCurrentPositionAsync();
         const { latitude, longitude } = location.coords;
-        const heading = location.coords.heading;
-        // console.log(heading);
-
-        setUserLocation({ latitude, longitude });
-
+        // const heading = location.coords.heading;
+        setUserLocation(new AnimatedRegion({ latitude, longitude }));
         updateNearestStations(latitude, longitude);
-
         mapRef.current.animateToRegion({
           latitude,
           longitude,
@@ -222,17 +231,19 @@ export default function MapsScreen() {
     : nearestStations;
   const listStations = (station) => {
     setSearch(station.name);
-    mapRef.current.animateToRegion({
-      latitude: station.latitude,
-      longitude: station.longitude,
-      latitudeDelta: 0.0022,
-      longitudeDelta: 0.0021,
-    });
+    mapRef.current.animateToRegion(
+      {
+        latitude: station.latitude,
+        longitude: station.longitude,
+        latitudeDelta: 0.0022,
+        longitudeDelta: 0.0021,
+      },
+      5000
+    );
     setShowFlatList(false);
   };
 
   const getRoutes = async (destinationLat, destinationLong) => {
-    console.log(destinationLat, destinationLong);
     const requestBody = {
       origin: {
         location: {
@@ -354,6 +365,16 @@ export default function MapsScreen() {
         }}
         onPress={() => setShowFlatList(false)}
       >
+        {userLocation && (
+          <MarkerAnimated
+            style={{ zIndex: 10 }}
+            coordinate={userLocation}
+            title="My Location"
+            // ref={(marker) => {
+            //   setMyMarker(marker);
+            // }}
+          />
+        )}
         {filteredStations.map((station) => (
           <MapsPin
             key={station.id}
@@ -366,22 +387,6 @@ export default function MapsScreen() {
             onPress={() => openConfirmationModal(station)}
           />
         ))}
-        {userLocation && (
-          <MarkerAnimated style={{ zIndex: 1 }} coordinate={userLocation} title="My Location">
-            {/* <View>
-              <Ionicons
-                style={
-                  {
-                    // transform: [{ rotate: `${userLocation.heading}deg` }],
-                  }
-                }
-                name="navigate-circle-outline"
-                size={40}
-                color="blue"
-              />
-            </View> */}
-          </MarkerAnimated>
-        )}
         {route && (
           <>
             {/* Menggambar Polyline menggunakan route */}
@@ -396,8 +401,8 @@ export default function MapsScreen() {
               <Marker
                 key={index}
                 coordinate={{
-                  latitude: coordinate[0],
-                  longitude: coordinate[1],
+                  latitude: coordinate.latitude,
+                  longitude: coordinate.longitude,
                 }}
               />
             ))} */}
@@ -459,9 +464,6 @@ export default function MapsScreen() {
               renderItem={({ item }) => (
                 <View style={{ alignItems: "center", marginVertical: 5 }}>
                   <Text>{item.name}</Text>
-                  {/* <Text>{item.description}</Text> */}
-                  {/* <Text>{item.feature}</Text> */}
-                  {/* Render other bicycle details as needed */}
                   <Image
                     source={{ uri: item.imageURL }}
                     style={{ width: 300, height: 200 }}
