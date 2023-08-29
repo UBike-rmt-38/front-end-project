@@ -17,3 +17,9 @@ export const CREATE_USER = gql`
     createUser(username: $username, email: $email, password: $password)
   }
 `;
+
+export const CHANGE_PASSWORD = gql`
+mutation Mutation($oldPassword: String!, $newPassword: String!) {
+  changePassword(oldPassword: $oldPassword, newPassword: $newPassword)
+}
+`;
