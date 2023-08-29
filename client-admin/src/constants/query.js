@@ -1,7 +1,7 @@
 import gql from "graphql-tag";
 
 export const GET_STATIONS = gql`
-  query GetStations {
+query GetStations {
   getStations {
     id
     name
@@ -16,6 +16,7 @@ export const GET_STATIONS = gql`
       description
       price
       StationId
+      CategoryId
       status
       createdAt
       updatedAt
@@ -24,36 +25,59 @@ export const GET_STATIONS = gql`
     updatedAt
   }
 }
-  
 `;
-export const ADD_BICYCLE = gql`
-  mutation Mutation(
-    $name: String!
-    $feature: String!
-    $imageUrl: String!
-    $description: String!
-    $price: Int!
-    $stationId: Int!
-    $categoryId: Int!
-  ) {
-    addBicycle(
-      name: $name
-      feature: $feature
-      imageURL: $imageUrl
-      description: $description
-      price: $price
-      StationId: $stationId
-      CategoryId: $categoryId
-    )
+export const GET_CATEGORIES = gql`
+query GetCategories {
+  getCategories {
+    id
+    name
+    description
+    createdAt
+    updatedAt
   }
+}
 `;
 
-export const GET_CATEGORIES = gql`
-  query GetCategories {
-    getCategories {
-      id
+ 
+export const GET_BICYCLES = gql`
+query GetBicycles {
+  getBicycles {
+    id
+    name
+    feature
+    imageURL
+    description
+    price
+    StationId
+    CategoryId
+    status
+    createdAt
+    updatedAt
+  }
+}
+`;
+
+export const GET_BICYCLE_BY_ID = gql`
+query Query($bicycleId: Int) {
+  getBicycleById(bicycleId: $bicycleId) {
+    id
+    name
+    feature
+    imageURL
+    description
+    price
+    StationId
+    CategoryId
+    status
+    Station {
       name
     }
+    Category {
+      name
+    }
+    createdAt
+    updatedAt
   }
+}
 `;
 
