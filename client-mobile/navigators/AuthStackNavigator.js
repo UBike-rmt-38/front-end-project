@@ -6,6 +6,7 @@ import LoginScreen from "../screens/LoginScreen";
 import { useSelector, useDispatch } from "react-redux";
 import { setIsSignedIn } from "../stores/reducers/authSlice";
 import { getValueFor } from "../helpers/secureStoreAction";
+import HistoryScreen from "../screens/HistoryScreen";
 import ProfileScreen from "../screens/ProfileScreen";
 import HomeScreen from "../screens/HomeScreen";
 import TopUpScreen from "../screens/TopUpScreen";
@@ -57,7 +58,11 @@ export default function AuthStackNavigator() {
             component={TopUpScreen}
             options={{ title: "Top Up", headerTintColor: "black" }}
           /> */}
-
+          <Stack.Screen
+            options={{ headerShown: false }}
+            name="History"
+            component={HistoryScreen}
+          />
           <Stack.Screen
             options={{ headerShown: false }}
             name="Maps"
