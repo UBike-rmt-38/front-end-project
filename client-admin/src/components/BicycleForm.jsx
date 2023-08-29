@@ -31,21 +31,13 @@ export default function BicycleForm() {
       bicycleId: +id },
     });
     
-  console.log(categoriesData, "list categories"); "<< ini kebaca"
-  console.log(stationsData, "list stations"); "<< ini undefined"
-  console.log(bicycleData, "get bicycle");
-  console.log(stationsError);
-  console.log(bicycleError);
-
-
-
   useEffect(() => {
     if (id && bicycleData) {
       const updateBicycle = bicycleData.getBicycleById;
       setInput(updateBicycle);
     }
     console.log(">>>>>", bicycleData);
-  }, [id]);
+  }, [bicycleData, id]);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
