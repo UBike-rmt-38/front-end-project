@@ -50,7 +50,7 @@ export default function MapsScreen() {
   const [showConfirmationModal, setShowConfirmationModal] = useState(false);
   const [selectedStation, setSelectedStation] = useState(null);
   const isRenting = useSelector((state) => state.auth.isRenting);
-  const [route, setRoute] = useState([]);
+  const [route, setRoute] = useState([]); // <=== masuk ke sini
   const [BicycleId, setBicycleId] = useState(null);
   const [travelledDistance, setTravelledDistance] = useState(0);
   const [estimatedTimeOfArrival, setEstimatedTimeOfArrival] = useState(null);
@@ -67,7 +67,7 @@ export default function MapsScreen() {
     },
   });
   const dispatch = useDispatch();
-  const {} = useQuery(CHECK_RENTALS, {
+  const {} = useQuery(CHECK_RENTALS, { // ini async juga
     onCompleted: (data) => {
       const isRenting = data.getUsersDetails.Rentals.some(
         (rental) => rental.status === false
@@ -78,7 +78,7 @@ export default function MapsScreen() {
       if (activeRental) {
         setRentalId(activeRental.id);
         setTravelledDistance(activeRental.travelledDistance);
-        setBicycleId(activeRental.BicycleId);
+        setBicycleId(activeRental.BicycleId); // sementara BicycleId didapat dari sini
         setBalance(data.getUsersDetails.balance);
       }
       dispatch(setIsRenting(isRenting));
@@ -87,7 +87,7 @@ export default function MapsScreen() {
     },
   });
 
-  const {} = useQuery(GET_BICYCLE_BY_ID, {
+  const {} = useQuery(GET_BICYCLE_BY_ID, { // bug di sini, useQuery async
     variables: {
       bicycleId: BicycleId,
     },
