@@ -4,16 +4,16 @@ import HistoryScreen from "../screens/HistoryScreen";
 import HomeScreen from "../screens/HomeScreen";
 import LoginScreen from "../screens/LoginScreen";
 import TransactionScreen from "../screens/TransactionScreen";
+import MapsScreen from "../screens/MapsScreen";
 
 export default function AppNavigator() {
   return (
     <NavigationContainer>
       {/* <AuthStackNavigator/> */}
-      {/* jika ada penambahan Navigator baru ( tabs / drawer / dll), letakkan di sini yaaa */}
       {/* <HistoryScreen /> */}
-      <TransactionScreen />
-      {/* <HomeScreen /> */}
-      {/* <LoginScreen /> */}
+      <MapsScreen />
+      {/* <TransactionScreen /> */}
+      {/* jika ada penambahan Navigator baru ( tabs / drawer / dll), letakkan di sini yaaa */}
     </NavigationContainer>
   );
 }
