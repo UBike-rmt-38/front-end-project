@@ -1,17 +1,17 @@
 import { gql } from "@apollo/client";
 
 export const ADD_STATIONS = gql`
-  mutation Mutation(
+  mutation AddStation(
     $name: String!
     $address: String!
     $latitude: String!
-    $longtitude: String!
+    $longitude: String!
   ) {
     addStation(
       name: $name
       address: $address
       latitude: $latitude
-      longtitude: $longtitude
+      longitude: $longitude
     )
   }
 `;
@@ -39,30 +39,28 @@ export const ADD_BICYCLE = gql`
 `;
 
 export const EDIT_BICYCLE = gql`
-  mutation Mutation(
-    $bicycleId: Int!
-    $name: String!
-    $feature: String!
-    $imageUrl: String!
-    $description: String!
-    $price: Int!
-    $stationId: Int!
-    $categoryId: Int!
+mutation EditBicycle(
+  $bicycleId: Int!, 
+  $name: String!, 
+  $feature: String!, 
+  $imageUrl: String!, 
+  $description: String!, 
+  $price: Int!, 
+  $stationId: Int!
   ) {
-    editBicycle(
-      bicycleId: $bicycleId
-      name: $name
-      feature: $feature
-      imageURL: $imageUrl
-      description: $description
-      price: $price
-      StationId: $stationId
-      CategoryId: $categoryId
-    )
-  }
+  editBicycle(
+    bicycleId: $bicycleId, 
+    name: $name, 
+    feature: $feature, 
+    imageURL: $imageUrl, 
+    description: $description, 
+    price: $price, 
+    StationId: $stationId)
+}
 `;
+
 export const DELETE_BICYCLES = gql`
-  mutation DeleteBicycle($bicycleId: Int!) {
-    deleteBicycle(bicycleId: $bicycleId)
-  }
+mutation DeleteBicycle($bicycleId: Int!) {
+  deleteBicycle(bicycleId: $bicycleId)
+}
 `;

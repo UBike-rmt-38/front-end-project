@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useMutation, useQuery } from "@apollo/client";
-import { GET_CATEGORIES, GET_STATIONS } from "../constants/query";
 import { ADD_BICYCLE } from "../constants/mutation";
+import { GET_CATEGORIES, GET_STATIONS } from "../constants/query";
 
 export default function BicycleForm() {
   const bicycle = {
@@ -45,9 +45,11 @@ export default function BicycleForm() {
   
 
   const handleInputChange = (event) => {
-    const { name, value } = event.target;
-    setInput((setInput) => ({
-      ...setInput,
+    let { name, value } = event.target;
+    if(name === 'price') Number(value)
+    console.log(value);
+    setInput((input) => ({
+      ...input,
       [name]: value,
     }));
   };
