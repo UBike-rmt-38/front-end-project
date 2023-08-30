@@ -4,8 +4,10 @@ import {
   StyleSheet,
   Text,
   TouchableHighlight,
+  TouchableOpacity,
   View,
 } from "react-native";
+import { FontAwesome5 } from "@expo/vector-icons";
 
 export default function OnboardingScreen({ navigation }) {
   const navigateToLogin = () => {
@@ -28,11 +30,14 @@ export default function OnboardingScreen({ navigation }) {
           Providing cheap bicycle rental services and safe comfortable
           facilities
         </Text>
-        <TouchableHighlight style={styles.button} onPress={navigateToLogin}>
-          <View>
+        <View style={styles.item_box}>
+          <TouchableOpacity style={styles.button} onPress={navigateToLogin}>
             <Text style={styles.buttonText}>Get Started</Text>
-          </View>
-        </TouchableHighlight>
+            <View style={styles.icon}>
+              <FontAwesome5 name="greater-than" size={24} color="white" />
+            </View>
+          </TouchableOpacity>
+        </View>
         {/* <StatusBar style="auto" /> */}
       </View>
     </View>
@@ -43,6 +48,18 @@ const styles = StyleSheet.create({
   image: {
     width: 330,
     height: 334,
+  },
+  icon: {
+    marginRight: 10
+  },
+  item_box: {
+    marginVertical: 30,
+  },
+  btn: {
+    color: "#ffff",
+    fontWeight: "bold",
+    fontSize: 26,
+    marginHorizontal: 30,
   },
   container: {
     flex: 1,
@@ -70,6 +87,8 @@ const styles = StyleSheet.create({
     width: 330,
     height: 60,
     borderRadius: 90,
+    flexDirection: 'row',
+    justifyContent: "space-between"
   },
   textTitle: {
     color: "white",
