@@ -75,7 +75,7 @@ export default function AuthStackNavigator() {
             options={{ headerShown: false }}
             name="Maps"
             component={MapsScreen}
-          /> 
+          />
           <Stack.Screen
           options={{headerTitle: "Change Password"}}
           name="ChangePassword"

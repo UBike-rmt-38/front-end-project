@@ -14,6 +14,10 @@ export default function HomePage() {
   const { data, loading: isLoading, error } = useQuery(GET_STATIONS);
   if (error) return `Error! ${error.message}`;
 
+  const handleDetail = (id) => {
+    navigate("/" + id)
+  }
+
   return (
     <>
       <ToastContainer />
@@ -75,6 +79,7 @@ export default function HomePage() {
               <TableRow
                 data={data.getStations}
                 isStation={false}
+                handleDetail={handleDetail}
               />
             )}
           </tbody>

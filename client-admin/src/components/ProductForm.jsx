@@ -1,15 +1,29 @@
-import { useMutation } from "@apollo/client";
+import { useMutation, useQuery } from "@apollo/client";
 import { ADD_STATIONS } from "../constants/mutation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
+import { useParams } from "react-router-dom";
+import { GET_STATION_DETAIL } from "../constants/query";
 
 export default function StationForm() {
+  const { stationId } = useParams()
   const [input, setInput] = useState({
     name: "",
     address: "",
     latitude: "",
     longitude: "",
   });
+
+  const { data, loadings, error } = useQuery(GET_STATION_DETAIL, { 
+    variables: { stationId: +stationId }
+  })
+
+  useEffect(() => {
+    if (stationId && data) {
+      const updateStation = data.getStationsById;
+      setInput(updateStation);
+    }
+  }, [data, stationId]);
 
   const [addStation, { loading }] = useMutation(ADD_STATIONS);
 
@@ -48,6 +62,7 @@ export default function StationForm() {
           navigate("/");
         }, 1500);
       }
+
     } catch (error) {
       toast.error(error.message, {});
     }
@@ -55,7 +70,7 @@ export default function StationForm() {
 
   return (
     <form onSubmit={handleSubmit} className="p-10 bg-white rounded shadow-xl">
-      <h1 className="w-full text-3xl text-black pb-6">Add Station</h1>
+      <h1 className="w-full text-3xl text-black pb-6">{stationId ? 'Edit Station' : 'Add Station' }</h1>
       <div className="grid md:grid-cols-2 md:gap-6">
         <div className="relative z-0 w-full mb-6 group">
           <input
