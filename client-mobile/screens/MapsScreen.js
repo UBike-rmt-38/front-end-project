@@ -840,7 +840,7 @@ const styles = StyleSheet.create({
     padding: 20,
     borderRadius: 10,
     alignItems: "center",
-    height: "50%",
+    height: height / 2,
     width: width,
   },
   modalButtonYes: {
