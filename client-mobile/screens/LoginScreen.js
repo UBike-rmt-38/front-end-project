@@ -31,10 +31,7 @@ export default function LoginScreen({ navigation }) {
       console.log(error);
     },
   });
-  useEffect(() => {
-    console.log( width);
-  }, []);
-  
+
   const handleLogin = async () => {
     try {
       const response = await login({
@@ -57,71 +54,71 @@ export default function LoginScreen({ navigation }) {
   };
 
   return (
-    <ImageBackground source={image} resizeMode="cover" style={styles.image}>
-      <View style={styles.container}>
-        <Image
-          source={require("../assets/Logo.png")}
-          style={styles.logo}
-          resizeMode="contain"
-        />
-        <View style={styles.box}>
-          <LinearGradient
-            colors={["rgba(0, 0, 0, 1)", "transparent"]}
-            style={styles.inline_box}
-          >
-            <View style={styles.inline_box}>
-              <View style={styles.item_box}>
-                <Text style={styles.label}>Username</Text>
-                <View style={styles.input_container}>
-                  <TextInput
-                    style={styles.input}
-                    placeholder="username"
-                    value={username}
-                    onChangeText={setUsername}
-                  />
-                </View>
-              </View>
-              <View style={styles.item_box}>
-                <Text style={styles.label}>Password</Text>
-                <View style={styles.input_container}>
-                  <TextInput
-                    style={styles.input}
-                    placeholder="password"
-                    secureTextEntry={!showPassword}
-                    value={password}
-                    onChangeText={setPassword}
-                  />
-                  <TouchableOpacity
-                    style={styles.eyeIcon}
-                    onPress={() => setShowPassword(!showPassword)}
-                  >
-                    <FontAwesome
-                      name={showPassword ? "eye-slash" : "eye"}
-                      size={20}
-                      color="grey"
+      <ImageBackground source={image} resizeMode="cover" style={styles.image} blurRadius={8}>
+        <View style={styles.container}>
+          <Image
+            source={require("../assets/Logo.png")}
+            style={styles.logo}
+            resizeMode="contain"
+          />
+          <View style={styles.box}>
+            <LinearGradient
+              colors={["rgba(0, 0, 0, 1)", "transparent"]}
+              style={styles.inline_box}
+            >
+              <View style={styles.inline_box}>
+                <View style={styles.item_box}>
+                  <Text style={styles.label}>Username</Text>
+                  <View style={styles.input_container}>
+                    <TextInput
+                      style={styles.input}
+                      placeholder="username"
+                      value={username}
+                      onChangeText={setUsername}
                     />
+                  </View>
+                </View>
+                <View style={styles.item_box}>
+                  <Text style={styles.label}>Password</Text>
+                  <View style={styles.input_container}>
+                    <TextInput
+                      style={styles.input}
+                      placeholder="password"
+                      secureTextEntry={!showPassword}
+                      value={password}
+                      onChangeText={setPassword}
+                    />
+                    <TouchableOpacity
+                      style={styles.eyeIcon}
+                      onPress={() => setShowPassword(!showPassword)}
+                    >
+                      <FontAwesome
+                        name={showPassword ? "eye-slash" : "eye"}
+                        size={20}
+                        color="grey"
+                      />
+                    </TouchableOpacity>
+                  </View>
+                </View>
+                <View style={styles.item_box}>
+                  <TouchableOpacity onPress={handleLogin} style={styles.btn_div}>
+                    <Text style={styles.btn}>Sign In</Text>
+                  </TouchableOpacity>
+                </View>
+                <View style={styles.signUpContainer}>
+                  <Text style={styles.regularText}>Don't have an account?</Text>
+                  <TouchableOpacity
+                    style={{ alignItems: "center" }}
+                    onPress={navigateToSignUp}
+                  >
+                    <Text style={styles.signUpText}>Sign up</Text>
                   </TouchableOpacity>
                 </View>
               </View>
-              <View style={styles.item_box}>
-                <TouchableOpacity onPress={handleLogin} style={styles.btn_div}>
-                  <Text style={styles.btn}>Sign In</Text>
-                </TouchableOpacity>
-              </View>
-              <View style={styles.signUpContainer}>
-                <Text style={styles.regularText}>Don't have an account?</Text>
-                <TouchableOpacity
-                  style={{ alignItems: "center" }}
-                  onPress={navigateToSignUp}
-                >
-                  <Text style={styles.signUpText}>Sign up</Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-          </LinearGradient>
+            </LinearGradient>
+          </View>
         </View>
-      </View>
-    </ImageBackground>
+      </ImageBackground>
   );
 }
 
@@ -136,6 +133,11 @@ const styles = StyleSheet.create({
   },
   item_box: {
     marginVertical: width - 380,
+  },
+  blurring: {
+    flex: 1,
+    backgroundColor: "#808080",
+    opacity: 0.
   },
   label: {
     color: "white",
@@ -156,7 +158,7 @@ const styles = StyleSheet.create({
   inline_box: {
     borderRadius: 50,
     height: 500,
-    backgroundColor: "rgba(120, 120, 120, 0.4)",
+    backgroundColor: "rgba(120, 120, 120, 0.3)",
     shadowColor: "#000",
     shadowOffset: {
       height: 30,
