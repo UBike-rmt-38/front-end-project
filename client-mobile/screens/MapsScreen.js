@@ -20,9 +20,8 @@ import MapView, {
 import MapsPin from "../components/MapsPin";
 import Scanner from "../components/Scanner";
 import * as Location from "expo-location";
-import * as SecureStore from "expo-secure-store";
 import { useDispatch, useSelector } from "react-redux";
-import { setIsRenting, setIsSignedIn } from "../stores/reducers/authSlice";
+import { setIsRenting } from "../stores/reducers/authSlice";
 import { useQuery } from "@apollo/client";
 import {
   CHECK_RENTALS,
@@ -333,7 +332,7 @@ export default function MapsScreen() {
       }
       const { status } = await Location.requestForegroundPermissionsAsync();
       if (status === "granted") {
-        console.log("ketrigger di current position")
+        console.log("ketrigger di current position");
         const location = await Location.getCurrentPositionAsync();
         const { latitude, longitude } = location.coords;
         // const heading = location.coords.heading;
@@ -454,7 +453,8 @@ export default function MapsScreen() {
   useEffect(() => {
     if (travelledDistance && price) {
       // console.log(price, "price ketrigger di useEffect");
-      const newTotalPrice = (+travelledDistance * +price) / 10000 - Number(cash);
+      const newTotalPrice =
+        (+travelledDistance * +price) / 10000 - Number(cash);
       // console.log(newTotalPrice, travelledDistance, price, cash, "<<<< useEffect")
       setTotalPrice(+newTotalPrice);
     }
@@ -480,9 +480,9 @@ export default function MapsScreen() {
           width: 50,
           zIndex: 1,
           position: "absolute",
-          right: 20,
-          top: 140,
-          backgroundColor: "white",
+          right: 16,
+          bottom: 70,
+          backgroundColor: "black",
           borderRadius: 90,
           alignItems: "center",
           justifyContent: "center",
@@ -496,7 +496,7 @@ export default function MapsScreen() {
         />
       </TouchableHighlight>
 
-      {showFlatList && (
+      {showFlatList && userLocation && (
         <View style={styles.flatListContainer}>
           <Text>"{search}"</Text>
           <FlatList
@@ -534,7 +534,7 @@ export default function MapsScreen() {
             //   setMyMarker(marker);
             // }}
           >
-
+            <Ionicons name="radio-button-on" size={40} color="dodgerblue" />
           </MarkerAnimated>
         )}
         {filteredStations.map((station) => (
@@ -554,8 +554,8 @@ export default function MapsScreen() {
             {/* Menggambar Polyline menggunakan route */}
             <Polyline
               coordinates={route}
-              strokeWidth={8}
-              strokeColor="#00d4ff"
+              strokeWidth={5}
+              strokeColor="#0AFF90"
             />
 
             {/* Menampilkan marker di setiap koordinat */}
@@ -575,28 +575,28 @@ export default function MapsScreen() {
         // <View style={styles.rentingStatus}>
         //   <Text style={{ color: "white" }}>renting</Text>
         // </View>
-        <TouchableOpacity style={styles.scanButton} onPress={openScanner}>
+        <TouchableHighlight style={styles.scanButton} onPress={openScanner}>
           <Ionicons
-            name="scan-circle-outline"
+            name="scan-outline"
             strokeWidth={8}
-            size={32}
+            size={40}
             color="#FFFFFF"
           />
-          <Text style={styles.buttonText}>Station</Text>
-        </TouchableOpacity>
+          {/* <Text style={styles.buttonText}>Station</Text> */}
+        </TouchableHighlight>
       ) : (
         // <TouchableOpacity style={styles.scanButton} onPress={openScanner}>
         //   <Text style={styles.buttonText}>Rent Bike</Text>
         // </TouchableOpacity>
-        <TouchableOpacity style={styles.scanButton} onPress={openScanner}>
+        <TouchableHighlight style={styles.scanButton} onPress={openScanner}>
           <Ionicons
-            name="scan-circle-outline"
+            name="scan-outline"
             strokeWidth={8}
-            size={32}
+            size={40}
             color="#FFFFFF"
           />
-          <Text style={styles.buttonText}>Bike</Text>
-        </TouchableOpacity>
+          {/* <Text style={styles.buttonText}>Bike</Text> */}
+        </TouchableHighlight>
         // <TouchableOpacity style={styles.scanButton} onPress={openScanner}>
         //   <Text style={styles.buttonText}>Rent Bike</Text>
         // </TouchableOpacity>
@@ -802,14 +802,16 @@ const styles = StyleSheet.create({
   },
   scanButton: {
     position: "absolute",
+    bottom: 70,
+    left: "56%",
+    transform: [{ translateX: -50 }],
+    backgroundColor: "black",
+    borderRadius: 20,
+    paddingVertical: 5,
+    paddingLeft: 8,
+    paddingRight: 5,
+    justifyContent: "center",
     alignItems: "center",
-    bottom: 50,
-    left: 125,
-    backgroundColor: "#4FFFB0",
-    borderRadius: 40,
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    zIndex: 100
   },
   rentingStatus: {
     position: "absolute",
