@@ -42,7 +42,7 @@ export default function TransactionScreen() {
                 <MaterialIcons name="payment" size={24} color="grey" />
                 <Text style={styles.amount}>
                   Rp. {item.amount.toLocaleString("id-ID")}
-                </Text>
+                </Text> 
                 <Text
                   style={[
                     styles.statusText,
@@ -135,6 +135,5 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#",
   },
 });
