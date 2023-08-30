@@ -2,22 +2,12 @@ import React from 'react';
 import { View, Text, FlatList, StyleSheet } from 'react-native';
 import { useQuery } from '@apollo/client';
 import { GET_USERS_DETAILS, GET_BICYCLES } from '../constants/query';
-import { setContext } from "@apollo/client/link/context";
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 
 const Tab = createMaterialTopTabNavigator();
 
 export default function HistoryScreen(){
-  const auth = setContext(async (_, { headers }) => {
-    const token = await AsyncStorage.getItem('access_token'); 
-    return {
-      headers: {
-        ...headers,
-        Authorization: token,
-      },
-    };
-  });
+
   const { loading: usersLoading, error: usersError, data: usersData } = useQuery(GET_USERS_DETAILS);
   const { loading: bicyclesLoading, error: bicyclesError, data: bicyclesData } = useQuery(GET_BICYCLES);
 

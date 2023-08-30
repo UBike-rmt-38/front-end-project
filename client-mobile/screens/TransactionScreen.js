@@ -2,21 +2,9 @@ import React from 'react';
 import { View, Text, FlatList, StyleSheet } from 'react-native';
 import { useQuery } from '@apollo/client';
 import { GET_USERS_DETAILS } from '../constants/query';
-import { setContext } from "@apollo/client/link/context";
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
 export default function TransactionScreen(){
-
-const auth = setContext(async (_, { headers }) => {
-    const token = await AsyncStorage.getItem('access_token'); 
-    return {
-        headers: {
-        ...headers,
-        Authorization: token,
-        },
-    };
-    });
   const { loading, error, data } = useQuery(GET_USERS_DETAILS);
 
   if (loading) {
