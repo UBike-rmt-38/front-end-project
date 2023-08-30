@@ -457,6 +457,8 @@ export default function MapsScreen() {
   }, [cash, travelledDistance, price]);
 
   return (
+    <View style={{ flex: 1, paddingBottom: 30 }}>
+
     <View style={styles.container}>
       <View style={styles.searchContainer}>
         <TextInput
@@ -739,6 +741,8 @@ export default function MapsScreen() {
         </Modal>
       )}
     </View>
+    </View>
+
   );
 }
 
