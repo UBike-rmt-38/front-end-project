@@ -7,7 +7,6 @@ import { createMaterialTopTabNavigator } from '@react-navigation/material-top-ta
 const Tab = createMaterialTopTabNavigator();
 
 export default function HistoryScreen(){
-
   const { loading: usersLoading, error: usersError, data: usersData } = useQuery(GET_USERS_DETAILS);
   const { loading: bicyclesLoading, error: bicyclesError, data: bicyclesData } = useQuery(GET_BICYCLES);
 
