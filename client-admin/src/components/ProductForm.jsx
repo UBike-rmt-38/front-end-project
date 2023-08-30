@@ -1,9 +1,13 @@
-import { useMutation } from "@apollo/client";
-import { ADD_STATIONS } from "../constants/mutation";
-import { useState } from "react";
+import { useMutation, useQuery } from "@apollo/client";
+import { ADD_STATIONS, EDIT_STATION } from "../constants/mutation";
+import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
+import { useNavigate, useParams } from "react-router-dom";
+import { GET_STATIONS, GET_STATION_DETAIL } from "../constants/query";
 
 export default function StationForm() {
+  const { stationId } = useParams()
+  const navigate = useNavigate()
   const [input, setInput] = useState({
     name: "",
     address: "",
@@ -11,7 +15,20 @@ export default function StationForm() {
     longitude: "",
   });
 
+  const { data, loadings, error } = useQuery(GET_STATION_DETAIL, {
+    variables: { stationId: +stationId }
+  })
+  const { refetch } = useQuery(GET_STATIONS)
+
+  useEffect(() => {
+    if (stationId && data) {
+      const updateStation = data.getStationsById;
+      setInput(updateStation);
+    }
+  }, [data, stationId]);
+
   const [addStation, { loading }] = useMutation(ADD_STATIONS);
+  const [editStation, {}] = useMutation(EDIT_STATION)
 
   const resetInput = () => ({
     name: "",
@@ -31,23 +48,34 @@ export default function StationForm() {
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
-      console.log("ketrigger di form")
-      await addStation({
-        variables: {
-          name: input.name,
-          address: input.address,
-          latitude: input.latitude,
-          longitude: input.longitude,
-        },
-      });
 
-      if (data.addStation) {
+      if(stationId) {
+        const { data } = await editStation({
+          variables: {
+            stationId: +stationId,
+            name: input.name,
+            address: input.address,
+            latitude: +input.latitude,
+            longitude: +input.longitude,
+          }
+        })
+
+        toast.success("Station edited successfully!", {});
+      } else {
+        await addStation({
+          variables: {
+            name: input.name,
+            address: input.address,
+            latitude: +input.latitude,
+            longitude: +input.longitude,
+          },
+        });
+  
         toast.success("Station added successfully!", {});
-        setInput(resetInput());
-        setTimeout(() => {
-          navigate("/");
-        }, 1500);
       }
+      await setInput(resetInput());
+      await refetch();
+      navigate("/");
     } catch (error) {
       toast.error(error.message, {});
     }
@@ -55,7 +83,7 @@ export default function StationForm() {
 
   return (
     <form onSubmit={handleSubmit} className="p-10 bg-white rounded shadow-xl">
-      <h1 className="w-full text-3xl text-black pb-6">Add Station</h1>
+      <h1 className="w-full text-3xl text-black pb-6">{stationId ? 'Edit Station' : 'Add Station'}</h1>
       <div className="grid md:grid-cols-2 md:gap-6">
         <div className="relative z-0 w-full mb-6 group">
           <input
@@ -129,7 +157,7 @@ export default function StationForm() {
         </div>
       </div>
       <button type="submit" className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
-        Add Station
+        {stationId ? "Edit Station" : "Add Station"}
       </button>
     </form>
   );

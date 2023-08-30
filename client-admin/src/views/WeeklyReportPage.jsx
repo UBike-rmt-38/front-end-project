@@ -1,5 +1,6 @@
 import { useQuery } from '@apollo/client';
 import { GET_BICYCLES, GET_RENTAL_REPORT, GET_USERS } from '../constants/query';
+import { formatDate } from '../helpers/FormatDate';
 
 export default function WeeklyReport(){
   const { loading: reportLoading, error: reportError, data: reportData } = useQuery(GET_RENTAL_REPORT);
@@ -58,15 +59,15 @@ export default function WeeklyReport(){
               const bicycle = bicycles.find(bicycle => bicycle.id === report.BicycleId);
 
               return (
-                <tr key={report.id}>
-                  <td className="py-4 px-6 font-size-12">{report.status === true ? "Completed" : "Active"}</td>
+                <tr className='text-black text-sm' key={report.id}>
+                  <td className="py-4 px-6 font-size-12">{report.status === true ? <p className='text-center bg-green-500 text-white p-2 rounded-md font-medium'>Completed</p> : <p className='text-center bg-yellow-500 text-white p-2 rounded-md font-medium'>Active</p>}</td>
                   <td className="py-4 px-6">{user ? user.username : 'N/A'}</td>
                   <td className="py-4 px-6">{bicycle ? bicycle.name : 'N/A'}</td>
                   <td className="py-4 px-6">{report.travelledDistance}</td>
                   <td className="py-4 px-6">{report.totalPrice}</td>
                   <td className="py-4 px-6">{report.transaction}</td>
-                  <td className="py-4 px-6">{report.createdAt}</td>
-                  <td className="py-4 px-6">{report.updatedAt}</td>
+                  <td className="py-4 px-6">{formatDate(report.createdAt)}</td>
+                  <td className="py-4 px-6">{formatDate(report.updatedAt)}</td>
                 </tr>
               );
             })}
