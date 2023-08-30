@@ -93,7 +93,6 @@ export default function SignUpScreen({ navigation }) {
               <View style={styles.item_box}>
                 <TouchableOpacity onPress={handleSignUp} style={styles.btn_div}>
                   <Text style={styles.btn}>Sign Up</Text>
-                  {/* <Image source={require('../assets/arrow1.png')} style={styles.icon} /> */}
                   <View style={styles.icon}>
                     <FontAwesome5 name="greater-than" size={24} color="white" />
                   </View>
