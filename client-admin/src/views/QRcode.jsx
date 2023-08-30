@@ -25,11 +25,11 @@ function QRcode() {
     }
     console.log(data.getStationQrCode);
   return (
-    <div>
+    <div >
         <h1>QRcode</h1>
 {
     data.getStationQrCode.map(e => {
-        return <CardQRcode data={e} key={e.id} />
+        return <CardQRcode data={e} key={e.id}  style={{backgroundColor:'#394452'}}/>
     })
 }
     </div>
