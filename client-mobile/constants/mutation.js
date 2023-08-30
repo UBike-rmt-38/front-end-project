@@ -41,3 +41,18 @@ export const DONE_RENTAL = gql`
     )
   }
 `;
+
+export const MUTATION_TOPUP_BALANCE = gql`
+  mutation Mutation($amount: Int!) {
+    topUpBalance(amount: $amount)
+  }
+`;
+
+export const MUTATION_GENERATE_MIDTRANS_TOKEN = gql`
+  mutation Mutation($amount: Int) {
+    generateMidtranToken(amount: $amount) {
+      redirect_url
+      token
+    }
+  }
+`;
