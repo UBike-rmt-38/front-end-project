@@ -14,6 +14,8 @@ import { CREATE_USER } from "../constants/mutation";
 import { FontAwesome } from "@expo/vector-icons";
 import { FontAwesome5 } from "@expo/vector-icons";
 const image = require("../assets/background.png");
+const { height, width } = Dimensions.get("screen");
+
 
 export default function SignUpScreen({ navigation }) {
   const [username, setUsername] = useState("");
@@ -143,7 +145,7 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     borderWidth: 1,
     borderColor: "#808090",
-    width: 490
+    width: width
   },
   input: {
     height: 50,

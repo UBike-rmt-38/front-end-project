@@ -8,6 +8,7 @@ import {
   TextInput,
   Image,
   ImageBackground,
+  Dimensions,
 } from "react-native";
 import { FontAwesome } from "@expo/vector-icons";
 import { useDispatch } from "react-redux";
@@ -17,6 +18,7 @@ import { saveAccessToken } from "../helpers/secureStoreAction";
 import { useMutation } from "@apollo/client";
 import { LOGIN } from "../constants/mutation";
 const image = require("../assets/background.png");
+const { height, width } = Dimensions.get("screen");
 
 export default function LoginScreen({ navigation }) {
   const [username, setUsername] = useState("");
@@ -157,7 +159,7 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     borderWidth: 1,
     borderColor: "#808090",
-    width: 490
+    width: width
   },
   input: {
     height: 50,
