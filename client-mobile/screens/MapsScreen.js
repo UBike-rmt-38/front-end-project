@@ -349,16 +349,6 @@ export default function MapsScreen() {
       alert("Error getting current location: " + error.message);
     }
   };
-
-  const handleLogout = async () => {
-    try {
-      await SecureStore.deleteItemAsync("access_token");
-      dispatch(setIsSignedIn(false));
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
   const filteredStations = search
     ? nearestStations.filter((station) =>
         station.name.toLowerCase().includes(search.toLowerCase())
@@ -618,10 +608,6 @@ export default function MapsScreen() {
           />
         </View>
       </Modal>
-
-      <TouchableOpacity style={styles.button} onPress={handleLogout}>
-        <Text style={styles.buttonText}>Logout</Text>
-      </TouchableOpacity>
       {isRenting ? (
         <Modal
           isVisible={showConfirmationModal}
