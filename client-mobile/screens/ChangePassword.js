@@ -4,14 +4,16 @@ import {
     Text,
     TextInput,
     StyleSheet,
-    TouchableOpacity
+    TouchableOpacity,
+    ImageBackground
 } from 'react-native'
 import { FontAwesome } from "@expo/vector-icons";
 import { CHANGE_PASSWORD } from '../constants/mutation';
 import { useMutation } from '@apollo/client';
 
 export default function ChangePassword({ navigation }) {
-    const [showPassword, setShowPassword] = useState(false);
+    const [showOldPassword, setShowOldPassword] = useState(false);
+    const [showNewPassword, setShowNewPassword] = useState(false);
     const [oldPassword, setOldPassword] = useState("");
     const [newPassword, setNewPassword] = useState("");
     const [changeNewPassword, { error }] = useMutation(CHANGE_PASSWORD)
@@ -30,59 +32,69 @@ export default function ChangePassword({ navigation }) {
         }
     }
     return (
-        <View style={styles.container}>
-            <View>
-                <TextInput
-                    style={styles.input}
-                    placeholder="Old Password"
-                    secureTextEntry={!showPassword}
-                    value={oldPassword}
-                    onChangeText={setOldPassword}
-                />
-                <TouchableOpacity
-                    style={styles.eyeIcon}
-                    onPress={() => setShowPassword(!showPassword)}
-                >
-                    <FontAwesome
-                        name={showPassword ? "eye-slash" : "eye"}
-                        size={20}
-                        color="grey"
-                    />
-                </TouchableOpacity>
+        <ImageBackground
+            source={require("../assets/background.png")}
+            style={styles.backgroundImage}
+        >
+            <View style={styles.container}>
+                <View style={{ backgroundColor: 'white', flex: 1, justifyContent: "center", alignItems: "center", maxHeight: 250, borderRadius: 15, opacity: 0.7, padding: 10 }}>
+                    <View  >
+                        <TextInput
+                            style={styles.input}
+                            placeholder="Old Password"
+                            secureTextEntry={!showOldPassword}
+                            value={oldPassword}
+                            onChangeText={setOldPassword}
+                        />
+                        <TouchableOpacity
+                            style={styles.eyeIcon}
+                            onPress={() => setShowOldPassword(!showOldPassword)}
+                        >
+                            <FontAwesome
+                                name={showOldPassword ? "eye-slash" : "eye"}
+                                size={20}
+                                color="grey"
+                            />
+                        </TouchableOpacity>
+                    </View>
+                    <View>
+                        <TextInput
+                            style={styles.input}
+                            placeholder="New Password"
+                            secureTextEntry={!showNewPassword}
+                            value={newPassword}
+                            onChangeText={setNewPassword}
+                        />
+                        <TouchableOpacity
+                            style={styles.eyeIcon}
+                            onPress={() => setShowNewPassword(!showNewPassword)}
+                        >
+                            <FontAwesome
+                                name={showNewPassword ? "eye-slash" : "eye"}
+                                size={20}
+                                color="grey"
+                            />
+                        </TouchableOpacity>
+                    </View>
+                    <TouchableOpacity style={styles.button} onPress={handleChangePassword} >
+                        <Text style={styles.buttonText}>Submit</Text>
+                    </TouchableOpacity>
+                </View>
             </View>
-            <View>
-                <TextInput
-                    style={styles.input}
-                    placeholder="New Password"
-                    secureTextEntry={!showPassword}
-                    value={newPassword}
-                    onChangeText={setNewPassword}
-                />
-                <TouchableOpacity
-                    style={styles.eyeIcon}
-                    onPress={() => setShowPassword(!showPassword)}
-                >
-                    <FontAwesome
-                        name={showPassword ? "eye-slash" : "eye"}
-                        size={20}
-                        color="grey"
-                    />
-                </TouchableOpacity>
-            </View>
-            <TouchableOpacity style={styles.button} onPress={handleChangePassword} >
-                <Text style={styles.buttonText}>Submit</Text>
-            </TouchableOpacity>
-        </View>
+        </ImageBackground>
     )
 }
 
 const styles = StyleSheet.create({
+    backgroundImage: {
+        flex: 1,
+        resizeMode: "cover",
+      },
     container: {
         flex: 1,
         justifyContent: "center",
         alignItems: "center",
-        paddingHorizontal: 20,
-        backgroundColor: "#fff",
+        paddingHorizontal: 20
     },
     title: {
         fontSize: 24,
@@ -97,6 +109,8 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderColor: "#ddd",
         borderRadius: 8,
+        backgroundColor: "white",
+        width: 270
     },
     eyeIcon: {
         position: "absolute",
