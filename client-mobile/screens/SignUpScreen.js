@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   StyleSheet,
   Image,
+  Dimensions,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { useMutation } from "@apollo/client";
@@ -15,7 +16,6 @@ import { FontAwesome } from "@expo/vector-icons";
 import { FontAwesome5 } from "@expo/vector-icons";
 const image = require("../assets/background.png");
 const { height, width } = Dimensions.get("screen");
-
 
 export default function SignUpScreen({ navigation }) {
   const [username, setUsername] = useState("");
@@ -40,8 +40,8 @@ export default function SignUpScreen({ navigation }) {
   };
 
   return (
-    <View style={styles.container}>
-      <ImageBackground source={image} resizeMode="cover" style={styles.image}>
+    <ImageBackground source={image} resizeMode="cover" style={styles.image}>
+      <View style={styles.container}>
         <View style={styles.box}>
           <LinearGradient
             colors={["rgba(0, 0, 0, 1)", "transparent"]}
@@ -103,14 +103,17 @@ export default function SignUpScreen({ navigation }) {
             </View>
           </LinearGradient>
         </View>
-      </ImageBackground>
-    </View>
+      </View>
+    </ImageBackground>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    alignItems: "center",
+    paddingHorizontal: width - 470,
+    marginTop: width - 180
   },
   icon: {
     marginRight: 30
@@ -124,28 +127,27 @@ const styles = StyleSheet.create({
     fontSize: 25,
     lineHeight: 84,
     fontWeight: "bold",
-    marginLeft: 45,
+    marginLeft: "15%",
   },
   box: {
     alignItems: "center",
     marginBottom: 10,
-    paddingHorizontal: 55
+    paddingHorizontal: width - 450
   },
   inline_box: {
     borderRadius: 50,
     height: 600,
     backgroundColor: "rgba(120, 120, 120, 0.4)",
-    width: "480",
     shadowColor: "#000",
     shadowOffset: {
       height: 30,
-      width: 30,
+      width: width - 470,
     },
     shadowOpacity: 0.25,
     shadowRadius: 4,
     borderWidth: 1,
     borderColor: "#808090",
-    width: width
+    width: width - 2
   },
   input: {
     height: 50,
@@ -153,7 +155,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     padding: 10,
     backgroundColor: "#ffff",
-    width: 400,
+    width: "70%",
     borderRadius: 10,
     fontSize: 20,
   },
@@ -162,12 +164,12 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   item_box: {
-    marginVertical: 30,
+    marginVertical: width - 370,
   },
   btn_div: {
-    marginTop: 40,
+    marginTop: width - 360,
     height: 60,
-    width: "80%",
+    width: "73%",
     marginHorizontal: 50,
     borderRadius: 30,
     backgroundColor: "rgba(128, 128, 128, 0.8)",
@@ -180,12 +182,12 @@ const styles = StyleSheet.create({
   btn: {
     color: "#ffff",
     fontWeight: "bold",
-    fontSize: 26,
-    marginHorizontal: 30,
+    fontSize: 23,
+    marginHorizontal: width - 370,
   },
   eyeIcon: {
     position: "absolute",
-    top: 8,
-    right: 15,
+    top: width - 475,
+    right: width - 420,
   },
 });
