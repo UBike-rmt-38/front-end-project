@@ -80,9 +80,10 @@ export default function MapsScreen() {
         (rental) => rental.status === false
       );
       if (activeRental) {
+        // console.log(activeRental[0].id, "<<<<< activeRental[0].id di CHECK_RENTALS")
         setRentalId(activeRental[0].id);
         setTravelledDistance(activeRental[0].travelledDistance);
-        console.log(activeRental[0].BicycleId, "<<<< check rental bicycleId");
+        // console.log(activeRental[0].BicycleId, "<<<< check rental bicycleId");
         setBicycleId(activeRental[0].BicycleId);
         refetch({ bicycleId: activeRental[0].BicycleId });
         setBalance(data.getUsersDetails.balance);
@@ -102,7 +103,7 @@ export default function MapsScreen() {
       bicycleId: BicycleId,
     },
     onCompleted: (data) => {
-      // console.log(data.getBicycleById.price, "<<<< useQuery GET_BICYCLE_BY_ID");
+      console.log(data.getBicycleById.price, "<<<< useQuery GET_BICYCLE_BY_ID");
       setPrice(data.getBicycleById.price);
       setStationId(data.getBicycleById.StationId);
       refetchStation({ stationId: data.getBicycleById.StationId });
@@ -310,7 +311,8 @@ export default function MapsScreen() {
 
   const getUserLocation = async () => {
     try {
-      if (station) {
+      if (station.getStationsById) {
+        // console.log(station, "<<<< station ketrigger di getUserLocation");
         setUserLocation(
           new AnimatedRegion({
             latitude: station.getStationsById.latitude,
@@ -331,6 +333,7 @@ export default function MapsScreen() {
       }
       const { status } = await Location.requestForegroundPermissionsAsync();
       if (status === "granted") {
+        console.log("ketrigger di current position")
         const location = await Location.getCurrentPositionAsync();
         const { latitude, longitude } = location.coords;
         // const heading = location.coords.heading;
@@ -450,8 +453,9 @@ export default function MapsScreen() {
 
   useEffect(() => {
     if (travelledDistance && price) {
+      // console.log(price, "price ketrigger di useEffect");
       const newTotalPrice = (+travelledDistance * +price) / 10000 - Number(cash);
-      console.log(newTotalPrice, travelledDistance, price, cash, "<<<< useEffect")
+      // console.log(newTotalPrice, travelledDistance, price, cash, "<<<< useEffect")
       setTotalPrice(+newTotalPrice);
     }
   }, [cash, travelledDistance, price]);

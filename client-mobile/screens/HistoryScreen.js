@@ -83,6 +83,7 @@ export default function HistoryScreen() {
   return (
     <Tab.Navigator
       screenOptions={{
+        tabBarPressColor: "transparent", // <<<< PR
         tabBarLabelStyle: { paddingTop: 50, fontSize: 14, fontWeight: "bold" },
         tabBarStyle: { backgroundColor: "#28E9C3", height: 100 },
         tabBarIndicatorStyle: { backgroundColor: "#07A384" },
