@@ -3,6 +3,8 @@ import Pencil from "./icons/Pencil";
 import Trash from "./icons/Trash";
 import { useMutation, useQuery } from "@apollo/client";
 import { DELETE_STATION } from "../constants/mutation";
+import { GET_STATIONS } from "../constants/query";
+import { toast } from "react-toastify";
 
 export default function TableRow({
   isStation,
@@ -22,15 +24,26 @@ export default function TableRow({
       ];
 
     const navigate = useNavigate()
+    const { refetch } = useQuery(GET_STATIONS)
     const [deleteStation] = useMutation(DELETE_STATION);
-    const onDeleteClick = (id) => {
-      deleteStation({
-        variables: { stationId: id }
-      })
+    const onDeleteClick =  async (id) => {
+      try {
+        await deleteStation({
+          variables: { stationId: id }
+        })
+        await refetch()
+      } catch (error) {
+        toast.error(error.message, {});
+      }
+
     }
 
     const onEditClick = (id) => {
       navigate("/edit/" + id)
+    }
+
+    const handleDetail = (id) => {
+      navigate('/' + id)
     }
 
   return (
@@ -61,7 +74,7 @@ export default function TableRow({
                     </div>
                   )}
                   <div className="ml-3">
-                    <p className="text-gray-900 whitespace-no-wrap cursor-pointer" onClick={() => handleDetail(el.id)}>
+                    <p className="text-gray-900 whitespace-no-wrap cursor-pointer hover:text-BrightMint" onClick={() => handleDetail(el.id)}>
                       {el.name}
                     </p>
                   </div>

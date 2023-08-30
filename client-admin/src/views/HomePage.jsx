@@ -76,6 +76,7 @@ export default function HomePage() {
             {isLoading ? (
               <TableRowLoading />
             ) : (
+              
               <TableRow
                 data={data.getStations}
                 isStation={false}
