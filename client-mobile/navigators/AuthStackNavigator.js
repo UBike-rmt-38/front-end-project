@@ -12,6 +12,7 @@ import ProfileScreen from "../screens/ProfileScreen";
 import HomeScreen from "../screens/HomeScreen";
 import TopUpScreen from "../screens/TopUpScreen";
 import SignUpScreen from "../screens/SignUpScreen";
+import ChangePassword from "../screens/ChangePassword";
 
 const Stack = createNativeStackNavigator();
 
@@ -45,7 +46,7 @@ export default function AuthStackNavigator() {
     >
       {isSignedIn ? (
         <>
-          <Stack.Screen
+          {/* <Stack.Screen
             options={{ headerShown: false }}
             name="Home"
             component={HomeScreen}
@@ -74,6 +75,11 @@ export default function AuthStackNavigator() {
             options={{ headerShown: false }}
             name="Maps"
             component={MapsScreen}
+          /> */}
+          <Stack.Screen
+          options={{headerTitle: "Change Password"}}
+          name="ChangePassword"
+          component={ChangePassword}
           />
         </>
       ) : (
