@@ -47,6 +47,8 @@ export default function ProfileScreen({ navigation }) {
     <>
       <StatusBar barStyle="light-content" backgroundColor="#000" />
       <SafeAreaView style={[styles.container, styles.bg_dark]}>
+      <View style={{ flex: 1, paddingBottom: 30 }}>
+
         <ScrollView style={styles.scrollView}>
           <View style={styles.profile_box}>
             <View style={styles.profileContent}>
@@ -116,6 +118,7 @@ export default function ProfileScreen({ navigation }) {
             </View>
           </View>
         </ScrollView>
+      </View>
       </SafeAreaView>
     </>
   );
