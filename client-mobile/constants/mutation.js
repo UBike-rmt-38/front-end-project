@@ -22,4 +22,21 @@ export const CHANGE_PASSWORD = gql`
 mutation Mutation($oldPassword: String!, $newPassword: String!) {
   changePassword(oldPassword: $oldPassword, newPassword: $newPassword)
 }
+`
+export const DONE_RENTAL = gql`
+  mutation Mutation(
+    $travelledDistance: Int!
+    $totalPrice: Int!
+    $rentalId: Int!
+    $stationToken: String!
+    $transaction: String!
+  ) {
+    doneRental(
+      travelledDistance: $travelledDistance
+      totalPrice: $totalPrice
+      rentalId: $rentalId
+      stationToken: $stationToken
+      transaction: $transaction
+    )
+  }
 `;
