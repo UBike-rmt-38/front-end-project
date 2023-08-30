@@ -81,7 +81,7 @@ const user = data.getUsersDetails;
                   <Text style={styles.profile_distance_text}>
                     {user.Rentals.travelledDistance}
                   </Text>
-                  <Text style={styles.profile_distance}>Total Distance</Text>
+                  <Text style={styles.profile_distance}>Total Distance:</Text>
                 </View>
               </View>
             </View>
