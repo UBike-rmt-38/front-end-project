@@ -1,41 +1,34 @@
-import { useState, useEffect } from 'react';
-import { View, Text, TextInput, Button, StyleSheet } from 'react-native';
-import { WebView } from 'react-native-webview';
-import { useQuery, useMutation } from '@apollo/client';
-import gql from 'graphql-tag';
-
-const QUERY_BALANCE = gql`
-  query Query {
-    balance
-  }
-`;
-
-const MUTATION_TOPUP_BALANCE = gql`
-  mutation Mutation($amount: Int!) {
-    topUpBalance(amount: $amount)
-  }
-`;
-
-const MUTATION_GENERATE_MIDTRANS_TOKEN = gql`
-  mutation Mutation($amount: Int) {
-    generateMidtranToken(amount: $amount) {
-      redirect_url
-      token
-    }
-  }
-`;
+import { useState, useEffect } from "react";
+import {
+  View,
+  Text,
+  TextInput,
+  Button,
+  StyleSheet,
+  TouchableOpacity,
+} from "react-native";
+import { WebView } from "react-native-webview";
+import { useQuery, useMutation } from "@apollo/client";
+import { QUERY_BALANCE } from "../constants/query";
+import {
+  MUTATION_GENERATE_MIDTRANS_TOKEN,
+  MUTATION_TOPUP_BALANCE,
+} from "../constants/mutation";
+import { useNavigation } from "@react-navigation/native";
 
 export default function TopUpScreen() {
-  const [topupAmount, setTopupAmount] = useState('');
+  const navigation = useNavigation()
+  const [topupAmount, setTopupAmount] = useState("");
+  const [message, setMessage] = useState({ text: "", style: {} });
   const [balance, setBalance] = useState(null);
   const [showWebView, setShowWebView] = useState(false);
-  const [webViewUrl, setWebViewUrl] = useState('');
+  const [webViewUrl, setWebViewUrl] = useState("");
   const { data } = useQuery(QUERY_BALANCE);
   const [topUpBalance] = useMutation(MUTATION_TOPUP_BALANCE);
   const [generateMidtransToken, { loading, error }] = useMutation(
     MUTATION_GENERATE_MIDTRANS_TOKEN
   );
-
+  const [nominals, setNominals] = useState([10000, 20000, 50000, 100000]);
   useEffect(() => {
     if (data) {
       setBalance(data.balance);
@@ -43,12 +36,22 @@ export default function TopUpScreen() {
   }, [data]);
 
   const handleTopup = async () => {
+    if (topupAmount < 10000) {
+      setMessage({
+        text: "Minimum input amount is 10.000!",
+        style: { color: "red", fontWeight: "bold" },
+      });
+      setTimeout(() => {
+        setMessage({ text: "", style: {} });
+      }, 5000);
+      return;
+    }
     try {
       const response = await generateMidtransToken({
         variables: { amount: parseInt(topupAmount) },
       });
 
-      console.log('Token generate:', response);
+      console.log("Token generate:", response);
       setShowWebView(true);
       setWebViewUrl(response.data.generateMidtranToken.redirect_url);
 
@@ -56,37 +59,74 @@ export default function TopUpScreen() {
         variables: { amount: parseInt(topupAmount) },
       });
     } catch (error) {
-      console.error('Top-up error:', error);
+      console.error("Top-up error:", error);
     }
   };
 
   const redirect = (state) => {
-    const { url } = state
+    const { url } = state;
     console.log(url);
-    if(url && url.includes("success")){
-        setTimeout(() => {
-            setShowWebView(false);
-        }, 5000);
+
+    if (url.includes("success")) {
+      setTimeout(() => {
+        setShowWebView(false);
+        navigation.navigate("Home"); 
+      }, 5000);
+    } else if (!url.includes("payment-list")) {
+      setTopupAmount("");
     }
-  }
+  };
+
 
   if (showWebView) {
-    return <WebView onNavigationStateChange={redirect} source={{ uri: webViewUrl }} />;
+    return (
+      <WebView
+        onNavigationStateChange={redirect}
+        source={{ uri: webViewUrl }}
+      />
+    );
   }
+  const buttonRow = 2;
+  const rows = Math.ceil(nominals.length / buttonRow);
 
   return (
     <View style={styles.container}>
-      <Text style={styles.header}>Top Up</Text>
-      <Text>Current balance: {balance}</Text>
+      <Text style={styles.title}>Input amount {balance}</Text>
       <TextInput
         style={styles.input}
-        placeholder="Enter top up amount"
         keyboardType="numeric"
-        value={topupAmount}
+        value={topupAmount.toString()}
         onChangeText={setTopupAmount}
+        required
       />
-      <Button title="Top Up" onPress={handleTopup} disabled={loading} />
       {error && <Text>Error: {error.message}</Text>}
+      {message.text !== "" && <Text style={message.style}>{message.text}</Text>}
+      <TouchableOpacity
+        title="Top Up"
+        onPress={handleTopup}
+        disabled={loading}
+        style={styles.buttonTopUp}
+      >
+        <Text style={styles.buttonText}>Top Up</Text>
+      </TouchableOpacity>
+      <View style={styles.buttonContainer}>
+        {Array.from({ length: rows }).map((_, index) => (
+          <View key={index} style={styles.rowContainer}>
+            {nominals
+              .slice(index * buttonRow, (index + 1) * buttonRow)
+              .map((nominal) => (
+                <TouchableOpacity
+                  key={nominal}
+                  onPress={() => setTopupAmount(nominal.toString())}
+                  disabled={loading}
+                  style={styles.button}
+                >
+                  <Text style={styles.buttonText}>{nominal}</Text>
+                </TouchableOpacity>
+              ))}
+          </View>
+        ))}
+      </View>
     </View>
   );
 }
@@ -94,20 +134,61 @@ export default function TopUpScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "#322D3A",
   },
-  header: {
-    fontSize: 24,
+  title: {
+    color: "white",
+    fontWeight: "bold",
+    fontSize: 25,
     marginBottom: 20,
   },
   input: {
-    width: '80%',
+    width: "80%",
     height: 40,
-    borderColor: 'gray',
-    borderWidth: 1,
-    borderRadius: 5,
+    borderColor: "#80FFCC",
+    borderBottomWidth: 2,
     paddingHorizontal: 10,
     marginBottom: 20,
+    color: "white",
+    fontWeight: "bold",
+    fontSize: 25,
+  },
+  buttonContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+  },
+  buttonTopUp: {
+    backgroundColor: "#3FDA9C",
+    padding: 10,
+    margin: 10,
+    borderRadius: 30,
+    width: "80%",
+  },
+  button: {
+    backgroundColor: "#3FDA9C",
+    padding: 10,
+    margin: 10,
+    borderRadius: 30,
+    width: "70%",
+  },
+  buttonText: {
+    color: "white",
+    fontWeight: "bold",
+    textAlign: "center",
+    fontSize: 20,
+  },
+  buttonContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+  },
+  rowContainer: {
+    flexDirection: "column",
+    alignItems: "center",
+    // borderWidth: 1,
+    // borderColor: 'yellow',
+    width: "45%",
+    paddingVertical: 1,
   },
 });
