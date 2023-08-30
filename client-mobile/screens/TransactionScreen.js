@@ -3,7 +3,6 @@ import { View, Text, FlatList, StyleSheet } from 'react-native';
 import { useQuery } from '@apollo/client';
 import { GET_USERS_DETAILS } from '../constants/query';
 
-
 export default function TransactionScreen(){
   const { loading, error, data } = useQuery(GET_USERS_DETAILS);
 

@@ -67,3 +67,14 @@ export const DELETE_BICYCLES = gql`
     deleteBicycle(bicycleId: $bicycleId)
   }
 `;
+
+export const DELETE_STATION = gql`
+mutation DeleteStation($stationId: Int!) {
+  deleteStation(stationId: $stationId)
+}`;
+
+
+export const EDIT_STATION = gql`
+mutation EditStation($stationId: Int!, $name: String!, $address: String!, $latitude: String!, $longitude: String!) {
+  editStation(stationId: $stationId, name: $name, address: $address, latitude: $latitude, longitude: $longitude)
+}`;

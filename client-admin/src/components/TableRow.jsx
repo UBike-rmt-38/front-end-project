@@ -1,11 +1,12 @@
+import { useNavigate } from "react-router-dom";
 import Pencil from "./icons/Pencil";
 import Trash from "./icons/Trash";
+import { useMutation, useQuery } from "@apollo/client";
+import { DELETE_STATION } from "../constants/mutation";
 
 export default function TableRow({
   isStation,
   data,
-  onEditClick,
-  onDeleteClick,
 }) {
   const columns = isStation
     ? [
@@ -19,6 +20,18 @@ export default function TableRow({
         { key: "createdAt" },
         { key: "updatedAt" },
       ];
+
+    const navigate = useNavigate()
+    const [deleteStation] = useMutation(DELETE_STATION);
+    const onDeleteClick = (id) => {
+      deleteStation({
+        variables: { stationId: id }
+      })
+    }
+
+    const onEditClick = (id) => {
+      navigate("/edit/" + id)
+    }
 
   return (
     <>
@@ -48,7 +61,7 @@ export default function TableRow({
                     </div>
                   )}
                   <div className="ml-3">
-                    <p className="text-gray-900 whitespace-no-wrap">
+                    <p className="text-gray-900 whitespace-no-wrap cursor-pointer" onClick={() => handleDetail(el.id)}>
                       {el.name}
                     </p>
                   </div>

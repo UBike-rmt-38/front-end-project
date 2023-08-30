@@ -90,6 +90,24 @@ export const GET_RENTAL_REPORT = gql`
   }
 `;
 
+export const GET_STATION_DETAIL = gql`
+  query GetStations($stationId: Int) {
+  getStationsById(stationId: $stationId) {
+    id
+    name
+    address
+    latitude
+    longitude
+    Bicycles {
+      id
+      name
+      imageURL
+      status
+    }
+  }
+}
+`
+
 export const GET_USERS = gql`
   query GetUsers {
     getUsers {
