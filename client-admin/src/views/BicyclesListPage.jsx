@@ -14,7 +14,7 @@ export default function BicyclesListPage() {
   const { data, loading: isLoading, error } = useQuery(GET_BICYCLES);
   if (error) return `Error! ${error.message}`;
 
-  
+
   const handleAdd = () => {
     navigate("/form")
   }
@@ -27,12 +27,16 @@ export default function BicyclesListPage() {
         <i className="mr-3"><Plus /></i> Add Bicycle
       </button>
       <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
-        <div className='grid grid-cols-4 gap-x-3 gap-y-5'>
+        <div className='flex'>
           {isLoading ? (
             <TableRowLoading />
           ) : (
             data.getBicycles.map((bicycle) => {
-              return <CardBicycle bicycle={bicycle} key={bicycle.id} />
+              return (
+                <div className='flex-grow'>
+                  <CardBicycle bicycle={bicycle} key={bicycle.id} />
+                </div>
+              )
             })
           )}
         </div>
@@ -40,3 +44,4 @@ export default function BicyclesListPage() {
     </>
   )
 }
+

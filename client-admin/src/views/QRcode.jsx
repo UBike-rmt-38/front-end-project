@@ -23,7 +23,6 @@ function QRcode() {
             <h1>Loading...</h1>
         </div>
     }
-    console.log(data.getStationQrCode);
   return (
     <div>
         <h1>QRcode</h1>
