@@ -307,7 +307,7 @@ const styles = StyleSheet.create({
     backgroundColor: "black",
     padding: 16,
     marginBottom: 16,
-    height: "42%" //ganti aja ini
+    height: "22%" //ganti aja ini
   },
   greetingText: {
     fontSize: 40,

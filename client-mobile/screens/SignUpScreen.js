@@ -6,11 +6,13 @@ import {
   ImageBackground,
   TouchableOpacity,
   StyleSheet,
+  Image,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { useMutation } from "@apollo/client";
 import { CREATE_USER } from "../constants/mutation";
 import { FontAwesome } from "@expo/vector-icons";
+import { FontAwesome5 } from "@expo/vector-icons";
 const image = require("../assets/background.png");
 
 export default function SignUpScreen({ navigation }) {
@@ -91,7 +93,10 @@ export default function SignUpScreen({ navigation }) {
               <View style={styles.item_box}>
                 <TouchableOpacity onPress={handleSignUp} style={styles.btn_div}>
                   <Text style={styles.btn}>Sign Up</Text>
-                  <Text style={[styles.btn, { fontSize: 40 }]}>&#62;</Text>
+                  {/* <Image source={require('../assets/arrow1.png')} style={styles.icon} /> */}
+                  <View style={styles.icon}>
+                    <FontAwesome5 name="greater-than" size={24} color="white" />
+                  </View>
                 </TouchableOpacity>
               </View>
             </View>
@@ -105,6 +110,9 @@ export default function SignUpScreen({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  icon: {
+    marginRight: 30
   },
   image: {
     flex: 1,
@@ -120,6 +128,7 @@ const styles = StyleSheet.create({
   box: {
     alignItems: "center",
     marginBottom: 10,
+    paddingHorizontal: 55
   },
   inline_box: {
     borderRadius: 50,
@@ -135,6 +144,7 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     borderWidth: 1,
     borderColor: "#808090",
+    width: 490
   },
   input: {
     height: 50,

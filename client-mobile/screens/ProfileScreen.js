@@ -44,6 +44,7 @@ export default function ProfileScreen() {
       console.log(error);
     }
   };
+
   return (
     <>
       <StatusBar barStyle="light-content" backgroundColor="#000" />
@@ -76,40 +77,34 @@ export default function ProfileScreen() {
                 </View>
               </View>
             </View>
+          </View>
+          <View style={styles.infoContainer}>
+            <Text style={styles.infoHeading}>Fullname</Text>
+            <Text style={styles.infoText}>{user.username}</Text>
+          </View>
+          <View style={styles.infoContainer}>
+            <Text style={styles.infoHeading}>Email</Text>
+            <Text style={styles.infoText}>{user.email}</Text>
+          </View>
+          <View style={styles.infoContainer}>
+            <Text style={styles.infoHeading}>Phone</Text>
+            <Text style={styles.infoText}>0987654321</Text>
+          </View>
+          <View style={styles.balanceContainer}>
+            <Text style={styles.balanceHeading}>My Balance</Text>
+            <View style={styles.balanceContent}>
+              <Text style={styles.infoText}>Rp. {user.balance}</Text>
+              <TouchableOpacity>
+                <Text style={styles.topUp}>TOP UP</Text>
+              </TouchableOpacity>
             </View>
-            <View style={styles.infoContainer}>
-              <Text style={styles.infoHeading}>Fullname</Text>
-              <Text style={styles.infoText}>{user.username}</Text>
-            </View>
-            <View style={styles.infoContainer}>
-              <Text style={styles.infoHeading}>Email</Text>
-              <Text style={styles.infoText}>{user.email}</Text>
-            </View>
-            <View style={styles.infoContainer}>
-              <Text style={styles.infoHeading}>Phone</Text>
-              <Text style={styles.infoText}>0987654321</Text>
-            </View>
-            <View style={styles.balanceContainer}>
-              <Text style={styles.balanceHeading}>My Balance</Text>
-              <View style={styles.balanceContent}>
-                <Text style={styles.infoText}>Rp. {user.balance}</Text>
-                <TouchableOpacity>
-                  <Text style={styles.topUp}>TOP UP</Text>
-                </TouchableOpacity>
-              </View>
             <View style={styles.actionContainer}>
-              <Text
-                style={styles.actionText}
-                onPress={handleHistory}
-              >
+              <Text style={styles.actionText} onPress={handleHistory}>
                 Rent history
               </Text>
             </View>
             <View style={styles.actionContainer}>
-              <Text
-                style={styles.actionText}
-                onPress={handleTransaction}
-              >
+              <Text style={styles.actionText} onPress={handleTransaction}>
                 Transaction
               </Text>
             </View>
@@ -234,7 +229,7 @@ const styles = StyleSheet.create({
     color: "white",
     fontSize: 17,
     marginTop: 2,
-    marginLeft: 10
+    marginLeft: 10,
   },
   actionContainer: {
     marginTop: 30,
@@ -255,7 +250,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "black",
     marginTop: 10,
-    paddingHorizontal: 10
+    paddingHorizontal: 10,
   },
 });
 

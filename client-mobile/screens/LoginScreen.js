@@ -50,7 +50,7 @@ export default function LoginScreen({ navigation }) {
   };
 
   return (
-      <ImageBackground source={image} resizeMode="cover" style={styles.image}>
+    <ImageBackground source={image} resizeMode="cover" style={styles.image}>
     <View style={styles.container}>
       <Image
         source={require("../assets/Logo.png")}

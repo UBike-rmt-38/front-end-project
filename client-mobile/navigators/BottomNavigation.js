@@ -23,7 +23,7 @@ export default function BottomTabs() {
           borderRadius: 0,
           height: 60,
         },
-        tabBarActiveTintColor: "#1AD3C1",
+        tabBarActiveTintColor: "#4FFFB0",
         tabBarInactiveTintColor: "#A0A0A0",
         tabBarShowLabel: true,
       }}>
