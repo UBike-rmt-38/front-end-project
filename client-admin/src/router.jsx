@@ -40,6 +40,8 @@ const router = createBrowserRouter([
       {
         path: "/report",
         element: <WeeklyReportPage />
+      },
+      {
         path: "/qrcode",
         element: <QRcode/>
       }

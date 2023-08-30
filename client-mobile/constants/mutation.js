@@ -17,3 +17,21 @@ export const CREATE_USER = gql`
     createUser(username: $username, email: $email, password: $password)
   }
 `;
+
+export const DONE_RENTAL = gql`
+  mutation Mutation(
+    $travelledDistance: Int!
+    $totalPrice: Int!
+    $rentalId: Int!
+    $stationToken: String!
+    $transaction: String!
+  ) {
+    doneRental(
+      travelledDistance: $travelledDistance
+      totalPrice: $totalPrice
+      rentalId: $rentalId
+      stationToken: $stationToken
+      transaction: $transaction
+    )
+  }
+`;

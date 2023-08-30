@@ -24,9 +24,13 @@ import * as SecureStore from "expo-secure-store";
 import { useDispatch, useSelector } from "react-redux";
 import { setIsRenting, setIsSignedIn } from "../stores/reducers/authSlice";
 import { useQuery } from "@apollo/client";
-import { GET_STATIONS } from "../constants/query";
+import {
+  CHECK_RENTALS,
+  GET_BICYCLE_BY_ID,
+  GET_STATIONS,
+} from "../constants/query";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import { getValueFor } from "../helpers/secureStoreAction";
+import { getValueFor, saveRentingStatus } from "../helpers/secureStoreAction";
 import axios from "axios";
 import { ROUTES_API } from "../constants/baseURL";
 import GOOGLE_API_KEY from "../constants/apiKey.js";
@@ -46,12 +50,58 @@ export default function MapsScreen() {
   const [showConfirmationModal, setShowConfirmationModal] = useState(false);
   const [selectedStation, setSelectedStation] = useState(null);
   const isRenting = useSelector((state) => state.auth.isRenting);
-  const [route, setRoute] = useState([]);
+  const [route, setRoute] = useState([]); 
+  const [BicycleId, setBicycleId] = useState(null); // <=== masuk ke sini
+  const [travelledDistance, setTravelledDistance] = useState(0);
+  const [estimatedTimeOfArrival, setEstimatedTimeOfArrival] = useState(null);
+  const [balance, setBalance] = useState(0);
+  const [StationId, setStationId] = useState(null);
+  const [price, setPrice] = useState(0);
+  const [rentalId, setRentalId] = useState(null);
+  const {} = useQuery(GET_STATIONS, {
+    onCompleted: (data) => {
+      setStations(data.getStations);
+    },
+    onError: (error) => {
+      alert(`${error.message}`);
+    },
+  });
+  const dispatch = useDispatch();
+  const {} = useQuery(CHECK_RENTALS, { // ini async juga
+    onCompleted: (data) => {
+      const isRenting = data.getUsersDetails.Rentals.some(
+        (rental) => rental.status === false
+      );
+      const activeRental = data.getUsersDetails.Rentals.filter(
+        (rental) => rental.status === false
+      );
+      if (activeRental) {
+        setRentalId(activeRental.id);
+        setTravelledDistance(activeRental.travelledDistance);
+        setBicycleId(activeRental.BicycleId); // sementara BicycleId didapat dari sini
+        setBalance(data.getUsersDetails.balance);
+      }
+      dispatch(setIsRenting(isRenting));
+      if (isRenting) saveRentingStatus("Active");
+      else saveRentingStatus("Inactive");
+    },
+  });
+
+  const {} = useQuery(GET_BICYCLE_BY_ID, { // bug di sini, useQuery async
+    variables: {
+      bicycleId: BicycleId,
+    },
+    skip: !BicycleId,
+    onCompleted: (data) => {
+      setPrice(data.getBicycleById);
+      setStationId(data.price);
+    },
+  });
 
   const getIsRenting = async () => {
     try {
       const renting_status = await getValueFor("renting_status");
-      if (renting_status) {
+      if (renting_status === "Active") {
         dispatch(setIsRenting(true));
       } else {
         dispatch(setIsRenting(false));
@@ -83,7 +133,7 @@ export default function MapsScreen() {
   }, [stations]);
 
   const moveToSelectedStation = () => {
-    if (userLocation && selectedStation && route.length > 0) {
+    if (userLocation && selectedStation && route.length > 0 && !isRenting) {
       // Calculate the bounding box that contains both userLocation and selectedStation
 
       const animationDuration = 10; // Adjust animation duration as needed
@@ -101,6 +151,62 @@ export default function MapsScreen() {
       // Execute animations in sequence
       Animated.sequence(animations).start(() => {
         // Animation sequence complete
+        setRoute([]);
+      });
+
+      closeConfirmationModal();
+
+      const minLat =
+        userLocation.latitude < selectedStation.latitude
+          ? userLocation.latitude
+          : selectedStation.latitude;
+      const maxLat =
+        userLocation.latitude > selectedStation.latitude
+          ? userLocation.latitude
+          : selectedStation.latitude;
+      const minLon =
+        userLocation.longitude < selectedStation.longitude
+          ? userLocation.longitude
+          : selectedStation.longitude;
+      const maxLon =
+        userLocation.longitude > selectedStation.longitude
+          ? userLocation.longitude
+          : selectedStation.longitude;
+
+      // Calculate map's new latitudeDelta and longitudeDelta
+      const latDelta = maxLat - minLat + 0.0922; // Add some padding
+      const lonDelta = maxLon - minLon + 0.0421; // Add some padding
+
+      // Animate the map to show the bounding box
+      mapRef.current.animateToRegion(
+        {
+          latitude: (minLat + maxLat) / 2,
+          longitude: (minLon + maxLon) / 2,
+          latitudeDelta: latDelta,
+          longitudeDelta: lonDelta,
+        },
+        1000
+      ); // Adjust duration as needed
+    } else {
+      // Calculate the bounding box that contains both userLocation and selectedStation
+
+      const animationDuration = 10; // Adjust animation duration as needed
+
+      const animations = route.map((coordinate, index) => {
+        const { latitude, longitude } = coordinate;
+        return userLocation.timing({
+          latitude,
+          longitude,
+          duration: animationDuration,
+          // delay: index * animationDuration, // Delay each animation by index * animationDuration
+        });
+      });
+
+      // Execute animations in sequence
+      Animated.sequence(animations).start(() => {
+        // Animation sequence complete
+        setRoute([]);
+        openScanner();
       });
 
       closeConfirmationModal();
@@ -138,17 +244,6 @@ export default function MapsScreen() {
       ); // Adjust duration as needed
     }
   };
-
-  const { data, loading, error } = useQuery(GET_STATIONS, {
-    onCompleted: (data) => {
-      setStations(data.getStations);
-    },
-    onError: (error) => {
-      alert(`${error.message}`);
-    },
-  });
-
-  const dispatch = useDispatch();
 
   const openScanner = () => {
     setShowScanner(true);
@@ -283,7 +378,15 @@ export default function MapsScreen() {
         },
       });
       // console.log(response);
-      // console.log(response.data.routes);
+      // console.log(response.data.routes[0].distanceMeters);
+      setTravelledDistance(response.data.routes[0].distanceMeters);
+      // console.log(response.data.routes[0].duration);
+      const durationInSeconds = parseInt(
+        response.data.routes[0].duration.replace("s", "")
+      );
+      // console.log(durationInSeconds);
+      setEstimatedTimeOfArrival(durationInSeconds);
+
       const decodedCoordinates = decodePolyline(
         response.data.routes[0].polyline.encodedPolyline
       );
@@ -421,14 +524,60 @@ export default function MapsScreen() {
 
       <Modal visible={showScanner} animationType="slide" transparent={false}>
         <View style={styles.scannerModal}>
-          <Scanner onCloseScanner={closeScanner} />
+          <Scanner
+            onCloseScanner={closeScanner}
+            isRenting={isRenting}
+            travelledDistance={travelledDistance}
+            totalPrice={(travelledDistance * price) / 10000}
+            rentalId={rentalId}
+          />
         </View>
       </Modal>
 
       <TouchableOpacity style={styles.button} onPress={handleLogout}>
         <Text style={styles.buttonText}>Logout</Text>
       </TouchableOpacity>
-      {selectedStation && (
+      {isRenting ? (
+        <Modal
+          isVisible={showConfirmationModal}
+          swipeDirection={["down"]}
+          onSwipeComplete={closeConfirmationModal}
+          onBackButtonPress={closeConfirmationModal}
+          animationIn="slideInUp"
+          animationOut="slideOutDown"
+          avoidKeyboard={true}
+          backdropColor="rgba(0, 0, 0, 0.5)"
+          backdropOpacity={0}
+          style={styles.modalContainer}
+        >
+          {/* <View style={styles.modalContainer}> */}
+          <View style={styles.modalContent}>
+            <View style={{ flexDirection: "row" }}>
+              <Text>Move to {selectedStation?.name}?</Text>
+              <TouchableOpacity
+                style={styles.modalButtonYes}
+                onPress={moveToSelectedStation}
+              >
+                <Text>Yes</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.modalButtonNo}
+                onPress={closeConfirmationModal}
+              >
+                <Text>No</Text>
+              </TouchableOpacity>
+            </View>
+            <View>
+              <Text>Balance: Rp{balance}</Text>
+              <Text>Estimated Distance: {travelledDistance}</Text>
+              <Text>
+                Estimated Price: {(travelledDistance * price) / 10000}
+              </Text>
+            </View>
+          </View>
+          {/* </View> */}
+        </Modal>
+      ) : (
         <Modal
           isVisible={showConfirmationModal}
           swipeDirection={["down"]}

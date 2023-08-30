@@ -6,6 +6,7 @@ export default function AppNavigator() {
     <NavigationContainer>
       <AuthStackNavigator/>
       {/* jika ada penambahan Navigator baru ( tabs / drawer / dll), letakkan di sini yaaa */}
+
     </NavigationContainer>
   );
 }

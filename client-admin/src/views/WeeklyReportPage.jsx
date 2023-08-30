@@ -59,7 +59,7 @@ export default function WeeklyReport(){
 
               return (
                 <tr key={report.id}>
-                  <td className="py-4 px-6 font-size-12">{report.status}</td>
+                  <td className="py-4 px-6 font-size-12">{report.status === true ? "Completed" : "Active"}</td>
                   <td className="py-4 px-6">{user ? user.username : 'N/A'}</td>
                   <td className="py-4 px-6">{bicycle ? bicycle.name : 'N/A'}</td>
                   <td className="py-4 px-6">{report.travelledDistance}</td>

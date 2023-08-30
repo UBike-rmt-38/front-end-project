@@ -69,7 +69,7 @@ export default function AuthStackNavigator() {
             options={{ headerShown: false }}
             name="History"
             component={HistoryScreen}
-          />
+          /> */}
           <Stack.Screen
             options={{ headerShown: false }}
             name="Maps"
