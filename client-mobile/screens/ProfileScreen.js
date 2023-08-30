@@ -11,13 +11,11 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useQuery } from "@apollo/client";
 import { GET_USERS_DETAIL } from "../constants/query";
-import { useNavigation } from "@react-navigation/native";
 import * as SecureStore from "expo-secure-store";
 import { setIsSignedIn } from "../stores/reducers/authSlice";
 import { useDispatch, useSelector } from "react-redux";
 
-export default function ProfileScreen() {
-  const navigation = useNavigation();
+export default function ProfileScreen({ navigation }) {
   const { loading, error, data } = useQuery(GET_USERS_DETAIL);
 
   if (loading) return <Text>Loading...</Text>;
@@ -111,7 +109,10 @@ export default function ProfileScreen() {
               </Text>
             </View>
             <View style={styles.logoutContainer}>
-              <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
+              <TouchableOpacity
+                style={styles.logoutButton}
+                onPress={handleLogout}
+              >
                 <Text style={styles.btnText}>Logout</Text>
               </TouchableOpacity>
             </View>
@@ -256,4 +257,3 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
   },
 });
-
