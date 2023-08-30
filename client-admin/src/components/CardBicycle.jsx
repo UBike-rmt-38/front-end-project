@@ -27,9 +27,9 @@ export default function CardBicycle({ bicycle }) {
 
   return (
     <>
-      <div className="card card-compact w-96 bg-white shadow-xl">
+      <div className="card card-compact w-96 flex-grow h-[500px] bg-white mx-4 my-5 shadow-2xl">
         <figure>
-          <img src={bicycle.imageURL} alt="Bicycle" />
+          <img src={bicycle.imageURL} alt="Bicycle" className="h-56"/>
         </figure>
         <div className="card-body">
           <h2 className="card-title text-black h-10">{bicycle.name}</h2>
@@ -38,12 +38,12 @@ export default function CardBicycle({ bicycle }) {
           <div className="card-actions justify-between">
             <Link
               to={`/form/${bicycle.id}`}
-              className="btn bg-purple text-white"
+              className="btn bg-purple-700 text-white border-white hover:bg-purple-400"
               onClick={handleEditClick} 
             >
               Edit
             </Link>
-            <button className="btn btn-error text-white" onClick={handleDelete}>
+            <button className="btn bg-red-600 text-white border-white hover:bg-red-400" onClick={handleDelete}>
               Delete
             </button>
           </div>
