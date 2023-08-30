@@ -21,6 +21,8 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import Carousel from 'react-native-snap-carousel';
 
 export default function HomeScreen() {
+  const [isRefreshing, setIsRefreshing] = useState(false);
+
   const [userLocation, setUserLocation] = useState(null);
   const [currentTime, setCurrentTime] = useState(new Date());
   const [user, setUser] = useState({});
@@ -46,9 +48,17 @@ export default function HomeScreen() {
   } = useQuery(GET_STATIONS);
 
   const handleRefresh = () => {
-    refetchUsers();
-    refetchStations();
+    setIsRefreshing(true);
+    refetchUsers()
+      .then(() => refetchStations())
+      .catch(error => {
+        console.error("Error refreshing data:", error);
+      })
+      .finally(() => {
+        setIsRefreshing(false);
+      });
   };
+
   const getUserLocation = async () => {
     const { status } = await Location.requestForegroundPermissionsAsync();
     if (status === "granted") {
@@ -131,13 +141,11 @@ export default function HomeScreen() {
   };
 
   const stations = stationsData.getStations || [];
-  console.log(stations);
+
   const nearbyStations = stations.filter((station) => {
     const distance = calculateDistance(station.latitude, station.longitude);
     return distance !== null && distance < 900;
   });
-
-  console.log("nearby stations:", nearbyStations);
 
   const getGreeting = () => {
     const currentHour = new Date().getHours();
@@ -150,6 +158,7 @@ export default function HomeScreen() {
       return "Good night, ";
     }
   };
+
   const images = [
     "https://png.pngtree.com/thumb_back/fw800/background/20210417/pngtree-world-bicycle-day-background-with-sun-rays-image_633284.jpg",
     "https://c8.alamy.com/comp/KNW1HR/lets-ride-bicycle-sport-transport-retro-banner-design-KNW1HR.jpg",
@@ -193,7 +202,7 @@ export default function HomeScreen() {
       <ScrollView
         style={styles.scrollContainer}
         refreshControl={
-          <RefreshControl refreshing={false} onRefresh={handleRefresh} />
+          <RefreshControl refreshing={isRefreshing} onRefresh={handleRefresh} />
         }
       >
         <View style={styles.greetingBox}>

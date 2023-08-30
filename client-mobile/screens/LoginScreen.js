@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -8,6 +8,7 @@ import {
   TextInput,
   Image,
   ImageBackground,
+  Dimensions,
 } from "react-native";
 import { FontAwesome } from "@expo/vector-icons";
 import { useDispatch } from "react-redux";
@@ -17,6 +18,8 @@ import { saveAccessToken } from "../helpers/secureStoreAction";
 import { useMutation } from "@apollo/client";
 import { LOGIN } from "../constants/mutation";
 const image = require("../assets/background.png");
+const { height, width } = Dimensions.get("screen");
+
 
 export default function LoginScreen({ navigation }) {
   const [username, setUsername] = useState("");
@@ -28,7 +31,10 @@ export default function LoginScreen({ navigation }) {
       console.log(error);
     },
   });
-
+  useEffect(() => {
+    console.log( width);
+  }, []);
+  
   const handleLogin = async () => {
     try {
       const response = await login({
@@ -124,30 +130,33 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
+    paddingHorizontal: width - 380,
+    marginTop: width - 180,
+    width: width
   },
   item_box: {
-    marginVertical: 30,
+    marginVertical: width - 380,
   },
   label: {
     color: "white",
     fontSize: 25,
     lineHeight: 84,
     fontWeight: "bold",
-    marginLeft: 45,
+    marginLeft: width - 338,
+    marginBottom: width - 380,
   },
   box: {
     alignItems: "center",
     marginBottom: 10,
-    paddingHorizontal: 55
+    paddingHorizontal: width - 400
   },
   icon: {
     marginRight: 30
   },
   inline_box: {
     borderRadius: 50,
-    height: 600,
+    height: 500,
     backgroundColor: "rgba(120, 120, 120, 0.4)",
-    width: "480",
     shadowColor: "#000",
     shadowOffset: {
       height: 30,
@@ -157,15 +166,15 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     borderWidth: 1,
     borderColor: "#808090",
-    width: 490
+    width: width - 2
   },
   input: {
     height: 50,
-    margin: 12,
+    margin: width - 430,
     borderWidth: 1,
     padding: 10,
     backgroundColor: "#ffff",
-    width: 400,
+    width: "70%",
     borderRadius: 10,
     fontSize: 20,
   },
@@ -173,13 +182,10 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
   },
-  item_box: {
-    marginVertical: 30,
-  },
   btn_div: {
     marginTop: 40,
     height: 60,
-    width: "80%",
+    width: "72%",
     marginHorizontal: 50,
     borderRadius: 30,
     backgroundColor: "rgba(128, 128, 128, 0.8)",
@@ -197,8 +203,8 @@ const styles = StyleSheet.create({
   },
   eyeIcon: {
     position: "absolute",
-    top: 25,
-    right: 60,
+    top: width - 468,
+    right: width - 420,
   },
   image: {
     flex: 1,
@@ -220,7 +226,8 @@ const styles = StyleSheet.create({
   signUpText: {
     marginTop: 5,
     fontSize: 20,
-    color: '#ffff',
+    fontWeight: "bold",
+    color: '#4FFFB0',
     textDecorationLine: 'underline',
   },
 });
