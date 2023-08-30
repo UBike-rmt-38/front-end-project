@@ -1,34 +1,50 @@
-import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, Button, Text } from 'react-native';
-import { BarCodeScanner } from 'expo-barcode-scanner';
-import { useMutation } from '@apollo/client';
-import { CREATE_RENTAL } from '../constants/mutation';
-import { useDispatch } from 'react-redux';
-import { setIsRenting } from '../stores/reducers/authSlice';
-import { saveRentingStatus } from '../helpers/secureStoreAction';
-// import { useNavigation } from '@react-navigation/native'; 
+import React, { useState, useEffect } from "react";
+import { View, StyleSheet, Button, Text } from "react-native";
+import { BarCodeScanner } from "expo-barcode-scanner";
+import { useMutation } from "@apollo/client";
+import { CREATE_RENTAL, DONE_RENTAL } from "../constants/mutation";
+import { useDispatch } from "react-redux";
+import { setIsRenting } from "../stores/reducers/authSlice";
+import { saveRentingStatus } from "../helpers/secureStoreAction";
 
-export default function Scanner({ onCloseScanner }) {
+export default function Scanner({
+  onCloseScanner,
+  isRenting,
+  travelledDistance,
+  totalPrice,
+  rentalId
+}) {
   const [hasCameraPermission, setHasCameraPermission] = useState(null);
   const dispatch = useDispatch();
 
-  // const navigation = useNavigation();  
   const [createRental, { data, loading, error }] = useMutation(CREATE_RENTAL, {
     onCompleted: (data) => {
-      alert(`${data}`);
+      // alert(`${data}`);
       dispatch(setIsRenting(true));
-      saveRentingStatus(false)
+      saveRentingStatus("Active");
     },
     onError: (error) => {
       alert(`${error.message}`);
       console.log(error);
-    }
+    },
+  });
+
+  const [doneRental, {}] = useMutation(DONE_RENTAL, {
+    onCompleted: (data) => {
+      console.log("mutation donerental >>>", data);
+      dispatch(setIsRenting(false));
+      saveRentingStatus("Inactive");
+    },
+    onError: (error) => {
+      alert(`${error.message}`);
+      console.log(error);
+    },
   });
 
   useEffect(() => {
     const getCameraPermission = async () => {
       const { status } = await BarCodeScanner.requestPermissionsAsync();
-      setHasCameraPermission(status === 'granted');
+      setHasCameraPermission(status === "granted");
     };
 
     getCameraPermission();
@@ -37,8 +53,22 @@ export default function Scanner({ onCloseScanner }) {
   const handleBarCodeScanned = async ({ type, data }) => {
     // navigation.navigate('Payment');
     // alert(`Bar code with type ${type} and data ${data} has been scanned!`);
-    createRental({ variables: { bicycleToken: data } });
-    onCloseScanner();
+    console.log("scanning ketrigger >>>>", isRenting, data);
+    if (isRenting) {
+      doneRental({
+        variables: {
+          travelledDistance,
+          totalPrice,
+          rentalId,
+          stationToken: data,
+          transaction: "Digital",
+        },
+      });
+      onCloseScanner();
+    } else {
+      createRental({ variables: { bicycleToken: data } });
+      onCloseScanner();
+    }
   };
 
   return (
@@ -63,18 +93,17 @@ export default function Scanner({ onCloseScanner }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   barcodeContainer: {
     width: 300,
     height: 300,
-    overflow: 'hidden',
+    overflow: "hidden",
     borderRadius: 10,
     marginBottom: 20,
     borderWidth: 2,
-    borderColor: '#006241',
-
+    borderColor: "#006241",
   },
   barcodeScanner: {
     ...StyleSheet.absoluteFillObject,

@@ -5,18 +5,8 @@ import { gql, useQuery } from "@apollo/client";
 import Plus from '../components/icons/Plus';
 import CardBicycle from '../components/CardBicycle';
 import { useNavigate } from 'react-router-dom';
+import { GET_BICYCLES } from '../constants/query';
 
-const GET_BICYCLES = gql`
- query GetBicycles {
-  getBicycles {
-    id
-    name
-    imageURL
-    feature
-    status
-  }
-}
-`;
 
 
 export default function BicyclesListPage() {
@@ -26,7 +16,7 @@ export default function BicyclesListPage() {
 
   
   const handleAdd = () => {
-    navigate("/addbicycle")
+    navigate("/form")
   }
   return (
     <>
