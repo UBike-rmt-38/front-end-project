@@ -180,3 +180,15 @@ export const GET_BICYCLE_BY_ID = gql`
     }
   }
 `;
+
+export const GET_STATION_BY_ID = gql`
+  query GetStationsById($stationId: Int) {
+    getStationsById(stationId: $stationId) {
+      id
+      name
+      address
+      latitude
+      longitude
+    }
+  }
+`;
