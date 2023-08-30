@@ -1,19 +1,9 @@
 import { gql } from "@apollo/client";
 
 export const ADD_STATIONS = gql`
-  mutation AddStation(
-    $name: String!
-    $address: String!
-    $latitude: String!
-    $longitude: String!
-  ) {
-    addStation(
-      name: $name
-      address: $address
-      latitude: $latitude
-      longitude: $longitude
-    )
-  }
+mutation AddStation($name: String!, $address: String!, $latitude: Float!, $longitude: Float!) {
+  addStation(name: $name, address: $address, latitude: $latitude, longitude: $longitude)
+}
 `;
 
 export const ADD_BICYCLE = gql`
@@ -75,6 +65,6 @@ mutation DeleteStation($stationId: Int!) {
 
 
 export const EDIT_STATION = gql`
-mutation EditStation($stationId: Int!, $name: String!, $address: String!, $latitude: String!, $longitude: String!) {
+mutation EditStation($stationId: Int!, $name: String!, $address: String!, $latitude: Float!, $longitude: Float!) {
   editStation(stationId: $stationId, name: $name, address: $address, latitude: $latitude, longitude: $longitude)
 }`;

@@ -12,7 +12,7 @@ export default function BicycleForm() {
   const bicycle = {
     name: "",
     feature: "",
-    imageUrl: "",
+    imageURL: "",
     description: "",
     price: 0,
     stationId: "",
@@ -36,7 +36,6 @@ export default function BicycleForm() {
       const updateBicycle = bicycleData.getBicycleById;
       setInput(updateBicycle);
     }
-    console.log(">>>>>", bicycleData);
   }, [bicycleData, id]);
 
 

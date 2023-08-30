@@ -12,7 +12,8 @@ export default function Scanner({
   isRenting,
   travelledDistance,
   totalPrice,
-  rentalId
+  rentalId,
+  transaction
 }) {
   const [hasCameraPermission, setHasCameraPermission] = useState(null);
   const dispatch = useDispatch();
@@ -46,7 +47,7 @@ export default function Scanner({
       const { status } = await BarCodeScanner.requestPermissionsAsync();
       setHasCameraPermission(status === "granted");
     };
-
+    console.log(totalPrice, "<<< di scanner");
     getCameraPermission();
   }, []);
 
@@ -61,7 +62,7 @@ export default function Scanner({
           totalPrice,
           rentalId,
           stationToken: data,
-          transaction: "Digital",
+          transaction,
         },
       });
       onCloseScanner();

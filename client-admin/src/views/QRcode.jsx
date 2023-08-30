@@ -16,14 +16,13 @@ query BicycleQrcode {
 }
 `
 function QRcode() {
-  const { data, loading: isLoading, error } = useQuery(GET_QRCODE);
-  if (error) return `Error! ${error.message}`;
-  if (isLoading) {
-    return <div>
-      <h1>Loading...</h1>
-    </div>
-  }
-  console.log(data.getStationQrCode);
+   const { data, loading: isLoading, error } = useQuery(GET_QRCODE);
+   if (error) return `Error! ${error.message}`;
+   if(isLoading){
+   return <div>
+            <h1>Loading...</h1>
+          </div>
+    }
   return (
     <div >
       {

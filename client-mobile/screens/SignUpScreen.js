@@ -125,7 +125,7 @@ const styles = StyleSheet.create({
     borderRadius: 50,
     height: 600,
     backgroundColor: "rgba(120, 120, 120, 0.4)",
-    width: 480,
+    width: "480",
     shadowColor: "#000",
     shadowOffset: {
       height: 30,
