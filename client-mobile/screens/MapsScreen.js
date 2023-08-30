@@ -28,6 +28,7 @@ import {
   CHECK_RENTALS,
   GET_BICYCLE_BY_ID,
   GET_STATIONS,
+  GET_STATION_BY_ID,
 } from "../constants/query";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { getValueFor, saveRentingStatus } from "../helpers/secureStoreAction";
@@ -50,7 +51,7 @@ export default function MapsScreen() {
   const [showConfirmationModal, setShowConfirmationModal] = useState(false);
   const [selectedStation, setSelectedStation] = useState(null);
   const isRenting = useSelector((state) => state.auth.isRenting);
-  const [route, setRoute] = useState([]); 
+  const [route, setRoute] = useState([]);
   const [BicycleId, setBicycleId] = useState(null); // <=== masuk ke sini
   const [travelledDistance, setTravelledDistance] = useState(0);
   const [estimatedTimeOfArrival, setEstimatedTimeOfArrival] = useState(null);
@@ -58,6 +59,9 @@ export default function MapsScreen() {
   const [StationId, setStationId] = useState(null);
   const [price, setPrice] = useState(0);
   const [rentalId, setRentalId] = useState(null);
+  const [transaction, setTransaction] = useState(null);
+  const [cash, setCash] = useState(0);
+  const [totalPrice, setTotalPrice] = useState();
   const {} = useQuery(GET_STATIONS, {
     onCompleted: (data) => {
       setStations(data.getStations);
@@ -67,7 +71,8 @@ export default function MapsScreen() {
     },
   });
   const dispatch = useDispatch();
-  const {} = useQuery(CHECK_RENTALS, { // ini async juga
+  const {} = useQuery(CHECK_RENTALS, {
+    // ini async juga
     onCompleted: (data) => {
       const isRenting = data.getUsersDetails.Rentals.some(
         (rental) => rental.status === false
@@ -76,27 +81,45 @@ export default function MapsScreen() {
         (rental) => rental.status === false
       );
       if (activeRental) {
-        setRentalId(activeRental.id);
-        setTravelledDistance(activeRental.travelledDistance);
-        setBicycleId(activeRental.BicycleId); // sementara BicycleId didapat dari sini
+        setRentalId(activeRental[0].id);
+        setTravelledDistance(activeRental[0].travelledDistance);
+        console.log(activeRental[0].BicycleId, "<<<< check rental bicycleId");
+        setBicycleId(activeRental[0].BicycleId); // sementara BicycleId didapat dari sini
+        refetch({ bicycleId: activeRental[0].BicycleId });
         setBalance(data.getUsersDetails.balance);
       }
+      console.log(isRenting, "<<<< check rental");
       dispatch(setIsRenting(isRenting));
       if (isRenting) saveRentingStatus("Active");
-      else saveRentingStatus("Inactive");
+      else {
+        saveRentingStatus("Inactive");
+        getUserLocation();
+      }
     },
   });
 
-  const {} = useQuery(GET_BICYCLE_BY_ID, { // bug di sini, useQuery async
+  const { refetch } = useQuery(GET_BICYCLE_BY_ID, {
+    // bug di sini, useQuery async
     variables: {
       bicycleId: BicycleId,
     },
-    skip: !BicycleId,
     onCompleted: (data) => {
-      setPrice(data.getBicycleById);
-      setStationId(data.price);
+      // console.log(data.getBicycleById.price, "<<<< useQuery GET_BICYCLE_BY_ID");
+      setPrice(data.getBicycleById.price);
+      setStationId(data.getBicycleById.StationId);
+      refetchStation({ stationId: data.getBicycleById.StationId });
+      // console.log(travelledDistance, price, "<<<< useQuery GET_BICYCLE_BY_ID")
     },
   });
+
+  const { data: station, refetch: refetchStation } = useQuery(
+    GET_STATION_BY_ID,
+    {
+      onCompleted: (data) => {
+        getUserLocation();
+      },
+    }
+  );
 
   const getIsRenting = async () => {
     try {
@@ -127,10 +150,9 @@ export default function MapsScreen() {
   };
 
   useEffect(() => {
-    getUserLocation();
     updateNearestStations();
     getIsRenting();
-  }, [stations]);
+  }, [stations, BicycleId, station]);
 
   const moveToSelectedStation = () => {
     if (userLocation && selectedStation && route.length > 0 && !isRenting) {
@@ -206,7 +228,6 @@ export default function MapsScreen() {
       Animated.sequence(animations).start(() => {
         // Animation sequence complete
         setRoute([]);
-        openScanner();
       });
 
       closeConfirmationModal();
@@ -291,6 +312,25 @@ export default function MapsScreen() {
 
   const getUserLocation = async () => {
     try {
+      if (station) {
+        setUserLocation(
+          new AnimatedRegion({
+            latitude: station.getStationsById.latitude,
+            longitude: station.getStationsById.longitude,
+          })
+        );
+        updateNearestStations(
+          station.getStationsById.latitude,
+          station.getStationsById.longitude
+        );
+        mapRef.current.animateToRegion({
+          latitude: station.getStationsById.latitude,
+          longitude: station.getStationsById.longitude,
+          latitudeDelta: 0.0022,
+          longitudeDelta: 0.0021,
+        });
+        return;
+      }
       const { status } = await Location.requestForegroundPermissionsAsync();
       if (status === "granted") {
         const location = await Location.getCurrentPositionAsync();
@@ -388,10 +428,33 @@ export default function MapsScreen() {
         })
       );
       setRoute(formattedRoute);
+      setTotalPrice((response.data.routes[0].distanceMeters * price) / 10000);
     } catch (error) {
       console.log(error);
     }
   };
+
+  let displayTravelledDistance = "";
+
+  if (travelledDistance >= 1000) {
+    const km = travelledDistance / 1000;
+    displayTravelledDistance = `${km.toFixed(1)} Km`;
+  } else {
+    displayTravelledDistance = `${travelledDistance} m`;
+  }
+
+  const handleCashChange = (text) => {
+    const cashValue = parseInt(text);
+    setCash(cashValue);
+  };
+
+  useEffect(() => {
+    if (travelledDistance && price) {
+      const newTotalPrice = (travelledDistance * price) / 10000 - cash;
+      console.log(newTotalPrice, "<<<< useEffect")
+      setTotalPrice(newTotalPrice);
+    }
+  }, [cash, travelledDistance, price]);
 
   return (
     <View style={styles.container}>
@@ -507,12 +570,30 @@ export default function MapsScreen() {
         //   <Text style={{ color: "white" }}>renting</Text>
         // </View>
         <TouchableOpacity style={styles.scanButton} onPress={openScanner}>
-          <Text style={styles.buttonText}>Rent Bike</Text>
+          <Ionicons
+            name="scan-circle-outline"
+            strokeWidth={8}
+            size={32}
+            color="#FFFFFF"
+          />
+          <Text style={styles.buttonText}>Station</Text>
         </TouchableOpacity>
       ) : (
+        // <TouchableOpacity style={styles.scanButton} onPress={openScanner}>
+        //   <Text style={styles.buttonText}>Rent Bike</Text>
+        // </TouchableOpacity>
         <TouchableOpacity style={styles.scanButton} onPress={openScanner}>
-          <Text style={styles.buttonText}>Rent Bike</Text>
+          <Ionicons
+            name="scan-circle-outline"
+            strokeWidth={8}
+            size={32}
+            color="#FFFFFF"
+          />
+          <Text style={styles.buttonText}>Bike</Text>
         </TouchableOpacity>
+        // <TouchableOpacity style={styles.scanButton} onPress={openScanner}>
+        //   <Text style={styles.buttonText}>Rent Bike</Text>
+        // </TouchableOpacity>
       )}
 
       <Modal visible={showScanner} animationType="slide" transparent={false}>
@@ -521,8 +602,9 @@ export default function MapsScreen() {
             onCloseScanner={closeScanner}
             isRenting={isRenting}
             travelledDistance={travelledDistance}
-            totalPrice={(travelledDistance * price) / 10000}
+            totalPrice={totalPrice}
             rentalId={rentalId}
+            transaction={transaction}
           />
         </View>
       </Modal>
@@ -556,12 +638,54 @@ export default function MapsScreen() {
                 <Text>No</Text>
               </TouchableOpacity>
             </View>
-            <View>
+            <View style={{ flexDirection: "column", gap: 2 }}>
               <Text>Balance: Rp{balance}</Text>
-              <Text>Estimated Distance: {travelledDistance}</Text>
+              <Text>Estimated Distance: {displayTravelledDistance}</Text>
               <Text>
-                Estimated Price: {(travelledDistance * price) / 10000}
+                Estimated Price: Rp{(travelledDistance * price) / 10000}
               </Text>
+              <View
+                style={{ flexDirection: "row", gap: 20, marginVertical: 5 }}
+              >
+                <TouchableOpacity
+                  onPress={() => setTransaction("Digital")}
+                  style={[
+                    styles.paymentButton,
+                    transaction === "Digital" && styles.activePaymentButton,
+                  ]}
+                >
+                  <Text style={styles.paymentButtonText}>Digital</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={() => setTransaction("Cash")}
+                  style={[
+                    styles.paymentButton,
+                    transaction === "Cash" && styles.activePaymentButton,
+                  ]}
+                >
+                  <Text style={styles.paymentButtonText}>Cash</Text>
+                </TouchableOpacity>
+              </View>
+              {transaction === "Cash" && (
+                <View>
+                  <Text>Cash</Text>
+                  <TextInput
+                    keyboardType="numeric"
+                    placeholder="Enter cash amount"
+                    value={parseInt(cash)}
+                    onChange={handleCashChange}
+                    style={{
+                      width: 300,
+                      height: 40,
+                      borderColor: "gray",
+                      borderWidth: 1,
+                      borderRadius: 5,
+                      paddingHorizontal: 10,
+                      marginBottom: 20,
+                    }}
+                  />
+                </View>
+              )}
             </View>
           </View>
           {/* </View> */}
@@ -672,9 +796,10 @@ const styles = StyleSheet.create({
   },
   scanButton: {
     position: "absolute",
+    alignItems: "center",
     bottom: 50,
     left: 125,
-    backgroundColor: "blue",
+    backgroundColor: "#4FFFB0",
     borderRadius: 40,
     paddingVertical: 10,
     paddingHorizontal: 20,
@@ -726,5 +851,39 @@ const styles = StyleSheet.create({
     backgroundColor: "red",
     padding: 10,
     borderRadius: 5,
+  },
+  paymentButton: {
+    backgroundColor: "rgba(120, 120, 120, 0.4)",
+    shadowColor: "#000",
+    shadowOffset: {
+      height: 30,
+      width: 30,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    borderWidth: 1,
+    borderColor: "#808090",
+    alignItems: "center",
+    justifyContent: "center",
+    // backgroundColor: "#808080",
+    padding: 15,
+    width: 100,
+    height: 60,
+    borderRadius: 90,
+  },
+  paymentButtonText: {
+    color: "#ffff",
+    fontWeight: "bold",
+    // fontSize: 26,
+    // marginHorizontal: 30,
+
+    color: "white",
+    // textAlign: "left",
+    // fontWeight: "bold",
+    fontSize: 20,
+  },
+  activePaymentButton: {
+    borderColor: "#4FFFB0",
+    borderWidth: 2,
   },
 });

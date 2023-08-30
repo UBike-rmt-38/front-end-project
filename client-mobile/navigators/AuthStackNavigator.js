@@ -23,7 +23,6 @@ export default function AuthStackNavigator() {
   const getIsSignedIn = async () => {
     try {
       const access_token = await getValueFor("access_token");
-      console.log(access_token);
       if (!access_token) throw { message: "access_token not found" };
       dispatch(setIsSignedIn(true));
     } catch (error) {
