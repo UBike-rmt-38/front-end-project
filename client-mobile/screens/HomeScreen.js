@@ -8,6 +8,7 @@ import {
   Image,
   ScrollView,
   ActivityIndicator,
+  RefreshControl,
 } from "react-native";
 import * as Location from "expo-location";
 import { Distance } from "../components/Distance";
@@ -24,6 +25,7 @@ export default function HomeScreen() {
     loading: usersLoading,
     error: usersError,
     data,
+    refetch: refetchUsers
   } = useQuery(GET_USERS_DETAIL, {
     onCompleted: (data) => {
       setUser(data.getUsersDetails);
@@ -36,8 +38,14 @@ export default function HomeScreen() {
     loading: stationsLoading,
     error: stationsError,
     data: stationsData,
+    refetch: refetchStations
   } = useQuery(GET_STATIONS);
 
+  
+  const handleRefresh = () => {
+    refetchUsers();
+    refetchStations();
+  };
   const getUserLocation = async () => {
     const { status } = await Location.requestForegroundPermissionsAsync();
     if (status === "granted") {
@@ -165,7 +173,10 @@ export default function HomeScreen() {
         </TouchableOpacity>
       </View>
 
-      <ScrollView style={styles.scrollContainer}>
+      <ScrollView style={styles.scrollContainer}
+        refreshControl={
+          <RefreshControl refreshing={false} onRefresh={handleRefresh} />
+        }>
         <View style={styles.greetingBox}>
           <Text style={styles.dateText}>{formattedDate}</Text>
           <Text style={styles.timeText}>

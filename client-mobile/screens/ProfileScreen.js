@@ -35,24 +35,15 @@ export default function ProfileScreen() {
     navigation.navigate("ChangePassword");
   };
 
-const navigation = useNavigation();
-
-const handleEdit = () => {
-  navigation.navigate('ChangePassword'); 
-};
-
-const dispatch = useDispatch();
-const handleLogout = async () => {
-  try {
-    await SecureStore.deleteItemAsync("access_token");
-    dispatch(setIsSignedIn(false));
-  } catch (error) {
-    console.log(error);
-  }
-};
-
-const user = data.getUsersDetails;
-
+  const dispatch = useDispatch();
+  const handleLogout = async () => {
+    try {
+      await SecureStore.deleteItemAsync("access_token");
+      dispatch(setIsSignedIn(false));
+    } catch (error) {
+      console.log(error);
+    }
+  };
   return (
     <>
       <StatusBar barStyle="light-content" backgroundColor="#000" />
@@ -122,15 +113,7 @@ const user = data.getUsersDetails;
                 Transaction
               </Text>
             </View>
-            <View style={{ marginTop: 30 }}>
-              <Text style={{ color: '#80FFCC', fontSize: 20 }}>Phone</Text>
-              <Text style={{ color: 'white', fontSize: 20 }}>0987654321</Text>
-            </View>
-            <View style={{ marginTop: 50 }}>
-              <TouchableOpacity style={styles.btn}  onPress={handleEdit}>
-                <Text style={{ fontSize: 20, fontWeight: 'bold' }}>Change Password</Text>
-              </TouchableOpacity>
-              <View style={styles.logoutContainer}>
+            <View style={styles.logoutContainer}>
               <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
                 <Text style={styles.btnText}>Logout</Text>
               </TouchableOpacity>
@@ -275,3 +258,4 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10
   },
 });
+
