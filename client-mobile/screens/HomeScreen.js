@@ -11,22 +11,44 @@ import {
 import * as Location from "expo-location";
 import { Distance } from "../components/Distance";
 import { useNavigation } from "@react-navigation/native";
+import { useQuery } from "@apollo/client";
+import { GET_STATIONS, GET_USERS_DETAIL } from "../constants/query";
 
-export default function HomeScreen({ navigation }) {
+export default function HomeScreen() {
   const [userLocation, setUserLocation] = useState(null);
-  const [stations, setStations] = useState([]);
-
   const [currentTime, setCurrentTime] = useState(new Date());
-  // const navigation = useNavigation();
+  const [user, setUser] = useState({});
+  const navigation = useNavigation();
+  const {
+    loading: usersLoading,
+    error: usersError,
+    data,
+  } = useQuery(GET_USERS_DETAIL, {
+    onCompleted: (data) => {
+      setUser(data.getUsersDetails);
+    },
+    onError: (error) => {
+      console.log(error);
+    },
+  });
+  const {
+    loading: stationsLoading,
+    error: stationsError,
+    data: stationsData,
+  } = useQuery(GET_STATIONS);
+
+  const getUserLocation = async () => {
+    const { status } = await Location.requestForegroundPermissionsAsync();
+    if (status === "granted") {
+      const location = await Location.getCurrentPositionAsync({});
+      setUserLocation(location);
+    } else {
+      console.error("Permission to access location was denied");
+    }
+  };
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentTime(new Date());
-    }, 1000);
-
-    return () => {
-      clearInterval(interval);
-    };
+    getUserLocation();
   }, []);
 
   const daysOfWeek = [
@@ -46,50 +68,45 @@ export default function HomeScreen({ navigation }) {
     month < 10 ? "0" + month : month
   }`;
 
-  const apiUrl = `http://192.168.0.56:3000/Stations`;
-
-  const fetchStations = async () => {
-    try {
-      const response = await fetch(apiUrl);
-      const data = await response.json();
-      setStations(data);
-    } catch (error) {
-      console.error("Error fetching stations:", error);
-    }
-  };
-
-  const getUserLocation = async () => {
-    const { status } = await Location.requestForegroundPermissionsAsync();
-    if (status === "granted") {
-      const location = await Location.getCurrentPositionAsync({});
-      setUserLocation(location);
-    } else {
-      console.error("Permission to access location was denied");
-    }
-  };
-
   useEffect(() => {
+    const getUserLocation = async () => {
+      const { status } = await Location.requestForegroundPermissionsAsync();
+      if (status === "granted") {
+        const location = await Location.getCurrentPositionAsync({});
+        setUserLocation(location);
+      } else {
+        console.error("Permission to access location was denied");
+      }
+    };
+
     getUserLocation();
-    fetchStations();
   }, []);
 
-  if (!userLocation) {
-    return <Text>Loading...</Text>;
-  }
+  if (usersLoading || stationsLoading) return <Text>Loading...</Text>;
+  if (usersError || stationsError)
+    return <Text>Error: {usersError?.message || stationsError?.message}</Text>;
 
-  const calculateDistance = (latitude, longitude) => {
-    return Distance(
-      userLocation.coords.latitude,
-      userLocation.coords.longitude,
-      latitude,
-      longitude
-    );
+  const calculateDistance = (lat, lon) => {
+    if (userLocation) {
+      const distance = Distance(
+        userLocation.coords.latitude,
+        userLocation.coords.longitude,
+        lat,
+        lon
+      );
+      return distance;
+    }
+    return null;
   };
 
+  const stations = stationsData.getStations || [];
+  console.log(stations);
   const nearbyStations = stations.filter((station) => {
     const distance = calculateDistance(station.latitude, station.longitude);
     return distance !== null && distance < 900;
   });
+
+  console.log("nearby stations:", nearbyStations);
 
   const getGreeting = () => {
     const currentHour = new Date().getHours();
@@ -111,10 +128,6 @@ export default function HomeScreen({ navigation }) {
     navigation.navigate("TopUp");
   };
 
-  const navigateToMaps = () => {
-    navigation.navigate("Maps");
-  };
-
   return (
     <ImageBackground
       source={require("../assets/background.png")}
@@ -131,14 +144,19 @@ export default function HomeScreen({ navigation }) {
             margin: 10,
           }}
         />
-        <View style={styles.icon}>
+        <TouchableOpacity
+          onPress={() => {
+            navigation.navigate("Profile");
+          }}
+          style={styles.icon}
+        >
           <Image
             source={{
               uri: "https://twirpz.files.wordpress.com/2015/06/twitter-avi-gender-balanced-figure.png",
             }}
             style={styles.iconImage}
           />
-        </View>
+        </TouchableOpacity>
       </View>
 
       <ScrollView style={styles.scrollContainer}>
@@ -153,7 +171,7 @@ export default function HomeScreen({ navigation }) {
         <View style={styles.container}>
           <View style={styles.box}>
             <Text style={styles.header}>Balance</Text>
-            <Text style={styles.balance}>$100.00</Text>
+            <Text style={styles.balance}>Rp. {user.balance}</Text>
             <TouchableOpacity
               style={styles.topUpButton}
               onPress={handleTopupPress}
@@ -170,32 +188,28 @@ export default function HomeScreen({ navigation }) {
               />
             ))}
           </ScrollView>
-
           <View style={styles.overlay}>
             <Text style={styles.header}>Stations near me:</Text>
             <ScrollView>
-              {nearbyStations.map((item) => (
-                <View key={item.id} style={styles.stationContainer}>
-                  <Text style={styles.stationName}>{item.name}</Text>
-                  <Text style={styles.stationDistance}>
-                    {` ${calculateDistance(
-                      item.latitude,
-                      item.longitude
-                    ).toFixed()} m`}
-                  </Text>
-                  <Text style={styles.stationCategory}>
-                    Available bikes: Kategori A
-                  </Text>
-                </View>
-              ))}
+              {userLocation &&
+                nearbyStations.map((item) => (
+                  <View key={item.id} style={styles.stationContainer}>
+                    <Text style={styles.stationName}>{item.name}</Text>
+                    <Text style={styles.stationDistance}>
+                      {` ${calculateDistance(
+                        item.latitude,
+                        item.longitude
+                      ).toFixed()} m`}
+                    </Text>
+                    <Text style={styles.bicyclesCategory}>
+                      Available bikes:{" "}
+                      {item.Bicycles.map((bike) => bike.name).join(", ")}
+                    </Text>
+                  </View>
+                ))}
             </ScrollView>
           </View>
         </View>
-        <TouchableOpacity onPress={navigateToMaps} style={styles.button}>
-          <View>
-            <Text style={styles.buttonText}>Go to Stations</Text>
-          </View>
-        </TouchableOpacity>
       </ScrollView>
     </ImageBackground>
   );
@@ -242,14 +256,6 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     alignItems: "center",
   },
-  button: {
-    justifyContent: "center",
-    backgroundColor: "#808080",
-    padding: 15,
-    width: 330,
-    height: 60,
-    borderRadius: 90,
-  },
   buttonText: {
     color: "white",
     fontSize: 16,
@@ -275,7 +281,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: "#666666",
   },
-  stationCategory: {
+  bicyclesCategory: {
     fontSize: 14,
     color: "green",
     marginTop: 8,
