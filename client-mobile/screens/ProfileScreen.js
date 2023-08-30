@@ -35,23 +35,15 @@ export default function ProfileScreen() {
     navigation.navigate("ChangePassword");
   };
 
-const navigation = useNavigation();
-
-const handleEdit = () => {
-  navigation.navigate('ChangePassword'); 
-};
-
-const dispatch = useDispatch();
-const handleLogout = async () => {
-  try {
-    await SecureStore.deleteItemAsync("access_token");
-    dispatch(setIsSignedIn(false));
-  } catch (error) {
-    console.log(error);
-  }
-};
-
-const user = data.getUsersDetails;
+  const dispatch = useDispatch();
+  const handleLogout = async () => {
+    try {
+      await SecureStore.deleteItemAsync("access_token");
+      dispatch(setIsSignedIn(false));
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   return (
     <>
@@ -85,53 +77,42 @@ const user = data.getUsersDetails;
                 </View>
               </View>
             </View>
+          </View>
+          <View style={styles.infoContainer}>
+            <Text style={styles.infoHeading}>Fullname</Text>
+            <Text style={styles.infoText}>{user.username}</Text>
+          </View>
+          <View style={styles.infoContainer}>
+            <Text style={styles.infoHeading}>Email</Text>
+            <Text style={styles.infoText}>{user.email}</Text>
+          </View>
+          <View style={styles.infoContainer}>
+            <Text style={styles.infoHeading}>Phone</Text>
+            <Text style={styles.infoText}>0987654321</Text>
+          </View>
+          <View style={styles.balanceContainer}>
+            <Text style={styles.balanceHeading}>My Balance</Text>
+            <View style={styles.balanceContent}>
+              <Text style={styles.infoText}>Rp. {user.balance}</Text>
+              <TouchableOpacity>
+                <Text style={styles.topUp}>TOP UP</Text>
+              </TouchableOpacity>
             </View>
-            <View style={styles.infoContainer}>
-              <Text style={styles.infoHeading}>Fullname</Text>
-              <Text style={styles.infoText}>{user.username}</Text>
-            </View>
-            <View style={styles.infoContainer}>
-              <Text style={styles.infoHeading}>Email</Text>
-              <Text style={styles.infoText}>{user.email}</Text>
-            </View>
-            <View style={styles.infoContainer}>
-              <Text style={styles.infoHeading}>Phone</Text>
-              <Text style={styles.infoText}>0987654321</Text>
-            </View>
-            <View style={styles.balanceContainer}>
-              <Text style={styles.balanceHeading}>My Balance</Text>
-              <View style={styles.balanceContent}>
-                <Text style={styles.infoText}>Rp. {user.balance}</Text>
-                <TouchableOpacity>
-                  <Text style={styles.topUp}>TOP UP</Text>
-                </TouchableOpacity>
-              </View>
             <View style={styles.actionContainer}>
-              <Text
-                style={styles.actionText}
-                onPress={handleHistory}
-              >
+              <Text style={styles.actionText} onPress={handleHistory}>
                 Rent history
               </Text>
             </View>
             <View style={styles.actionContainer}>
-              <Text
-                style={styles.actionText}
-                onPress={handleTransaction}
-              >
+              <Text style={styles.actionText} onPress={handleTransaction}>
                 Transaction
               </Text>
             </View>
-            <View style={{ marginTop: 30 }}>
-              <Text style={{ color: '#80FFCC', fontSize: 20 }}>Phone</Text>
-              <Text style={{ color: 'white', fontSize: 20 }}>0987654321</Text>
-            </View>
-            <View style={{ marginTop: 50 }}>
-              <TouchableOpacity style={styles.btn}  onPress={handleEdit}>
-                <Text style={{ fontSize: 20, fontWeight: 'bold' }}>Change Password</Text>
-              </TouchableOpacity>
-              <View style={styles.logoutContainer}>
-              <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
+            <View style={styles.logoutContainer}>
+              <TouchableOpacity
+                style={styles.logoutButton}
+                onPress={handleLogout}
+              >
                 <Text style={styles.btnText}>Logout</Text>
               </TouchableOpacity>
             </View>
@@ -251,7 +232,7 @@ const styles = StyleSheet.create({
     color: "white",
     fontSize: 17,
     marginTop: 2,
-    marginLeft: 10
+    marginLeft: 10,
   },
   actionContainer: {
     marginTop: 30,
@@ -272,6 +253,6 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "black",
     marginTop: 10,
-    paddingHorizontal: 10
+    paddingHorizontal: 10,
   },
 });
