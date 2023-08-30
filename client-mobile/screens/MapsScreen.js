@@ -52,7 +52,7 @@ export default function MapsScreen() {
   const [selectedStation, setSelectedStation] = useState(null);
   const isRenting = useSelector((state) => state.auth.isRenting);
   const [route, setRoute] = useState([]);
-  const [BicycleId, setBicycleId] = useState(null); // <=== masuk ke sini
+  const [BicycleId, setBicycleId] = useState(null);
   const [travelledDistance, setTravelledDistance] = useState(0);
   const [estimatedTimeOfArrival, setEstimatedTimeOfArrival] = useState(null);
   const [balance, setBalance] = useState(0);
@@ -72,7 +72,6 @@ export default function MapsScreen() {
   });
   const dispatch = useDispatch();
   const {} = useQuery(CHECK_RENTALS, {
-    // ini async juga
     onCompleted: (data) => {
       const isRenting = data.getUsersDetails.Rentals.some(
         (rental) => rental.status === false
@@ -84,7 +83,7 @@ export default function MapsScreen() {
         setRentalId(activeRental[0].id);
         setTravelledDistance(activeRental[0].travelledDistance);
         console.log(activeRental[0].BicycleId, "<<<< check rental bicycleId");
-        setBicycleId(activeRental[0].BicycleId); // sementara BicycleId didapat dari sini
+        setBicycleId(activeRental[0].BicycleId);
         refetch({ bicycleId: activeRental[0].BicycleId });
         setBalance(data.getUsersDetails.balance);
       }
@@ -99,7 +98,6 @@ export default function MapsScreen() {
   });
 
   const { refetch } = useQuery(GET_BICYCLE_BY_ID, {
-    // bug di sini, useQuery async
     variables: {
       bicycleId: BicycleId,
     },
@@ -454,15 +452,17 @@ export default function MapsScreen() {
   }
 
   const handleCashChange = (text) => {
+    // console.log(text, typeof text, "<<<< text")
     const cashValue = parseInt(text);
+    // console.log(cashValue, typeof cashValue, "<<<< onChangeText")
     setCash(cashValue);
   };
 
   useEffect(() => {
     if (travelledDistance && price) {
-      const newTotalPrice = (travelledDistance * price) / 10000 - cash;
-      console.log(newTotalPrice, "<<<< useEffect")
-      setTotalPrice(newTotalPrice);
+      const newTotalPrice = (+travelledDistance * +price) / 10000 - Number(cash);
+      console.log(newTotalPrice, travelledDistance, price, cash, "<<<< useEffect")
+      setTotalPrice(+newTotalPrice);
     }
   }, [cash, travelledDistance, price]);
 
@@ -539,7 +539,9 @@ export default function MapsScreen() {
             // ref={(marker) => {
             //   setMyMarker(marker);
             // }}
-          />
+          >
+
+          </MarkerAnimated>
         )}
         {filteredStations.map((station) => (
           <MapsPin
@@ -687,7 +689,7 @@ export default function MapsScreen() {
                     keyboardType="numeric"
                     placeholder="Enter cash amount"
                     value={parseInt(cash)}
-                    onChange={handleCashChange}
+                    onChangeText={handleCashChange}
                     style={{
                       width: 300,
                       height: 40,
@@ -817,6 +819,7 @@ const styles = StyleSheet.create({
     borderRadius: 40,
     paddingVertical: 10,
     paddingHorizontal: 20,
+    zIndex: 100
   },
   rentingStatus: {
     position: "absolute",
