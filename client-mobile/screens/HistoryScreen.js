@@ -1,5 +1,12 @@
 import React from "react";
-import { View, Text, FlatList, StyleSheet, Image, ActivityIndicator } from "react-native";
+import {
+  View,
+  Text,
+  FlatList,
+  StyleSheet,
+  Image,
+  ActivityIndicator,
+} from "react-native";
 import { useQuery } from "@apollo/client";
 import { GET_USERS_DETAILS, GET_BICYCLES } from "../constants/query";
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
@@ -76,8 +83,8 @@ export default function HistoryScreen() {
   return (
     <Tab.Navigator
       screenOptions={{
-        tabBarLabelStyle: { paddingTop: 25, fontSize: 14, fontWeight: "bold" },
-        tabBarStyle: { backgroundColor: "#28E9C3", height: 80 },
+        tabBarLabelStyle: { paddingTop: 50, fontSize: 14, fontWeight: "bold" },
+        tabBarStyle: { backgroundColor: "#28E9C3", height: 100 },
         tabBarIndicatorStyle: { backgroundColor: "#07A384" },
       }}
     >
@@ -117,10 +124,10 @@ const Messages = ({ status }) => (
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 16,
     backgroundColor: "#F4F4F4",
   },
   itemContainer: {
+    margin: 16,
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
@@ -172,6 +179,6 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#F4F4F4",
+    backgroundColor: "#",
   },
 });
