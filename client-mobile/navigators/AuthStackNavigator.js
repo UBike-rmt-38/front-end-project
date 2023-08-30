@@ -46,7 +46,7 @@ export default function AuthStackNavigator() {
     >
       {isSignedIn ? (
         <>
-          {/* <Stack.Screen
+          <Stack.Screen
             options={{ headerShown: false }}
             name="Home"
             component={HomeScreen}
@@ -72,10 +72,10 @@ export default function AuthStackNavigator() {
             component={HistoryScreen}
           />
           <Stack.Screen
-            options={{ headerShown: false }}
+            // options={{ headerShown: false }}
             name="Maps"
             component={MapsScreen}
-          /> */}
+          />
           <Stack.Screen
           options={{headerTitle: "Change Password"}}
           name="ChangePassword"

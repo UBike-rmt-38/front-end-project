@@ -4,24 +4,34 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { setContext } from "@apollo/client/link/context";
 import { useQuery } from '@apollo/client';
 import { GET_USERS_DETAIL } from '../constants/query';
+import { useNavigation } from '@react-navigation/native';
+import * as SecureStore from "expo-secure-store";
+import { setIsSignedIn } from "../stores/reducers/authSlice";
+import { useDispatch, useSelector } from "react-redux";
+
 
 
 export default function ProfileScreen() {
-
-  const auth = setContext(async (_, { headers }) => {
-    const token = await AsyncStorage.getItem('access_token'); 
-    return {
-      headers: {
-        ...headers,
-        Authorization: token,
-      },
-    };
-  });
-  
-  const { loading, error, data } = useQuery(GET_USERS_DETAIL);
+const { loading, error, data } = useQuery(GET_USERS_DETAIL);
 
 if (loading) return <Text>Loading...</Text>;
 if (error) return <Text>Error: {error.message}</Text>;
+
+const navigation = useNavigation();
+
+const handleEdit = () => {
+  navigation.navigate('ChangePassword'); 
+};
+
+const dispatch = useDispatch();
+const handleLogout = async () => {
+  try {
+    await SecureStore.deleteItemAsync("access_token");
+    dispatch(setIsSignedIn(false));
+  } catch (error) {
+    console.log(error);
+  }
+};
 
 const user = data.getUsersDetails;
   return (
@@ -75,8 +85,11 @@ const user = data.getUsersDetails;
               <Text style={{ color: 'white', fontSize: 20 }}>0987654321</Text>
             </View>
             <View style={{ marginTop: 50 }}>
-              <TouchableOpacity style={styles.btn}>
-                <Text style={{ fontSize: 20, fontWeight: 'bold' }}>EDIT</Text>
+              <TouchableOpacity style={styles.btn}  onPress={handleEdit}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold' }}>Change Password</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.btn} onPress={handleLogout}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold' }}>Logout</Text>
               </TouchableOpacity>
             </View>
           </View>
