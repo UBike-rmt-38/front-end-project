@@ -131,6 +131,8 @@ export const GET_USERS_DETAILS = gql`
         action
         amount
         UserId
+        createdAt
+        updatedAt
       }
     }
   }
