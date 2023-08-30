@@ -16,22 +16,21 @@ query BicycleQrcode {
 }
 `
 function QRcode() {
-    const { data, loading: isLoading, error } = useQuery(GET_QRCODE);
-    if (error) return `Error! ${error.message}`;
-    if(isLoading){
-        return <div>
-            <h1>Loading...</h1>
-        </div>
-    }
-    console.log(data.getStationQrCode);
+  const { data, loading: isLoading, error } = useQuery(GET_QRCODE);
+  if (error) return `Error! ${error.message}`;
+  if (isLoading) {
+    return <div>
+      <h1>Loading...</h1>
+    </div>
+  }
+  console.log(data.getStationQrCode);
   return (
     <div >
-        <h1>QRcode</h1>
-{
-    data.getStationQrCode.map(e => {
-        return <CardQRcode data={e} key={e.id}  style={{backgroundColor:'#394452'}}/>
-    })
-}
+      {
+        data.getStationQrCode.map(e => {
+          return <CardQRcode data={e} key={e.id} style={{ backgroundColor: '#394452' }} />
+        })
+      }
     </div>
   )
 }
