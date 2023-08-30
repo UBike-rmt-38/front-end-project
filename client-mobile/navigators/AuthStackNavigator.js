@@ -12,6 +12,7 @@ import ProfileScreen from "../screens/ProfileScreen";
 import HomeScreen from "../screens/HomeScreen";
 import TopUpScreen from "../screens/TopUpScreen";
 import SignUpScreen from "../screens/SignUpScreen";
+import ChangePassword from "../screens/ChangePassword";
 
 const Stack = createNativeStackNavigator();
 
@@ -21,6 +22,7 @@ export default function AuthStackNavigator() {
   const getIsSignedIn = async () => {
     try {
       const access_token = await getValueFor("access_token");
+      console.log(access_token);
       if (!access_token) throw { message: "access_token not found" };
       dispatch(setIsSignedIn(true));
     } catch (error) {
@@ -31,7 +33,7 @@ export default function AuthStackNavigator() {
 
   useEffect(() => {
     getIsSignedIn();
-  }, []);
+  }, [isSignedIn]);
 
   return (
     <Stack.Navigator
@@ -44,7 +46,7 @@ export default function AuthStackNavigator() {
     >
       {isSignedIn ? (
         <>
-          {/* <Stack.Screen
+          <Stack.Screen
             options={{ headerShown: false }}
             name="Home"
             component={HomeScreen}
@@ -68,11 +70,16 @@ export default function AuthStackNavigator() {
             options={{ headerShown: false }}
             name="History"
             component={HistoryScreen}
-          /> */}
+          />
           <Stack.Screen
             options={{ headerShown: false }}
             name="Maps"
             component={MapsScreen}
+          /> */}
+          <Stack.Screen
+          options={{headerTitle: "Change Password"}}
+          name="ChangePassword"
+          component={ChangePassword}
           />
         </>
       ) : (

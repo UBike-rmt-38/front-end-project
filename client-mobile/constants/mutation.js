@@ -18,6 +18,11 @@ export const CREATE_USER = gql`
   }
 `;
 
+export const CHANGE_PASSWORD = gql`
+mutation Mutation($oldPassword: String!, $newPassword: String!) {
+  changePassword(oldPassword: $oldPassword, newPassword: $newPassword)
+}
+
 export const DONE_RENTAL = gql`
   mutation Mutation(
     $travelledDistance: Int!

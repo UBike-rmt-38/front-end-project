@@ -513,9 +513,12 @@ export default function MapsScreen() {
         )}
       </MapView>
       {isRenting ? (
-        <View style={styles.rentingStatus}>
-          <Text style={{ color: "white" }}>renting</Text>
-        </View>
+        // <View style={styles.rentingStatus}>
+        //   <Text style={{ color: "white" }}>renting</Text>
+        // </View>
+        <TouchableOpacity style={styles.scanButton} onPress={openScanner}>
+          <Text style={styles.buttonText}>Rent Bike</Text>
+        </TouchableOpacity>
       ) : (
         <TouchableOpacity style={styles.scanButton} onPress={openScanner}>
           <Text style={styles.buttonText}>Rent Bike</Text>
@@ -608,7 +611,7 @@ export default function MapsScreen() {
               </TouchableOpacity>
             </View>
             <FlatList
-              data={selectedStation.Bicycles}
+              data={selectedStation?.Bicycles}
               keyExtractor={(item) => item.id}
               renderItem={({ item }) => (
                 <View style={{ alignItems: "center", marginVertical: 5 }}>

@@ -31,6 +31,7 @@ export default function Scanner({
 
   const [doneRental, {}] = useMutation(DONE_RENTAL, {
     onCompleted: (data) => {
+      console.log("mutation donerental >>>", data);
       dispatch(setIsRenting(false));
       saveRentingStatus("Inactive");
     },
@@ -52,6 +53,7 @@ export default function Scanner({
   const handleBarCodeScanned = async ({ type, data }) => {
     // navigation.navigate('Payment');
     // alert(`Bar code with type ${type} and data ${data} has been scanned!`);
+    console.log("scanning ketrigger >>>>", isRenting, data);
     if (isRenting) {
       doneRental({
         variables: {
