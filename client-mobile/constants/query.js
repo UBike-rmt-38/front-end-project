@@ -194,3 +194,9 @@ export const GET_STATION_BY_ID = gql`
     }
   }
 `;
+
+export const QUERY_BALANCE = gql`
+  query Query {
+    balance
+  }
+`;
