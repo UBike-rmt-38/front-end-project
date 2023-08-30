@@ -124,7 +124,7 @@ export default function BicycleForm() {
       <div className="relative z-0 w-full mb-6 group">
         <input
           onChange={handleInputChange}
-          value={input.imageUrl || ""}
+          value={input.imageURL || ""}
           type="text"
           name="imageUrl"
           className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-teal-500 focus:outline-none focus:ring-0 focus:border-teal-600 peer"
@@ -132,7 +132,7 @@ export default function BicycleForm() {
           required
         />
         <label
-          htmlFor="imageUrl"
+          htmlFor="imageURL"
           className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
         >
           Image URL
@@ -184,7 +184,7 @@ export default function BicycleForm() {
           name="stationId"
           onChange={handleInputChange}
           value={input.stationId || ""}
-          className="block w-full mt-1 py-2.5 px-0 text-sm text-gray-900 bg-transparent border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-teal-500 focus:outline-none focus:ring-0 focus:border-teal-600 peer"
+          className="block w-full mt-1 py-2.5 px-3 rounded-md text-sm text-gray-900 bg-transparent border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-teal-500 focus:outline-none focus:ring-0 focus:border-teal-600 peer"
           required
         >
           <option value="" disabled >
@@ -215,7 +215,7 @@ export default function BicycleForm() {
           name="categoryId"
           onChange={handleInputChange}
           value={input.categoryId || ""}
-          className="block w-full mt-1 py-2.5 px-0 text-sm text-gray-900 bg-transparent border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-teal-500 focus:outline-none focus:ring-0 focus:border-teal-600 peer"
+          className="block w-full mt-1 py-2.5 px-3 rounded-md text-sm text-gray-900 bg-transparent border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-teal-500 focus:outline-none focus:ring-0 focus:border-teal-600 peer"
           required
         >
           <option value="" disabled>
@@ -236,7 +236,7 @@ export default function BicycleForm() {
       </div>
       <button
         type="submit"
-        className="w-40 mb-8 bg-white text-teal-600 font-semibold py-2 mt-5 rounded-br-lg rounded-bl-lg rounded-tr-lg shadow-lg hover:shadow-xl hover:bg-gray-300 flex items-center justify-center"
+        className="w-40 mb-8 bg-white border-slate-200 border-2 text-teal-600 font-semibold py-2 mt-5 rounded-br-lg rounded-bl-lg rounded-tr-lg shadow-lg hover:shadow-xl hover:bg-gray-300 flex items-center justify-center"
       >
           { id ? 'Edit Bicycle' : 'Add Bicycle'}      
       </button>

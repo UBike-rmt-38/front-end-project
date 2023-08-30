@@ -7,8 +7,8 @@ export default function BicycleTrow({ bicycle }) {
           <div>
             <h1>{bicycle.name}</h1>
           </div>
-          <div>
-            {bicycle.status ? <h1 className=' text-green-500'>Available</h1> : <h1 className='text-red-500'>Used</h1>}
+          <div className=' w-20'>
+            {bicycle.status ? <h1 className='bg-green-500 text-white text-center p-1 rounded-2xl'>Available</h1> : <h1 className='text-white bg-red-500 p-1 text-center rounded-2xl'>Used</h1>}
           </div>
         </div>
       </div>
