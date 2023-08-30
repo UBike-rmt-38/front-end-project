@@ -1,10 +1,11 @@
 
 import React from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { Ionicons } from "@expo/vector-icons";
+import { Ionicons, MaterialIcons, FontAwesome } from "@expo/vector-icons";
 import HomeScreen from "../screens/HomeScreen";
 import ProfileScreen from "../screens/ProfileScreen";
 import MapsScreen from "../screens/MapsScreen";  
+import HistoryScreen from "../screens/HistoryScreen";
 
 const Tab = createBottomTabNavigator();
 
@@ -45,11 +46,23 @@ export default function BottomTabs() {
         component={MapsScreen} 
         options={{
           tabBarIcon: ({ color, size }) => (
-            <Ionicons name="list" size={size} color={color} />
+            <FontAwesome name="map-pin" size={size} color={color} />
           ),
           
           headerShown: false,
           tabBarLabel: "Rent",
+          tabBarShowLabel: false,
+
+        }}
+      />
+    <Tab.Screen
+        name="HistoryTab"
+        component={HistoryScreen}
+        options={{
+          tabBarIcon: ({ color, size }) => (
+        <MaterialIcons name="history" size={size} color={color} />          ),
+          headerShown: false,
+          tabBarLabel: "History",
           tabBarShowLabel: false,
 
         }}
