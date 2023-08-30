@@ -13,6 +13,7 @@ import HomeScreen from "../screens/HomeScreen";
 import TopUpScreen from "../screens/TopUpScreen";
 import SignUpScreen from "../screens/SignUpScreen";
 import ChangePassword from "../screens/ChangePassword";
+import BottomTabs from "./BottomNavigation";
 
 const Stack = createNativeStackNavigator();
 
@@ -46,10 +47,10 @@ export default function AuthStackNavigator() {
     >
       {isSignedIn ? (
         <>
-          {/* <Stack.Screen
+          <Stack.Screen
             options={{ headerShown: false }}
             name="Home"
-            component={HomeScreen}
+            component={BottomTabs}
           />
           <Stack.Screen
             options={{ headerShown: false }}
@@ -74,8 +75,8 @@ export default function AuthStackNavigator() {
           <Stack.Screen
             options={{ headerShown: false }}
             name="Maps"
-            component={MapsScreen}
-          /> */}
+            component={BottomTabs}
+          />
           <Stack.Screen
           options={{headerTitle: "Change Password"}}
           name="ChangePassword"

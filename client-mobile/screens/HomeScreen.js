@@ -103,7 +103,7 @@ export default function HomeScreen() {
   console.log(stations);
   const nearbyStations = stations.filter((station) => {
     const distance = calculateDistance(station.latitude, station.longitude);
-    return distance !== null && distance < 900;
+    return distance !== null && distance < 1000000;
   });
 
   console.log("nearby stations:", nearbyStations);
@@ -112,11 +112,11 @@ export default function HomeScreen() {
     const currentHour = new Date().getHours();
 
     if (currentHour >= 6 && currentHour < 12) {
-      return "Good Morning!";
+      return "Good morning, ";
     } else if (currentHour >= 12 && currentHour < 18) {
-      return "Good Afternoon!";
+      return "Good afternoon, ";
     } else {
-      return "Good Night!";
+      return "Good night, ";
     }
   };
   const images = [
@@ -137,12 +137,11 @@ export default function HomeScreen() {
         <Image
           source={require("../assets/Logo.png")}
           style={{
-            height: 30,
-            width: 30,
-            borderColor: "yellow",
-            borderWidth: 1,
-            margin: 10,
+            height: 80,
+            width: 80,
+            marginTop: 20,
           }}
+          resizeMode="contain"
         />
         <TouchableOpacity
           onPress={() => {
@@ -165,7 +164,7 @@ export default function HomeScreen() {
           <Text style={styles.timeText}>
             {currentTime.toLocaleTimeString()}
           </Text>
-          <Text style={styles.greetingText}>{getGreeting()}</Text>
+          <Text style={styles.greetingText}>{getGreeting()}{user.username}!</Text>
           <Text style={styles.navigationText}>Where do you want to go?</Text>
         </View>
         <View style={styles.container}>
@@ -239,7 +238,7 @@ const styles = StyleSheet.create({
     width: "50%",
   },
   header: {
-    fontSize: 24,
+    fontSize: 20,
     fontWeight: "bold",
     marginBottom: 8,
     color: "white",
@@ -251,9 +250,9 @@ const styles = StyleSheet.create({
     color: "white",
   },
   topUpButton: {
-    backgroundColor: "#199C61",
+    backgroundColor: "black",
     padding: 10,
-    borderRadius: 8,
+    borderRadius: 20,
     alignItems: "center",
   },
   buttonText: {
@@ -290,16 +289,18 @@ const styles = StyleSheet.create({
     backgroundColor: "black",
     padding: 16,
     marginBottom: 16,
+    height: "42%" //ganti aja ini
   },
   greetingText: {
     fontSize: 40,
     fontWeight: "bold",
     color: "white",
+    marginTop: 40,
+    marginBottom: 20,
   },
   navigationText: {
     fontSize: 18,
     color: "white",
-    marginLeft: 5,
   },
   avatarContainer: {
     backgroundColor: "black",
