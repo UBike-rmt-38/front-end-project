@@ -109,10 +109,7 @@ export default function ProfileScreen() {
               </Text>
             </View>
             <View style={styles.logoutContainer}>
-              <TouchableOpacity
-                style={styles.logoutButton}
-                onPress={handleLogout}
-              >
+              <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
                 <Text style={styles.btnText}>Logout</Text>
               </TouchableOpacity>
             </View>
@@ -256,3 +253,4 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
   },
 });
+

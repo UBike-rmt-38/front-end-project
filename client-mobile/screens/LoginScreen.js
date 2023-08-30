@@ -11,6 +11,7 @@ import {
 } from "react-native";
 import { FontAwesome } from "@expo/vector-icons";
 import { useDispatch } from "react-redux";
+import { LinearGradient } from "expo-linear-gradient";
 import { setIsSignedIn } from "../stores/reducers/authSlice";
 import { saveAccessToken } from "../helpers/secureStoreAction";
 import { useMutation } from "@apollo/client";
@@ -51,54 +52,69 @@ export default function LoginScreen({ navigation }) {
 
   return (
     <ImageBackground source={image} resizeMode="cover" style={styles.image}>
-    <View style={styles.container}>
-      <Image
-        source={require("../assets/Logo.png")}
-        style={styles.logo}
-        resizeMode="contain"
-      />
-      <View style={styles.formContainer}>
-        <Text style={styles.title}>Login</Text>
-        {error ? <Text style={styles.errorText}>{error.message}</Text> : null}
-        <TextInput
-          style={styles.input}
-          placeholder="Username"
-          value={username}
-          onChangeText={setUsername}
+      <View style={styles.container}>
+        <Image
+          source={require("../assets/Logo.png")}
+          style={styles.logo}
+          resizeMode="contain"
         />
-        <View style={styles.passwordInputContainer}>
-          <TextInput
-            style={styles.input}
-            placeholder="Password"
-            secureTextEntry={!showPassword}
-            value={password}
-            onChangeText={setPassword}
-          />
-          <TouchableOpacity
-            style={styles.eyeIcon}
-            onPress={() => setShowPassword(!showPassword)}
+        <View style={styles.box}>
+          <LinearGradient
+            colors={["rgba(0, 0, 0, 1)", "transparent"]}
+            style={styles.inline_box}
           >
-            <FontAwesome
-              name={showPassword ? "eye-slash" : "eye"}
-              size={20}
-              color="grey"
-            />
-          </TouchableOpacity>
-        </View>
-        <TouchableOpacity style={styles.button} onPress={handleLogin}>
-          <Text style={styles.buttonText}>Log In</Text>
-        </TouchableOpacity>
-        <View style={styles.signUpContainer}>
-          <Text style={styles.regularText}>Don't have an account?</Text>
-          <TouchableOpacity
-            style={{ alignItems: "center" }}
-            onPress={navigateToSignUp}
-          >
-            <Text style={styles.signUpText}>Sign up</Text>
-          </TouchableOpacity>
+            <View style={styles.inline_box}>
+              <View style={styles.item_box}>
+                <Text style={styles.label}>Username</Text>
+                <View style={styles.input_container}>
+                  <TextInput
+                    style={styles.input}
+                    placeholder="username"
+                    value={username}
+                    onChangeText={setUsername}
+                  />
+                </View>
+              </View>
+              <View style={styles.item_box}>
+                <Text style={styles.label}>Password</Text>
+                <View style={styles.input_container}>
+                  <TextInput
+                    style={styles.input}
+                    placeholder="password"
+                    secureTextEntry={!showPassword}
+                    value={password}
+                    onChangeText={setPassword}
+                  />
+                  <TouchableOpacity
+                    style={styles.eyeIcon}
+                    onPress={() => setShowPassword(!showPassword)}
+                  >
+                    <FontAwesome
+                      name={showPassword ? "eye-slash" : "eye"}
+                      size={20}
+                      color="grey"
+                    />
+                  </TouchableOpacity>
+                </View>
+              </View>
+              <View style={styles.item_box}>
+                <TouchableOpacity onPress={handleLogin} style={styles.btn_div}>
+                  <Text style={styles.btn}>Sign In</Text>
+                </TouchableOpacity>
+              </View>
+              <View style={styles.signUpContainer}>
+                <Text style={styles.regularText}>Don't have an account?</Text>
+                <TouchableOpacity
+                  style={{ alignItems: "center" }}
+                  onPress={navigateToSignUp}
+                >
+                  <Text style={styles.signUpText}>Sign up</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </LinearGradient>
         </View>
       </View>
-    </View>
     </ImageBackground>
   );
 }
@@ -109,6 +125,81 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
+  item_box: {
+    marginVertical: 30,
+  },
+  label: {
+    color: "white",
+    fontSize: 25,
+    lineHeight: 84,
+    fontWeight: "bold",
+    marginLeft: 45,
+  },
+  box: {
+    alignItems: "center",
+    marginBottom: 10,
+    paddingHorizontal: 55
+  },
+  icon: {
+    marginRight: 30
+  },
+  inline_box: {
+    borderRadius: 50,
+    height: 600,
+    backgroundColor: "rgba(120, 120, 120, 0.4)",
+    width: "480",
+    shadowColor: "#000",
+    shadowOffset: {
+      height: 30,
+      width: 30,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    borderWidth: 1,
+    borderColor: "#808090",
+    width: 490
+  },
+  input: {
+    height: 50,
+    margin: 12,
+    borderWidth: 1,
+    padding: 10,
+    backgroundColor: "#ffff",
+    width: 400,
+    borderRadius: 10,
+    fontSize: 20,
+  },
+  input_container: {
+    flex: 1,
+    alignItems: "center",
+  },
+  item_box: {
+    marginVertical: 30,
+  },
+  btn_div: {
+    marginTop: 40,
+    height: 60,
+    width: "80%",
+    marginHorizontal: 50,
+    borderRadius: 30,
+    backgroundColor: "rgba(128, 128, 128, 0.8)",
+    alignItems: "center",
+    justifyContent: "space-between",
+    borderColor: "#808080",
+    borderWidth: 1,
+    paddingTop: 10
+  },
+  btn: {
+    color: "#ffff",
+    fontWeight: "bold",
+    fontSize: 26,
+    marginHorizontal: 30,
+  },
+  eyeIcon: {
+    position: "absolute",
+    top: 25,
+    right: 60,
+  },
   image: {
     flex: 1,
     justifyContent: "flex-end",
@@ -116,71 +207,20 @@ const styles = StyleSheet.create({
   logo: {
     width: 150,
     height: 90,
-    marginBottom: 20, 
-  },
-  formContainer: {
-    backgroundColor: "rgba(255, 255, 255, 0.9)",
-    padding: 20,
-    borderRadius: 10,
-    width: "80%",
-    alignItems: "center",
-    
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: "bold",
     marginBottom: 20,
-    color: "black",
-  },
-  input: {
-    marginBottom: 10,
-    paddingVertical: 10,
-    paddingHorizontal: 15,
-    borderWidth: 2,
-    borderColor: "#076F59",
-    borderRadius: 8,
-    backgroundColor: "white",
-    width: "90%"
-  },
-  passwordInputContainer: {
-    position: "relative",
-    
-  },
-  eyeIcon: {
-    position: "absolute",
-    top: 8,
-    right: 15,
-  },
-  buttonText: {
-    color: "#fff",
-    fontSize: 12,
-    fontWeight: "bold",
-    textAlign: "center",
-  },
-  errorText: {
-    color: "red",
-    marginBottom: 10,
-    fontWeight: "bold",
-  },
-  button: {
-    backgroundColor: "black",
-    paddingVertical: 12,
-    paddingHorizontal: 20,
-    borderRadius: 8,
-    marginVertical: 10,
-    marginHorizontal: 80,
-    borderRadius: 40,
-  },
-  regularText: {
-    fontSize: 15,
-    fontWeight: "bold",
   },
   signUpContainer: {
-    marginTop: 20,
+    marginTop: 5
+  },
+  regularText: {
+    textAlign: 'center',
+    fontSize: 20,
+    color: 'white'
   },
   signUpText: {
-    color: "#076F59",
-    fontSize: 15,
-    fontWeight: "bold",
+    marginTop: 5,
+    fontSize: 20,
+    color: '#ffff',
+    textDecorationLine: 'underline',
   },
 });
