@@ -51,27 +51,27 @@ export const GET_BICYCLES = gql`
 `;
 
 export const GET_BICYCLE_BY_ID = gql`
-  query Query($bicycleId: Int) {
-    getBicycleById(bicycleId: $bicycleId) {
-      id
+query GetBicycleById($bicycleId: Int) {
+  getBicycleById(bicycleId: $bicycleId) {
+    id
+    name
+    feature
+    imageURL
+    description
+    price
+    StationId
+    CategoryId
+    status
+    Station {
       name
-      feature
-      imageURL
-      description
-      price
-      StationId
-      CategoryId
-      status
-      Station {
-        name
-      }
-      Category {
-        name
-      }
-      createdAt
-      updatedAt
     }
+    Category {
+      name
+    }
+    createdAt
+    updatedAt
   }
+}
 `;
 
 export const GET_RENTAL_REPORT = gql`

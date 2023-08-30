@@ -31,23 +31,29 @@ export default function StationDetails() {
           </div>
           <div className='grid grid-cols-2 mb-10'>
             <div className='col-span-1 border-r-2 border-black'>
-              <h1 className='my-2 py-2'>LATITUDE</h1>
-              <h1>{station?.latitude}</h1>
+              <h1 className='my-2 py-2 font-semibold'>LATITUDE</h1>
+              <h1 className='text-green-500 font-bold'>{station?.latitude}</h1>
             </div>
             <div className='col-span-1 border-l-2 border-black'>
-              <h1 className='my-2 py-2'>LONGITUDE</h1>
-              <h1>{station?.longitude}</h1>
+              <h1 className='my-2 py-2 font-semibold'>LONGITUDE</h1>
+              <h1 className='text-green-500 font-bold'>{station?.longitude}</h1>
             </div>
           </div>
         </div>
         <div className='text-center text-black mb-5'>
           <h1 className='text-2xl font-semibold'>Bicyle List</h1>
         </div>
-        <div className="h-48  overflow-y-scroll border w-full">
+        {station?.Bicycles.length < 1 ?
+          <div className='py-5'>
+            <h1 className='text-black text-center'>No Available Bicycle</h1>
+          </div>
+          :
+          <div className=" h-52  overflow-y-scroll border w-full">
             {station?.Bicycles?.map((bicycle) => {
               return (<BicycleTrow bicycle={bicycle} key={bicycle.id} />)
             })}
-        </div>
+          </div>
+        }
       </div>
     </>
   )
