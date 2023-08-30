@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   Image,
   ScrollView,
+  ActivityIndicator,
 } from "react-native";
 import * as Location from "expo-location";
 import { Distance } from "../components/Distance";
@@ -82,7 +83,13 @@ export default function HomeScreen() {
     getUserLocation();
   }, []);
 
-  if (usersLoading || stationsLoading) return <Text>Loading...</Text>;
+  if (usersLoading || stationsLoading) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="#1AD3C1" />
+      </View>
+    );
+  }  
   if (usersError || stationsError)
     return <Text>Error: {usersError?.message || stationsError?.message}</Text>;
 
@@ -344,5 +351,11 @@ const styles = StyleSheet.create({
   timeText: {
     fontWeight: "bold",
     color: "white",
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "black",
   },
 });
