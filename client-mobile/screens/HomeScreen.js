@@ -72,6 +72,7 @@ export default function HomeScreen() {
 
   useEffect(() => {
     getUserLocation();
+    refetchUsers()
   }, []);
 
   const daysOfWeek = [
