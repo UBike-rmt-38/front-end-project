@@ -107,6 +107,7 @@ export default function HomeScreen() {
   } ${monthName}`;
   // console.log(monthName);
   useEffect(() => {
+    refetchUsers();
     const getUserLocation = async () => {
       const { status } = await Location.requestForegroundPermissionsAsync();
       if (status === "granted") {
