@@ -90,7 +90,7 @@ export default function MapsScreen() {
     // console.log(station, "<<<< handleOpenSheet");
     setSelectedStation(station);
     if (userLocation) {
-      getRoutes(station.latitude, station.longitude);
+      getRoutes(station?.latitude, station?.longitude);
     }
     // console.log(station, "<<< selected")
     sheetRef.current?.snapToIndex(2);
@@ -799,8 +799,8 @@ export default function MapsScreen() {
           <View style={styles.buttomSheetContainer}>
             {/* <Button title="Snap To 90%" onPress={() => handleSnapPress(2)} />
             <Button title="Snap To 50%" onPress={() => handleSnapPress(1)} />
-            <Button title="Snap To 25%" onPress={() => handleSnapPress(0)} />
-            <Button title="Close" onPress={() => handleClosePress()} /> */}
+            <Button title="Snap To 25%" onPress={() => handleSnapPress(0)} /> */}
+            {/* <Button title="Close" onPress={() => handleClosePress()} /> */}
             {selectedStation && (
               <BottomSheet
                 ref={sheetRef}

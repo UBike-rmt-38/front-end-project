@@ -48,7 +48,7 @@ export default function HistoryScreen() {
   };
 
   const TabContent = ({ data, status }) => (
-    <View style={styles.container}>
+    <View style={[styles.container]}>
       <FlatList
         data={data}
         keyExtractor={(item) => item.id}
@@ -98,7 +98,7 @@ export default function HistoryScreen() {
         {() => {
           const ongoingRentals = Rentals.filter((item) => !item.status);
           return ongoingRentals.length > 0 ? (
-            <TabContent data={ongoingRentals} status="Ongoing" />
+            <TabContent data={ongoingRentals} status="Ongoing"/>
           ) : (
             <Messages status="Ongoing" />
           );
@@ -151,7 +151,6 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
     elevation: 5,
-    backgroundColor: '#272b2a'
   },
   bicycleName: {
     fontSize: 16,
