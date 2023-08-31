@@ -189,7 +189,6 @@ export default function MapsScreen() {
     updateNearestStations();
     getIsRenting();
   }, [stations, BicycleId, station]);
-
   const moveToSelectedStation = () => {
     try {
       setShowRoute(true);
@@ -850,9 +849,9 @@ const styles = StyleSheet.create({
   },
   searchContainer: {
     position: "absolute",
-    top: 80,
-    left: 40,
-    right: 40,
+    top: 50,
+    left: 20,
+    right: 20,
     paddingHorizontal: 20,
     zIndex: 1,
     backgroundColor: "white",
@@ -866,7 +865,7 @@ const styles = StyleSheet.create({
   },
   flatListContainer: {
     position: "absolute",
-    top: 125,
+    top: 100,
     left: 50,
     right: 50,
     backgroundColor: "white",
