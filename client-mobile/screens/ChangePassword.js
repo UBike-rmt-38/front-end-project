@@ -30,11 +30,7 @@ export default function ChangePassword({ navigation }) {
         });
     }
     const successToast = () => {
-        Toast.show({
-            type: 'success',
-            text1: 'success',
-            text2: 'password has been changed'
-        });
+        
     }
     const handleChangePassword = async () => {
         try {
@@ -44,14 +40,24 @@ export default function ChangePassword({ navigation }) {
             console.log(response, 'ini adalah respon');
             if (error) {
                 console.log(error);
-                showToast();
+                Toast.show({
+                    type: 'error',
+                    text1: 'Failed To Change Password',
+                });
             }
             else {
+                Toast.show({
+                    type: 'success',
+                    text1: 'Password Has Been Changed',
+                });
                 navigation.goBack();
             }
         } catch (err) {
             console.log(err, '<<<<<<<<<<<<');
-            showToast()
+            Toast.show({
+                type: 'error',
+                text1: 'Failed To Change Password',
+            });
         }
     }
     return (

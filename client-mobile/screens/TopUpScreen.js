@@ -9,12 +9,14 @@ import {
 } from "react-native";
 import { WebView } from "react-native-webview";
 import { useQuery, useMutation } from "@apollo/client";
-import { QUERY_BALANCE } from "../constants/query";
+import { GET_USERS_DETAIL, GET_USERS_DETAILS, QUERY_BALANCE } from "../constants/query";
 import {
   MUTATION_GENERATE_MIDTRANS_TOKEN,
   MUTATION_TOPUP_BALANCE,
 } from "../constants/mutation";
 import { useNavigation } from "@react-navigation/native";
+import Toast from "react-native-toast-message";
+
 
 export default function TopUpScreen() {
   const navigation = useNavigation()
@@ -28,11 +30,13 @@ export default function TopUpScreen() {
   const [generateMidtransToken, { loading, error }] = useMutation(
     MUTATION_GENERATE_MIDTRANS_TOKEN
   );
+  const { refetch } = useQuery(GET_USERS_DETAILS)
   const [nominals, setNominals] = useState([10000, 20000, 50000, 100000]);
   useEffect(() => {
     if (data) {
       setBalance(data.balance);
     }
+    refetch();
   }, [data]);
 
   const handleTopup = async () => {
@@ -72,6 +76,7 @@ export default function TopUpScreen() {
         setShowWebView(false);
         navigation.navigate("Home"); 
       }, 5000);
+      refetch();
     } else if (!url.includes("payment-list")) {
       setTopupAmount("");
     }

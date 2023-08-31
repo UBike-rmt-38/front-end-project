@@ -14,6 +14,7 @@ import { useMutation } from "@apollo/client";
 import { CREATE_USER } from "../constants/mutation";
 import { FontAwesome } from "@expo/vector-icons";
 import { FontAwesome5 } from "@expo/vector-icons";
+import Toast from "react-native-toast-message";
 const image = require("../assets/background.png");
 const { height, width } = Dimensions.get("screen");
 
@@ -32,6 +33,12 @@ export default function SignUpScreen({ navigation }) {
       });
       if (response.errors) throw response.errors;
       else {
+        Toast.show({
+          type: 'success',
+          text1: 'New User Registered',
+          position: "top",
+          visibilityTime: 2000
+        });
         navigation.goBack();
       }
     } catch (error) {

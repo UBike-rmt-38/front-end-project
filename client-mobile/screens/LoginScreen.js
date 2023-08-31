@@ -17,6 +17,7 @@ import { setIsSignedIn } from "../stores/reducers/authSlice";
 import { saveAccessToken } from "../helpers/secureStoreAction";
 import { useMutation } from "@apollo/client";
 import { LOGIN } from "../constants/mutation";
+import Toast from "react-native-toast-message";
 const image = require("../assets/background.png");
 const { height, width } = Dimensions.get("screen");
 
@@ -40,7 +41,13 @@ export default function LoginScreen({ navigation }) {
       console.log(response, "ini responde");
       if (response.errors) throw response.errors;
       else {
-        console.log("ketrigrr di handle logini");
+
+        Toast.show({
+          type: 'success',
+          text1: `Welcome, ${username}`,
+          position: "top",
+          visibilityTime: 2000
+        });
         await saveAccessToken(response.data.login);
         dispatch(setIsSignedIn(true));
       }
@@ -54,72 +61,72 @@ export default function LoginScreen({ navigation }) {
   };
 
   return (
-      <ImageBackground source={image} resizeMode="cover" style={styles.image} blurRadius={8}>
-        <View style={styles.container}>
-          <Image
-            source={require("../assets/Logo.png")}
-            style={styles.logo}
-            resizeMode="contain"
-          />
-          <View style={styles.box}>
-            <LinearGradient
-              colors={["rgba(0, 0, 0, 1)", "transparent"]}
-              style={styles.inline_box}
-            >
-              <View style={styles.inline_box}>
-                <View style={styles.item_box}>
-                  <Text style={styles.label}>Username</Text>
-                  <View style={styles.input_container}>
-                    <TextInput
-                      style={styles.input}
-                      placeholder="username"
-                      value={username}
-                      onChangeText={setUsername}
-                    />
-                  </View>
+    <ImageBackground source={image} resizeMode="cover" style={styles.image} blurRadius={8}>
+      <View style={styles.container}>
+        <Image
+          source={require("../assets/Logo.png")}
+          style={styles.logo}
+          resizeMode="contain"
+        />
+        <View style={styles.box}>
+          <LinearGradient
+            colors={["rgba(0, 0, 0, 1)", "transparent"]}
+            style={styles.inline_box}
+          >
+            <View style={styles.inline_box}>
+              <View style={styles.item_box}>
+                <Text style={styles.label}>Username</Text>
+                <View style={styles.input_container}>
+                  <TextInput
+                    style={styles.input}
+                    placeholder="username"
+                    value={username}
+                    onChangeText={setUsername}
+                  />
                 </View>
-                <View style={styles.item_box}>
-                  <Text style={styles.label}>Password</Text>
-                  <View style={styles.input_container}>
-                    <TextInput
-                      style={styles.input}
-                      placeholder="password"
-                      secureTextEntry={!showPassword}
-                      value={password}
-                      onChangeText={setPassword}
-                    />
-                    <TouchableOpacity
-                      style={styles.eyeIcon}
-                      onPress={() => setShowPassword(!showPassword)}
-                    >
-                      <FontAwesome
-                        name={showPassword ? "eye" : "eye-slash"}
-                        size={20}
-                        color="grey"
-                        style={{ position: "absolute", right: width - 310, top: height - 835 }}
-                      />
-                    </TouchableOpacity>
-                  </View>
-                </View>
-                <View style={styles.item_box}>
-                  <TouchableOpacity onPress={handleLogin} style={styles.btn_div}>
-                    <Text style={styles.btn}>Sign In</Text>
-                  </TouchableOpacity>
-                </View>
-                <View style={styles.signUpContainer}>
-                  <Text style={styles.regularText}>Don't have an account?</Text>
+              </View>
+              <View style={styles.item_box}>
+                <Text style={styles.label}>Password</Text>
+                <View style={styles.input_container}>
+                  <TextInput
+                    style={styles.input}
+                    placeholder="password"
+                    secureTextEntry={!showPassword}
+                    value={password}
+                    onChangeText={setPassword}
+                  />
                   <TouchableOpacity
-                    style={{ alignItems: "center" }}
-                    onPress={navigateToSignUp}
+                    style={styles.eyeIcon}
+                    onPress={() => setShowPassword(!showPassword)}
                   >
-                    <Text style={styles.signUpText}>Sign up</Text>
+                    <FontAwesome
+                      name={showPassword ? "eye" : "eye-slash"}
+                      size={20}
+                      color="grey"
+                      style={{ position: "absolute", right: width - 310, top: height - 835 }}
+                    />
                   </TouchableOpacity>
                 </View>
               </View>
-            </LinearGradient>
-          </View>
+              <View style={styles.item_box}>
+                <TouchableOpacity onPress={handleLogin} style={styles.btn_div}>
+                  <Text style={styles.btn}>Sign In</Text>
+                </TouchableOpacity>
+              </View>
+              <View style={styles.signUpContainer}>
+                <Text style={styles.regularText}>Don't have an account?</Text>
+                <TouchableOpacity
+                  style={{ alignItems: "center" }}
+                  onPress={navigateToSignUp}
+                >
+                  <Text style={styles.signUpText}>Sign up</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </LinearGradient>
         </View>
-      </ImageBackground>
+      </View>
+    </ImageBackground>
   );
 }
 
