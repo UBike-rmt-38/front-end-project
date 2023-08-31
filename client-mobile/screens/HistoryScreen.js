@@ -60,9 +60,9 @@ export default function HistoryScreen() {
               <View style={styles.contentContainer}>
                 <Text style={styles.bicycleName}>{bicycleInfo.name}</Text>
                 <Text>
-                  Distance: {item.travelledDistance.toLocaleString()} m
+                  Distance: {item.travelledDistance?.toLocaleString()} m
                 </Text>
-                <Text>Total: Rp.{item.totalPrice.toLocaleString("id-ID")}</Text>
+                <Text>Total: Rp.{item.totalPrice?.toLocaleString("id-ID")}</Text>
                 <Text>{item.transaction}</Text>
                 <Text
                 style={[
@@ -130,7 +130,7 @@ const Messages = ({ status }) => (
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#F4F4F4",
+    backgroundColor: "#272b2a",
   },
   itemContainer: {
     margin: 16,
@@ -151,6 +151,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
     elevation: 5,
+    backgroundColor: '#272b2a'
   },
   bicycleName: {
     fontSize: 16,

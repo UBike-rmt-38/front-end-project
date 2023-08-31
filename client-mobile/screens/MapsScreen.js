@@ -118,12 +118,12 @@ export default function MapsScreen() {
       );
       if (activeRental) {
         // console.log(activeRental[0].id, "<<<<< activeRental[0].id di CHECK_RENTALS")
-        setRentalId(activeRental[0].id);
-        setTravelledDistance(activeRental[0].travelledDistance);
+        setRentalId(activeRental[0]?.id);
+        setTravelledDistance(activeRental[0]?.travelledDistance);
         // console.log(activeRental[0].BicycleId, "<<<< check rental bicycleId");
-        setBicycleId(activeRental[0].BicycleId);
-        refetch({ bicycleId: activeRental[0].BicycleId });
-        setBalance(data.getUsersDetails.balance);
+        setBicycleId(activeRental[0]?.BicycleId);
+        refetch({ bicycleId: activeRental[0]?.BicycleId });
+        setBalance(data.getUsersDetails?.balance);
       }
       console.log(isRenting, "<<<< check rental");
       dispatch(setIsRenting(isRenting));
@@ -140,10 +140,10 @@ export default function MapsScreen() {
       bicycleId: BicycleId,
     },
     onCompleted: (data) => {
-      console.log(data.getBicycleById.price, "<<<< useQuery GET_BICYCLE_BY_ID");
-      setPrice(data.getBicycleById.price);
-      setStationId(data.getBicycleById.StationId);
-      refetchStation({ stationId: data.getBicycleById.StationId });
+      console.log(data.getBicycleById?.price, "<<<< useQuery GET_BICYCLE_BY_ID");
+      setPrice(data.getBicycleById?.price);
+      setStationId(data.getBicycleById?.StationId);
+      refetchStation({ stationId: data.getBicycleById?.StationId });
       // console.log(travelledDistance, price, "<<<< useQuery GET_BICYCLE_BY_ID")
     },
   });
@@ -354,21 +354,21 @@ export default function MapsScreen() {
 
   const getUserLocation = async () => {
     try {
-      if (station.getStationsById) {
+      if (station?.getStationsById) {
         // console.log(station, "<<<< station ketrigger di getUserLocation");
         setUserLocation(
           new AnimatedRegion({
-            latitude: station.getStationsById.latitude,
-            longitude: station.getStationsById.longitude,
+            latitude: station?.getStationsById.latitude,
+            longitude: station?.getStationsById.longitude,
           })
         );
         updateNearestStations(
-          station.getStationsById.latitude,
-          station.getStationsById.longitude
+          station?.getStationsById.latitude,
+          station?.getStationsById.longitude
         );
         mapRef.current.animateToRegion({
-          latitude: station.getStationsById.latitude,
-          longitude: station.getStationsById.longitude,
+          latitude: station?.getStationsById.latitude,
+          longitude: station?.getStationsById.longitude,
           latitudeDelta: 0.0022,
           longitudeDelta: 0.0021,
         });
@@ -572,7 +572,7 @@ export default function MapsScreen() {
           )}
           {filteredStations.map((station) => (
             <MapsPin
-              key={station.id}
+              key={station?.id}
               coordinate={{
                 latitude: station.latitude,
                 longitude: station.longitude,
@@ -830,7 +830,7 @@ export default function MapsScreen() {
                 </View>
                 <BottomSheetFlatList
                   data={selectedStation?.Bicycles}
-                  keyExtractor={(item) => item.id}
+                  keyExtractor={(item) => item?.id}
                   renderItem={renderItem}
                   contentContainerStyle={styles.contentContainer}
                 />

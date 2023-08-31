@@ -46,80 +46,80 @@ export default function ProfileScreen({ navigation }) {
   return (
     <>
       <StatusBar barStyle="light-content" backgroundColor="#000" />
-      <SafeAreaView style={[styles.container, styles.bg_dark]}>
-      <View style={{ flex: 1, paddingBottom: 30 }}>
+      <ScrollView style={styles.scrollView}>
+        <SafeAreaView style={[styles.container, styles.bg_dark]}>
+          <View style={{ flex: 1, paddingBottom: 30 }}>
 
-        <ScrollView style={styles.scrollView}>
-          <View style={styles.profile_box}>
-            <View style={styles.profileContent}>
-              <View style={styles.profileTextContainer}>
-                <Text style={styles.profile_text}>Hi, {user.username}</Text>
-              </View>
-              <View style={styles.imageContainer}>
-                <Image
-                  source={require("../assets/dummy_user.png")}
-                  style={styles.image}
-                />
-              </View>
-              <TouchableOpacity style={styles.btn} onPress={handleEdit}>
-                <Text style={styles.btnText}>Change Password</Text>
-              </TouchableOpacity>
-              <View style={styles.profile_data}>
-                <View style={styles.profileDataContainer}>
-                  <Text style={styles.profile_distance}>Last Ride</Text>
+            <View style={styles.profile_box}>
+              <View style={styles.profileContent}>
+                <View style={styles.profileTextContainer}>
+                  <Text style={styles.profile_text}>Hi, {user.username}</Text>
                 </View>
-                <View style={styles.profileDataSeparator}></View>
-                <View style={styles.profileDataContainer}>
-                  <Text style={styles.profile_distance_text}>
-                    {user.Rentals.travelledDistance}
-                  </Text>
-                  <Text style={styles.profile_distance}>Total Distance:</Text>
+                <View style={styles.imageContainer}>
+                  <Image
+                    source={require("../assets/dummy_user.png")}
+                    style={styles.image}
+                  />
+                </View>
+                <TouchableOpacity style={styles.btn} onPress={handleEdit}>
+                  <Text style={styles.btnText}>Change Password</Text>
+                </TouchableOpacity>
+                <View style={styles.profile_data}>
+                  <View style={styles.profileDataContainer}>
+                    <Text style={styles.profile_distance}>Last Ride</Text>
+                  </View>
+                  <View style={styles.profileDataSeparator}></View>
+                  <View style={styles.profileDataContainer}>
+                    <Text style={styles.profile_distance_text}>
+                      {user.Rentals?.travelledDistance}
+                    </Text>
+                    <Text style={styles.profile_distance}>Total Distance:</Text>
+                  </View>
                 </View>
               </View>
             </View>
-          </View>
-          <View style={styles.infoContainer}>
-            <Text style={styles.infoHeading}>Fullname</Text>
-            <Text style={styles.infoText}>{user.username}</Text>
-          </View>
-          <View style={styles.infoContainer}>
-            <Text style={styles.infoHeading}>Email</Text>
-            <Text style={styles.infoText}>{user.email}</Text>
-          </View>
-          <View style={styles.infoContainer}>
-            <Text style={styles.infoHeading}>Phone</Text>
-            <Text style={styles.infoText}>0987654321</Text>
-          </View>
-          <View style={styles.balanceContainer}>
-            <Text style={styles.balanceHeading}>My Balance</Text>
-            <View style={styles.balanceContent}>
-              <Text style={styles.infoText}>Rp. {user.balance}</Text>
-              <TouchableOpacity>
-                <Text style={styles.topUp}>TOP UP</Text>
-              </TouchableOpacity>
+            <View style={styles.infoContainer}>
+              <Text style={styles.infoHeading}>Fullname</Text>
+              <Text style={styles.infoText}>{user.username}</Text>
             </View>
-            <View style={styles.actionContainer}>
-              <Text style={styles.actionText} onPress={handleHistory}>
-                Rent history
-              </Text>
+            <View style={styles.infoContainer}>
+              <Text style={styles.infoHeading}>Email</Text>
+              <Text style={styles.infoText}>{user.email}</Text>
             </View>
-            <View style={styles.actionContainer}>
-              <Text style={styles.actionText} onPress={handleTransaction}>
-                Transaction
-              </Text>
+            <View style={styles.infoContainer}>
+              <Text style={styles.infoHeading}>Phone</Text>
+              <Text style={styles.infoText}>0987654321</Text>
             </View>
-            <View style={styles.logoutContainer}>
-              <TouchableOpacity
-                style={styles.logoutButton}
-                onPress={handleLogout}
-              >
-                <Text style={styles.btnText}>Logout</Text>
-              </TouchableOpacity>
+            <View style={styles.balanceContainer}>
+              <Text style={styles.balanceHeading}>My Balance</Text>
+              <View style={styles.balanceContent}>
+                <Text style={styles.infoText}>Rp. {user?.balance || 0}</Text>
+                <TouchableOpacity>
+                  <Text style={styles.topUp}>TOP UP</Text>
+                </TouchableOpacity>
+              </View>
+              <View style={styles.actionContainer}>
+                <Text style={styles.actionText} onPress={handleHistory}>
+                  Rent history
+                </Text>
+              </View>
+              <View style={styles.actionContainer}>
+                <Text style={styles.actionText} onPress={handleTransaction}>
+                  Transaction
+                </Text>
+              </View>
+              <View style={styles.logoutContainer}>
+                <TouchableOpacity
+                  style={styles.logoutButton}
+                  onPress={handleLogout}
+                >
+                  <Text style={styles.btnText}>Logout</Text>
+                </TouchableOpacity>
+              </View>
             </View>
           </View>
-        </ScrollView>
-      </View>
-      </SafeAreaView>
+        </SafeAreaView>
+      </ScrollView>
     </>
   );
 }
@@ -130,6 +130,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: "#322D3A",
+    paddingBottom: 50
   },
   scrollView: {
     flex: 1,

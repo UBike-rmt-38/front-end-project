@@ -227,7 +227,7 @@ export default function HomeScreen() {
                   <Text style={styles.balance}>
                     {user && user.balance
                       ? user.balance.toLocaleString("id-ID")
-                      : "Loading..."}
+                      : 0}
                   </Text>
                 </View>
                 <TouchableOpacity
