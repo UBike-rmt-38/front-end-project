@@ -85,9 +85,10 @@ export default function SignUpScreen({ navigation }) {
                       onPress={() => setShowPassword(!showPassword)}
                     >
                       <FontAwesome
-                        name={showPassword ? "eye-slash" : "eye"}
+                        name={showPassword ? "eye" : "eye-slash"}
                         size={20}
                         color="grey"
+                        style={{ position: "absolute", right: width - 310, top: height - 786 }}
                       />
                     </TouchableOpacity>
                   </View>
@@ -112,7 +113,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: "center",
-    paddingHorizontal: width - 470,
     marginTop: width - 180,
   },
   blurring: {
