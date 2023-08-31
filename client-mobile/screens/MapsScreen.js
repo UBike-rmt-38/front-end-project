@@ -220,7 +220,7 @@ export default function MapsScreen() {
       if (userLocation && selectedStation && route.length > 0 && !isRenting) {
         // Calculate the bounding box that contains both userLocation and selectedStation
 
-        const animationDuration = 100; // Adjust animation duration as needed
+        const animationDuration = 200; // Adjust animation duration as needed
 
         const animations = route.map((coordinate, index) => {
           const { latitude, longitude } = coordinate;
@@ -239,7 +239,7 @@ export default function MapsScreen() {
           setShowRoute(false);
         });
 
-        closeConfirmationModal();
+        handleClosePress();
 
         const minLat =
           userLocation.latitude < selectedStation.latitude
@@ -259,8 +259,8 @@ export default function MapsScreen() {
             : selectedStation.longitude;
 
         // Calculate map's new latitudeDelta and longitudeDelta
-        const latDelta = maxLat - minLat + 0.0922; // Add some padding
-        const lonDelta = maxLon - minLon + 0.0421; // Add some padding
+        const latDelta = maxLat - minLat + 0.0042; // Add some padding
+        const lonDelta = maxLon - minLon + 0.0041; // Add some padding
 
         // Animate the map to show the bounding box
         mapRef.current.animateToRegion(
@@ -275,7 +275,7 @@ export default function MapsScreen() {
       } else {
         // Calculate the bounding box that contains both userLocation and selectedStation
 
-        const animationDuration = 100; // Adjust animation duration as needed
+        const animationDuration = 200; // Adjust animation duration as needed
 
         const animations = route.map((coordinate, index) => {
           const { latitude, longitude } = coordinate;
@@ -294,7 +294,7 @@ export default function MapsScreen() {
           setShowRoute(false);
         });
 
-        closeConfirmationModal();
+        handleClosePress();
 
         const minLat =
           userLocation.latitude < selectedStation.latitude
@@ -408,16 +408,20 @@ export default function MapsScreen() {
         // setUserLocation(new AnimatedRegion({ latitude, longitude }));
         setUserLocation(
           new AnimatedRegion({
-            latitude: -6.2554579761602005,
-            longitude: 106.85606339939457,
+            // latitude: -6.2554579761602005,
+            // longitude: 106.85606339939457,
+            latitude: -6.200605283965109,
+            longitude: 106.78046095580949,
           })
         );
         updateNearestStations(latitude, longitude);
         mapRef.current.animateToRegion({
           // latitude,
           // longitude,
-          latitude: -6.2554579761602005,
-          longitude: 106.85606339939457,
+          // latitude: -6.2554579761602005,
+          // longitude: 106.85606339939457,
+          latitude: -6.200605283965109,
+          longitude: 106.78046095580949,
           latitudeDelta: 0.0022,
           longitudeDelta: 0.0021,
         });
