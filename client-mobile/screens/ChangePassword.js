@@ -13,7 +13,6 @@ import { CHANGE_PASSWORD } from '../constants/mutation';
 import { LinearGradient } from "expo-linear-gradient";
 import { useMutation } from '@apollo/client';
 import Toast from 'react-native-toast-message';
-import { response } from 'express';
 const { height, width } = Dimensions.get("screen");
 
 export default function ChangePassword({ navigation }) {
