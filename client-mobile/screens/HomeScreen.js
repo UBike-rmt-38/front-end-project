@@ -200,7 +200,7 @@ export default function HomeScreen() {
         <View style={styles.container}>
           <View style={styles.box}>
             <Text style={styles.header}>Balance</Text>
-            <Text style={styles.balance}>Rp. {user.balance}</Text>
+            <Text style={styles.balance}>Rp. {user.balance ? user.balance : 0}</Text>
             <TouchableOpacity
               style={styles.topUpButton}
               onPress={handleTopupPress}
