@@ -10,6 +10,7 @@ import {
 import { setContext } from "@apollo/client/link/context";
 import { baseURL } from "./constants/baseURL";
 import { getValueFor } from "./helpers/secureStoreAction";
+import { Toast } from "react-native-toast-message/lib/src/Toast";
 
 const httpLink = createHttpLink({
   uri: baseURL,
@@ -40,7 +41,9 @@ export default function App() {
   return (
     <ApolloProvider client={client}>
       <Provider store={store}>
-        <AppNavigator />
+        <AppNavigator>
+          <Toast position='top' />
+        </AppNavigator>
       </Provider>
     </ApolloProvider>
   );
