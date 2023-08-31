@@ -31,10 +31,10 @@ export default function BicyclesListPage() {
           {isLoading ? (
             <TableRowLoading />
           ) : (
-            data.getBicycles.map((bicycle) => {
+            data.getBicycles.map((bicycle, idx) => {
               return (
-                <div className='flex-grow'>
-                  <CardBicycle bicycle={bicycle} key={bicycle.id} />
+                <div className='flex-grow' key={idx}>
+                  <CardBicycle bicycle={bicycle} key={idx} />
                 </div>
               )
             })

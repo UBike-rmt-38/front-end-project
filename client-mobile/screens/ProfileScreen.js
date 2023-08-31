@@ -33,6 +33,10 @@ export default function ProfileScreen({ navigation }) {
     navigation.navigate("ChangePassword");
   };
 
+  const handleTopupPress = () => {
+    navigation.navigate("TopUp");
+  };
+
   const dispatch = useDispatch();
   const handleLogout = async () => {
     try {
@@ -62,16 +66,19 @@ export default function ProfileScreen({ navigation }) {
                   />
                 </View>
                 <TouchableOpacity style={styles.btn} onPress={handleEdit}>
-                  <Text style={styles.btnText}>Change Password</Text>
+                  <Text style={[styles.btnText, { color: '#000' }]}>Change Password</Text>
                 </TouchableOpacity>
                 <View style={styles.profile_data}>
                   <View style={styles.profileDataContainer}>
+                    <Text style={styles.profile_distance_text}>
+                      {user.Rentals.travelledDistance ? user.Rentals?.travelledDistance : "0"}
+                    </Text>
                     <Text style={styles.profile_distance}>Last Ride</Text>
                   </View>
                   <View style={styles.profileDataSeparator}></View>
                   <View style={styles.profileDataContainer}>
                     <Text style={styles.profile_distance_text}>
-                      {user.Rentals?.travelledDistance}
+                    {user.Rentals.travelledDistance ? user.Rentals?.travelledDistance : "0"}
                     </Text>
                     <Text style={styles.profile_distance}>Total Distance:</Text>
                   </View>
@@ -94,19 +101,31 @@ export default function ProfileScreen({ navigation }) {
               <Text style={styles.balanceHeading}>My Balance</Text>
               <View style={styles.balanceContent}>
                 <Text style={styles.infoText}>Rp. {user?.balance || 0}</Text>
-                <TouchableOpacity>
+                <TouchableOpacity onPress={() => handleTopupPress()} >
                   <Text style={styles.topUp}>TOP UP</Text>
                 </TouchableOpacity>
               </View>
-              <View style={styles.actionContainer}>
-                <Text style={styles.actionText} onPress={handleHistory}>
-                  Rent history
-                </Text>
-              </View>
-              <View style={styles.actionContainer}>
-                <Text style={styles.actionText} onPress={handleTransaction}>
-                  Transaction
-                </Text>
+              <View style={{ marginTop: 30 }}>
+                <View style={styles.actionContainer}>
+                  <TouchableOpacity
+                    onPress={handleHistory}
+                    style={styles.BaseButton}
+                  >
+                    <Text style={styles.actionText} >
+                      Rent history
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+                <View style={styles.actionContainer}>
+                  <TouchableOpacity
+                    onPress={handleTransaction}
+                    style={styles.BaseButton}
+                  >
+                    <Text style={styles.actionText} >
+                      Transaction
+                    </Text>
+                  </TouchableOpacity>
+                </View>
               </View>
               <View style={styles.logoutContainer}>
                 <TouchableOpacity
@@ -130,7 +149,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: "#322D3A",
-    paddingBottom: 50
+    paddingBottom: 70
   },
   scrollView: {
     flex: 1,
@@ -178,13 +197,16 @@ const styles = StyleSheet.create({
   btnText: {
     fontSize: 15,
     fontWeight: "bold",
+    color: "white"
   },
   profile_data: {
+    display: "flex",
     flexDirection: "row",
     marginTop: 30,
     paddingVertical: 30,
     borderBottomWidth: 2,
     borderBottomColor: "#80FFCC",
+
   },
   profileDataContainer: {
     alignItems: "center",
@@ -195,6 +217,7 @@ const styles = StyleSheet.create({
   profile_distance_text: {
     color: "#80FFCC",
     fontSize: 25,
+    marginBottom: 10
   },
   profile_distance: {
     fontSize: 25,
@@ -218,6 +241,7 @@ const styles = StyleSheet.create({
   },
   topUp: {
     fontSize: 15,
+    fontWeight: "700",
     backgroundColor: "#80FFCC",
     paddingHorizontal: 20,
     paddingVertical: 3,
@@ -237,17 +261,29 @@ const styles = StyleSheet.create({
     marginLeft: 10,
   },
   actionContainer: {
-    marginTop: 30,
+    marginTop: 10,
   },
   actionText: {
-    color: "#80FFCC",
+    color: "#000",
     fontSize: 20,
+    fontWeight: "600"
   },
   logoutContainer: {
     marginTop: 50,
   },
   logoutButton: {
-    backgroundColor: "#FF8066",
+    backgroundColor: "#808080",
+    height: 40,
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: 30,
+    borderWidth: 1,
+    borderColor: "black",
+    marginTop: 10,
+    paddingHorizontal: 10,
+  },
+  BaseButton: {
+    backgroundColor: "#80ffcc",
     height: 40,
     alignItems: "center",
     justifyContent: "center",

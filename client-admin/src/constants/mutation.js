@@ -7,25 +7,9 @@ mutation AddStation($name: String!, $address: String!, $latitude: Float!, $longi
 `;
 
 export const ADD_BICYCLE = gql`
-  mutation Mutation(
-    $name: String!
-    $feature: String!
-    $imageUrl: String!
-    $description: String!
-    $price: Int!
-    $stationId: Int!
-    $categoryId: Int!
-  ) {
-    addBicycle(
-      name: $name
-      feature: $feature
-      imageURL: $imageUrl
-      description: $description
-      price: $price
-      StationId: $stationId
-      CategoryId: $categoryId
-    )
-  }
+mutation AddBicycle($name: String!, $feature: String!, $imageUrl: String!, $description: String!, $price: Int!, $stationId: Int!, $categoryId: Int!) {
+  addBicycle(name: $name, feature: $feature, imageURL: $imageUrl, description: $description, price: $price, StationId: $stationId, CategoryId: $categoryId)
+}
 `;
 
 export const EDIT_BICYCLE = gql`

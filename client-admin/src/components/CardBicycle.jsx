@@ -3,7 +3,9 @@
 import { useMutation } from "@apollo/client";
 import { DELETE_BICYCLES } from "../constants/mutation";
 import { Link, useNavigate } from "react-router-dom";
+import { useQuery } from'@apollo/client'
 import { useState } from "react";
+import { GET_BICYCLES } from "../constants/query";
 
 export default function CardBicycle({ bicycle }) {
 
@@ -11,10 +13,11 @@ export default function CardBicycle({ bicycle }) {
 
 
   const [deleteBicycle] = useMutation(DELETE_BICYCLES);
+  const { refetch } = useQuery(GET_BICYCLES)
   const handleDelete = () => {
     deleteBicycle({ variables: { bicycleId: bicycle.id } })
       .then(() => {
-        console.log("Bicycle deleted successfully");
+        refetch()
       })
       .catch((error) => {
         console.log("Error deleting bicycle:", error);
@@ -22,7 +25,6 @@ export default function CardBicycle({ bicycle }) {
   };
   const handleEditClick = () => {
     setEditItem(bicycle.id);
-    // console.log(bicycle);
 };
 
   return (
