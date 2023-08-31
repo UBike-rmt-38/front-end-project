@@ -13,7 +13,8 @@ export default function Scanner({
   travelledDistance,
   totalPrice,
   rentalId,
-  transaction
+  transaction,
+  navigation
 }) {
   const [hasCameraPermission, setHasCameraPermission] = useState(null);
   const dispatch = useDispatch();
@@ -35,6 +36,7 @@ export default function Scanner({
       console.log("mutation donerental >>>", data);
       dispatch(setIsRenting(false));
       saveRentingStatus("Inactive");
+      navigation.navigate("History");
     },
     onError: (error) => {
       alert(`${error.message}`);

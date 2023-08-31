@@ -65,7 +65,6 @@ export default function MapsScreen() {
   const [transaction, setTransaction] = useState(null);
   const [cash, setCash] = useState(0);
   const [totalPrice, setTotalPrice] = useState();
-  const [shouldUpdateTotalPrice, setShouldUpdateTotalPrice] = useState(true);
 
   // hooks
   const sheetRef = useRef(null);
@@ -142,9 +141,13 @@ export default function MapsScreen() {
       bicycleId: BicycleId,
     },
     onCompleted: (data) => {
-      console.log(data.getBicycleById?.price, "<<<< useQuery GET_BICYCLE_BY_ID");
+      console.log(
+        data.getBicycleById?.price,
+        "<<<< useQuery GET_BICYCLE_BY_ID"
+      );
       setPrice(data.getBicycleById?.price);
       setStationId(data.getBicycleById?.StationId);
+      console.log(data.getBicycleById?.StationId, "<<<<< StationId");
       refetchStation({ stationId: data.getBicycleById?.StationId });
       // console.log(travelledDistance, price, "<<<< useQuery GET_BICYCLE_BY_ID")
     },
@@ -153,11 +156,31 @@ export default function MapsScreen() {
   const { data: station, refetch: refetchStation } = useQuery(
     GET_STATION_BY_ID,
     {
+      variables: {
+        stationId: StationId,
+      },
       onCompleted: (data) => {
+        console.log(data, "<<<<< refetchStation ketrigger");
         getUserLocation();
       },
     }
   );
+
+  // const fetchData = async () => {
+  //   const { data } = await useQuery(GET_BICYCLE_BY_ID, { variables: {
+  //     bicycleId: BicycleId,
+  //   }});
+  //   console.log(data.getBicycleById?.price, "<<<< useQuery GET_BICYCLE_BY_ID");
+  //   setPrice(data.getBicycleById?.price);
+  //   setStationId(data.getBicycleById.StationId);
+  //   console.log(data.getBicycleById.StationId, "<<<<< StationId");
+
+  //   const stationData = await useQuery(GET_STATION_BY_ID, {});
+  //   console.log(stationData, "<<<<< refetchStation ketrigger");
+  //   getUserLocation();
+  // };
+
+  // fetchData();
 
   const getIsRenting = async () => {
     try {
@@ -194,12 +217,11 @@ export default function MapsScreen() {
   const moveToSelectedStation = () => {
     try {
       setShowRoute(true);
-      setShouldUpdateTotalPrice(true);
       if (userLocation && selectedStation && route.length > 0 && !isRenting) {
         // Calculate the bounding box that contains both userLocation and selectedStation
-  
-        const animationDuration = 10; // Adjust animation duration as needed
-  
+
+        const animationDuration = 100; // Adjust animation duration as needed
+
         const animations = route.map((coordinate, index) => {
           const { latitude, longitude } = coordinate;
           return userLocation.timing({
@@ -209,16 +231,16 @@ export default function MapsScreen() {
             // delay: index * animationDuration, // Delay each animation by index * animationDuration
           });
         });
-  
+
         // Execute animations in sequence
         Animated.sequence(animations).start(() => {
           // Animation sequence complete
           setRoute([]);
-          setShowRoute(false)
+          setShowRoute(false);
         });
-  
+
         closeConfirmationModal();
-  
+
         const minLat =
           userLocation.latitude < selectedStation.latitude
             ? userLocation.latitude
@@ -235,11 +257,11 @@ export default function MapsScreen() {
           userLocation.longitude > selectedStation.longitude
             ? userLocation.longitude
             : selectedStation.longitude;
-  
+
         // Calculate map's new latitudeDelta and longitudeDelta
         const latDelta = maxLat - minLat + 0.0922; // Add some padding
         const lonDelta = maxLon - minLon + 0.0421; // Add some padding
-  
+
         // Animate the map to show the bounding box
         mapRef.current.animateToRegion(
           {
@@ -252,9 +274,9 @@ export default function MapsScreen() {
         ); // Adjust duration as needed
       } else {
         // Calculate the bounding box that contains both userLocation and selectedStation
-  
-        const animationDuration = 10; // Adjust animation duration as needed
-  
+
+        const animationDuration = 100; // Adjust animation duration as needed
+
         const animations = route.map((coordinate, index) => {
           const { latitude, longitude } = coordinate;
           return userLocation.timing({
@@ -264,16 +286,16 @@ export default function MapsScreen() {
             // delay: index * animationDuration, // Delay each animation by index * animationDuration
           });
         });
-  
+
         // Execute animations in sequence
         Animated.sequence(animations).start(() => {
           // Animation sequence complete
           setRoute([]);
-          setShowRoute(false)
+          setShowRoute(false);
         });
-  
+
         closeConfirmationModal();
-  
+
         const minLat =
           userLocation.latitude < selectedStation.latitude
             ? userLocation.latitude
@@ -290,11 +312,11 @@ export default function MapsScreen() {
           userLocation.longitude > selectedStation.longitude
             ? userLocation.longitude
             : selectedStation.longitude;
-  
+
         // Calculate map's new latitudeDelta and longitudeDelta
         const latDelta = maxLat - minLat + 0.0922; // Add some padding
         const lonDelta = maxLon - minLon + 0.0421; // Add some padding
-  
+
         // Animate the map to show the bounding box
         mapRef.current.animateToRegion(
           {
@@ -307,7 +329,7 @@ export default function MapsScreen() {
         ); // Adjust duration as needed
       }
     } catch (error) {
-      console.log(error, "<<<< error di moveToStation")
+      console.log(error, "<<<< error di moveToStation");
     }
   };
 
@@ -357,8 +379,8 @@ export default function MapsScreen() {
 
   const getUserLocation = async () => {
     try {
-      if (station?.getStationsById) {
-        // console.log(station, "<<<< station ketrigger di getUserLocation");
+      if (station.getStationsById) {
+        console.log(station, "<<<< station ketrigger di getUserLocation");
         setUserLocation(
           new AnimatedRegion({
             latitude: station?.getStationsById.latitude,
@@ -383,17 +405,26 @@ export default function MapsScreen() {
         const location = await Location.getCurrentPositionAsync();
         const { latitude, longitude } = location.coords;
         // const heading = location.coords.heading;
-        setUserLocation(new AnimatedRegion({ latitude, longitude }));
+        // setUserLocation(new AnimatedRegion({ latitude, longitude }));
+        setUserLocation(
+          new AnimatedRegion({
+            latitude: -6.2554579761602005,
+            longitude: 106.85606339939457,
+          })
+        );
         updateNearestStations(latitude, longitude);
         mapRef.current.animateToRegion({
-          latitude,
-          longitude,
+          // latitude,
+          // longitude,
+          latitude: -6.2554579761602005,
+          longitude: 106.85606339939457,
           latitudeDelta: 0.0022,
           longitudeDelta: 0.0021,
         });
       }
     } catch (error) {
-      alert("Error getting current location: " + error.message);
+      // alert("Error getting current location: " + error.message);
+      console.log(error);
     }
   };
   const filteredStations = search
@@ -494,19 +525,22 @@ export default function MapsScreen() {
     // console.log(text, typeof text, "<<<< text")
     const cashValue = parseInt(text);
     // console.log(cashValue, typeof cashValue, "<<<< onChangeText")
-    setCash(cashValue);
+    if (text !== "") {
+      setCash(cashValue);
+    } else {
+      setCash(0);
+    }
   };
 
   useEffect(() => {
-    if (shouldUpdateTotalPrice && travelledDistance && price) {
+    if (travelledDistance && price) {
       // console.log(price, "price ketrigger di useEffect");
       const newTotalPrice =
         (+travelledDistance * +price) / 10000 - Number(cash);
       // console.log(newTotalPrice, travelledDistance, price, cash, "<<<< useEffect")
       setTotalPrice(+newTotalPrice);
-      setShouldUpdateTotalPrice(false);
     }
-  }, [shouldUpdateTotalPrice, cash, travelledDistance, price]);
+  }, [cash]);
 
   const renderItem = useCallback(({ item }) => (
     <View style={styles.itemContainer}>
@@ -571,7 +605,7 @@ export default function MapsScreen() {
               //   setMyMarker(marker);
               // }}
             >
-              <Ionicons name="radio-button-on" size={40} color="dodgerblue" />
+              <Ionicons name="radio-button-on" size={30} color="dodgerblue" />
             </MarkerAnimated>
           )}
           {filteredStations.map((station) => (
@@ -586,7 +620,7 @@ export default function MapsScreen() {
               onPress={() => handleOpenBottomSheet(station)}
             />
           ))}
-          {route && (
+          {route && showRoute && (
             <>
               {/* Menggambar Polyline menggunakan route */}
               <Polyline
@@ -612,33 +646,39 @@ export default function MapsScreen() {
           // <View style={styles.rentingStatus}>
           //   <Text style={{ color: "white" }}>renting</Text>
           // </View>
-          <TouchableHighlight style={styles.scanButton} onPress={openScanner}>
-            <Ionicons
-              name="scan-outline"
-              strokeWidth={8}
-              size={40}
-              color="#FFFFFF"
-            />
-            {/* <Text style={styles.buttonText}>Station</Text> */}
-          </TouchableHighlight>
+          <View>
+            <TouchableHighlight style={styles.rentingStatus}>
+              <Ionicons
+                name="bicycle"
+                strokeWidth={8}
+                size={40}
+                color="#4FFFB0"
+              />
+              {/* <Text style={styles.buttonText}>Station</Text> */}
+            </TouchableHighlight>
+            <TouchableHighlight style={styles.scanButton} onPress={openScanner}>
+              <Ionicons
+                name="scan-outline"
+                strokeWidth={8}
+                size={40}
+                color="#FFFFFF"
+              />
+              {/* <Text style={styles.buttonText}>Station</Text> */}
+            </TouchableHighlight>
+          </View>
         ) : (
-          // <TouchableOpacity style={styles.scanButton} onPress={openScanner}>
-          //   <Text style={styles.buttonText}>Rent Bike</Text>
-          // </TouchableOpacity>
-          <TouchableHighlight style={styles.scanButton} onPress={openScanner}>
-            <Ionicons
-              name="scan-outline"
-              strokeWidth={8}
-              size={40}
-              color="#FFFFFF"
-            />
-            {/* <Text style={styles.buttonText}>Bike</Text> */}
-          </TouchableHighlight>
-          // <TouchableOpacity style={styles.scanButton} onPress={openScanner}>
-          //   <Text style={styles.buttonText}>Rent Bike</Text>
-          // </TouchableOpacity>
+          <View>
+            <TouchableHighlight style={styles.scanButton} onPress={openScanner}>
+              <Ionicons
+                name="scan-outline"
+                strokeWidth={8}
+                size={40}
+                color="#FFFFFF"
+              />
+              {/* <Text style={styles.buttonText}>Station</Text> */}
+            </TouchableHighlight>
+          </View>
         )}
-
         <TouchableHighlight
           style={{
             height: 50,
@@ -674,70 +714,84 @@ export default function MapsScreen() {
           </View>
         </Modal>
         {isRenting && selectedStation ? (
-          <Modal
-            isVisible={showConfirmationModal}
-            swipeDirection={["down"]}
-            onSwipeComplete={closeConfirmationModal}
-            onBackButtonPress={closeConfirmationModal}
-            animationIn="slideInUp"
-            animationOut="slideOutDown"
-            avoidKeyboard={true}
-            backdropColor="rgba(0, 0, 0, 0.5)"
-            backdropOpacity={0}
-            style={styles.modalContainer}
-          >
-            {/* <View style={styles.modalContainer}> */}
-            <View style={styles.modalContent}>
-              <View style={{ flexDirection: "row" }}>
-                <Text>Move to {selectedStation?.name}?</Text>
-                <TouchableOpacity
-                  style={styles.modalButtonYes}
-                  onPress={moveToSelectedStation}
-                >
-                  <Text>Yes</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  style={styles.modalButtonNo}
-                  onPress={closeConfirmationModal}
-                >
-                  <Text>No</Text>
-                </TouchableOpacity>
-              </View>
-              <View style={{ flexDirection: "column", gap: 2 }}>
-                <Text>Balance: Rp{balance}</Text>
-                <Text>Estimated Distance: {displayTravelledDistance}</Text>
-                <Text>
-                  Estimated Price: Rp{(travelledDistance * price) / 10000}
-                </Text>
-                <View
-                  style={{ flexDirection: "row", gap: 20, marginVertical: 5 }}
-                >
-                  <TouchableOpacity
-                    onPress={() => setTransaction("Digital")}
-                    style={[
-                      styles.paymentButton,
-                      transaction === "Digital" && styles.activePaymentButton,
-                    ]}
-                  >
-                    <Text style={styles.paymentButtonText}>Digital</Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity
-                    onPress={() => setTransaction("Cash")}
-                    style={[
-                      styles.paymentButton,
-                      transaction === "Cash" && styles.activePaymentButton,
-                    ]}
-                  >
-                    <Text style={styles.paymentButtonText}>Cash</Text>
-                  </TouchableOpacity>
+          <View style={styles.buttomSheetContainer}>
+            <BottomSheet
+              onChange={handleSheetChange}
+              snapPoints={snapPoints}
+              style={{ zIndex: 2 }}
+            >
+              <View style={{ flexDirection: "row", gap: 8 }}>
+                <View style={[styles.itemContainer, { width: "40%" }]}>
+                  <Text style={styles.bikePrice}>Move to</Text>
+                  <Text style={styles.bikeName}>{selectedStation?.name} ?</Text>
                 </View>
-                {transaction === "Cash" && (
+                {transaction && (
+                  <TouchableOpacity
+                    onPress={() => moveToSelectedStation(selectedStation)}
+                    style={[
+                      styles.itemContainer,
+                      { width: "42%", backgroundColor: "#0AFF90" },
+                    ]}
+                  >
+                    <View style={{ flexDirection: "row", gap: 8 }}>
+                      <Text style={[styles.bikeName]}>Start Navigation</Text>
+                      <Ionicons name="navigate" color="white" size={20} />
+                    </View>
+                  </TouchableOpacity>
+                )}
+              </View>
+              <View style={styles.itemContainer}>
+                <View style={[styles.bikeDetails, { flexDirection: "row" }]}>
                   <View>
-                    <Text>Cash</Text>
+                    <Text style={styles.bikePrice}>Balance : </Text>
+                    <Text style={styles.bikeName}>Rp{balance}</Text>
+                    <Text style={styles.bikePrice}>Estimated Distance : </Text>
+                    <Text style={styles.bikeName}>
+                      {displayTravelledDistance}
+                    </Text>
+                    <Text style={styles.bikePrice}>Estimated Price :</Text>
+                    <Text style={styles.bikeName}>
+                      Rp{(travelledDistance * price) / 10000}
+                    </Text>
+                  </View>
+                  <View style={{ flexDirection: "column", gap: 8 }}>
+                    <TouchableOpacity
+                      onPress={() => setTransaction("Digital")}
+                      style={[
+                        styles.itemContainer,
+                        { width: "85%", backgroundColor: "#808080" },
+                        transaction === "Digital" && styles.activePaymentButton,
+                      ]}
+                    >
+                      <View style={{ flexDirection: "row", gap: 8 }}>
+                        <Ionicons name="card" color="white" size={25} />
+                        <Text style={styles.paymentButtonText}>Digital</Text>
+                      </View>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                      onPress={() => setTransaction("Cash")}
+                      style={[
+                        styles.itemContainer,
+                        { width: "85%", backgroundColor: "#808080" },
+                        transaction === "Cash" && styles.activePaymentButton,
+                      ]}
+                    >
+                      <View style={{ flexDirection: "row", gap: 8 }}>
+                        <Ionicons name="cash" color="white" size={25} />
+                        <Text style={styles.paymentButtonText}>Cash</Text>
+                      </View>
+                    </TouchableOpacity>
+                  </View>
+                </View>
+              </View>
+              {transaction === "Cash" && (
+                <View style={styles.itemContainer}>
+                  <View style={{ flexDirection: "column", gap: 8 }}>
+                    <Text>Amount :</Text>
                     <TextInput
                       keyboardType="numeric"
                       placeholder="Enter cash amount"
-                      value={parseInt(cash)}
+                      value={cash.toString()}
                       onChangeText={handleCashChange}
                       style={{
                         width: 300,
@@ -750,56 +804,11 @@ export default function MapsScreen() {
                       }}
                     />
                   </View>
-                )}
-              </View>
-            </View>
-            {/* </View> */}
-          </Modal>
+                </View>
+              )}
+            </BottomSheet>
+          </View>
         ) : (
-          // <Modal
-          //   isVisible={showConfirmationModal}
-          //   swipeDirection={["down"]}
-          //   onSwipeComplete={closeConfirmationModal}
-          //   onBackButtonPress={closeConfirmationModal}
-          //   animationIn="slideInUp"
-          //   animationOut="slideOutDown"
-          //   avoidKeyboard={true}
-          //   backdropColor="rgba(0, 0, 0, 0.5)"
-          //   backdropOpacity={0}
-          //   style={styles.modalContainer}
-          // >
-          //   <View style={styles.modalContent}>
-          //     <View style={{ flexDirection: "row" }}>
-          //       <Text>Move to {selectedStation?.name}?</Text>
-          //       <TouchableOpacity
-          //         style={styles.modalButtonYes}
-          //         onPress={moveToSelectedStation}
-          //       >
-          //         <Text>Yes</Text>
-          //       </TouchableOpacity>
-          //       <TouchableOpacity
-          //         style={styles.modalButtonNo}
-          //         onPress={closeConfirmationModal}
-          //       >
-          //         <Text>No</Text>
-          //       </TouchableOpacity>
-          //     </View>
-          //     <FlatList
-          //       data={selectedStation?.Bicycles}
-          //       keyExtractor={(item) => item.id}
-          //       renderItem={({ item }) => (
-          //         <View style={{ alignItems: "center", marginVertical: 5 }}>
-          //           <Text>{item.name}</Text>
-          //           <Image
-          //             source={{ uri: item.imageURL }}
-          //             style={{ width: 300, height: 200 }}
-          //           />
-          //           <Text>Price: {item.price}</Text>
-          //         </View>
-          //       )}
-          //     />
-          //   </View>
-          // </Modal>
           <View style={styles.buttomSheetContainer}>
             {/* <Button title="Snap To 90%" onPress={() => handleSnapPress(2)} />
             <Button title="Snap To 50%" onPress={() => handleSnapPress(1)} />
@@ -914,12 +923,15 @@ const styles = StyleSheet.create({
   },
   rentingStatus: {
     position: "absolute",
-    bottom: 50,
-    left: 125,
-    backgroundColor: "green",
-    borderRadius: 40,
-    paddingVertical: 10,
-    paddingHorizontal: 20,
+    bottom: 90,
+    left: 0,
+    backgroundColor: "black",
+    borderRadius: 0,
+    paddingVertical: 5,
+    paddingLeft: 8,
+    paddingRight: 5,
+    justifyContent: "center",
+    alignItems: "center",
   },
   buttonText: {
     color: "#fff",
@@ -980,19 +992,16 @@ const styles = StyleSheet.create({
     borderRadius: 90,
   },
   paymentButtonText: {
-    color: "#ffff",
+    color: "black",
     fontWeight: "bold",
     // fontSize: 26,
     // marginHorizontal: 30,
-
-    color: "white",
     // textAlign: "left",
     // fontWeight: "bold",
     fontSize: 20,
   },
   activePaymentButton: {
-    borderColor: "#4FFFB0",
-    borderWidth: 2,
+    backgroundColor: "#0AFF90",
   },
   buttomSheetContainer: {
     flex: 1,
