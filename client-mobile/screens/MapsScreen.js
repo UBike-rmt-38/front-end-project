@@ -65,6 +65,7 @@ export default function MapsScreen() {
   const [transaction, setTransaction] = useState(null);
   const [cash, setCash] = useState(0);
   const [totalPrice, setTotalPrice] = useState();
+  const [shouldUpdateTotalPrice, setShouldUpdateTotalPrice] = useState(true);
 
   // hooks
   const sheetRef = useRef(null);
@@ -116,7 +117,8 @@ export default function MapsScreen() {
       const activeRental = data.getUsersDetails.Rentals.filter(
         (rental) => rental.status === false
       );
-      if (activeRental) {
+      console.log(activeRental, "<<<<<< active Rental");
+      if (activeRental.length > 0) {
         // console.log(activeRental[0].id, "<<<<< activeRental[0].id di CHECK_RENTALS")
         setRentalId(activeRental[0]?.id);
         setTravelledDistance(activeRental[0]?.travelledDistance);
@@ -188,10 +190,11 @@ export default function MapsScreen() {
   useEffect(() => {
     updateNearestStations();
     getIsRenting();
-  }, [stations, BicycleId, station]);
+  }, [stations]);
   const moveToSelectedStation = () => {
     try {
       setShowRoute(true);
+      setShouldUpdateTotalPrice(true);
       if (userLocation && selectedStation && route.length > 0 && !isRenting) {
         // Calculate the bounding box that contains both userLocation and selectedStation
   
@@ -495,14 +498,15 @@ export default function MapsScreen() {
   };
 
   useEffect(() => {
-    if (travelledDistance && price) {
+    if (shouldUpdateTotalPrice && travelledDistance && price) {
       // console.log(price, "price ketrigger di useEffect");
       const newTotalPrice =
         (+travelledDistance * +price) / 10000 - Number(cash);
       // console.log(newTotalPrice, travelledDistance, price, cash, "<<<< useEffect")
       setTotalPrice(+newTotalPrice);
+      setShouldUpdateTotalPrice(false);
     }
-  }, [cash, travelledDistance, price]);
+  }, [shouldUpdateTotalPrice, cash, travelledDistance, price]);
 
   const renderItem = useCallback(({ item }) => (
     <View style={styles.itemContainer}>
@@ -816,7 +820,7 @@ export default function MapsScreen() {
                     </Text>
                   </View>
                   <TouchableOpacity
-                    onPress={moveToSelectedStation(selectedStation)}
+                    onPress={() => moveToSelectedStation(selectedStation)}
                     style={[
                       styles.itemContainer,
                       { width: "42%", backgroundColor: "#0AFF90" },
