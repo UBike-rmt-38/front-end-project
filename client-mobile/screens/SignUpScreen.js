@@ -12,7 +12,7 @@ import {
 import { LinearGradient } from "expo-linear-gradient";
 import { useMutation } from "@apollo/client";
 import { CREATE_USER } from "../constants/mutation";
-import { FontAwesome } from "@expo/vector-icons";
+import { FontAwesome, Ionicons } from "@expo/vector-icons";
 import { FontAwesome5 } from "@expo/vector-icons";
 import Toast from "react-native-toast-message";
 const image = require("../assets/background.png");
@@ -34,10 +34,10 @@ export default function SignUpScreen({ navigation }) {
       if (response.errors) throw response.errors;
       else {
         Toast.show({
-          type: 'success',
-          text1: 'New User Registered',
+          type: "success",
+          text1: "New User Registered",
           position: "top",
-          visibilityTime: 2000
+          visibilityTime: 2000,
         });
         navigation.goBack();
       }
@@ -47,72 +47,82 @@ export default function SignUpScreen({ navigation }) {
   };
 
   return (
-      <ImageBackground source={image} resizeMode="cover" style={styles.image} blurRadius={8}>
-        <View style={styles.container}>
-          <View style={styles.box}>
-            <LinearGradient
-              colors={["rgba(0, 0, 0, 1)", "transparent"]}
-              style={styles.inline_box}
-            >
-              <View style={styles.inline_box}>
-                <View style={styles.item_box}>
-                  <Text style={styles.label}>Username</Text>
-                  <View style={styles.input_container}>
-                    <TextInput
-                      style={styles.input}
-                      placeholder="username"
-                      value={username}
-                      onChangeText={setUsername}
-                    />
-                  </View>
+    <ImageBackground
+      source={image}
+      resizeMode="cover"
+      style={styles.image}
+      blurRadius={8}
+    >
+      <View style={styles.container}>
+        <View style={styles.box}>
+          <LinearGradient
+            colors={["rgba(0, 0, 0, 1)", "transparent"]}
+            style={styles.inline_box}
+          >
+            <View style={styles.inline_box}>
+              <View style={styles.item_box}>
+                <Text style={styles.label}>Username</Text>
+                <View style={styles.input_container}>
+                  <TextInput
+                    style={styles.input}
+                    placeholder="username"
+                    value={username}
+                    onChangeText={setUsername}
+                  />
                 </View>
-                <View style={styles.item_box}>
-                  <Text style={styles.label}>Email</Text>
-                  <View style={styles.input_container}>
-                    <TextInput
-                      style={styles.input}
-                      placeholder="email"
-                      value={email}
-                      onChangeText={setEmail}
-                    />
-                  </View>
+              </View>
+              <View style={styles.item_box}>
+                <Text style={styles.label}>Email</Text>
+                <View style={styles.input_container}>
+                  <TextInput
+                    style={styles.input}
+                    placeholder="email"
+                    value={email}
+                    onChangeText={setEmail}
+                  />
                 </View>
-                <View style={styles.item_box}>
-                  <Text style={styles.label}>Password</Text>
-                  <View style={styles.input_container}>
-                    <TextInput
-                      style={styles.input}
-                      placeholder="password"
-                      secureTextEntry={!showPassword}
-                      value={password}
-                      onChangeText={setPassword}
+              </View>
+              <View style={styles.item_box}>
+                <Text style={styles.label}>Password</Text>
+                <View style={styles.input_container}>
+                  <TextInput
+                    style={styles.input}
+                    placeholder="password"
+                    secureTextEntry={!showPassword}
+                    value={password}
+                    onChangeText={setPassword}
+                  />
+                  <TouchableOpacity
+                    style={styles.eyeIcon}
+                    onPress={() => setShowPassword(!showPassword)}
+                  >
+                    <FontAwesome
+                      name={showPassword ? "eye" : "eye-slash"}
+                      size={20}
+                      color="grey"
+                      style={{
+                        position: "absolute",
+                        right: width - 310,
+                        top: height - 786,
+                      }}
                     />
-                    <TouchableOpacity
-                      style={styles.eyeIcon}
-                      onPress={() => setShowPassword(!showPassword)}
-                    >
-                      <FontAwesome
-                        name={showPassword ? "eye" : "eye-slash"}
-                        size={20}
-                        color="grey"
-                        style={{ position: "absolute", right: width - 310, top: height - 786 }}
-                      />
-                    </TouchableOpacity>
-                  </View>
-                </View>
-                <View style={styles.item_box}>
-                  <TouchableOpacity onPress={handleSignUp} style={styles.btn_div}>
-                    <Text style={styles.btn}>Sign Up</Text>
-                    <View style={styles.icon}>
-                      <FontAwesome5 name="greater-than" size={24} color="white" />
-                    </View>
                   </TouchableOpacity>
                 </View>
               </View>
-            </LinearGradient>
-          </View>
+              <View style={styles.item_box}>
+                <TouchableOpacity onPress={handleSignUp} style={styles.btn_div}>
+                  <Text style={styles.btn}>Sign Up</Text>
+                  <View style={styles.icon}>
+                    {/* <FontAwesome5 name="greater-than" size={24} color="white" /> */}
+                    <Ionicons name="chevron-forward" size={28} color="white" />
+                  </View>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </LinearGradient>
         </View>
-      </ImageBackground>
+      </View>
+    </ImageBackground>
   );
 }
 
@@ -125,10 +135,12 @@ const styles = StyleSheet.create({
   blurring: {
     flex: 1,
     backgroundColor: "#808080",
-    opacity: 0.7
+    opacity: 0.7,
   },
   icon: {
-    marginRight: 30
+    marginRight: 10,
+    justifyContent: "center",
+    alignItems: "center",
   },
   image: {
     flex: 1,
@@ -144,7 +156,7 @@ const styles = StyleSheet.create({
   box: {
     alignItems: "center",
     marginBottom: 10,
-    paddingHorizontal: width - 450
+    paddingHorizontal: width - 450,
   },
   inline_box: {
     borderRadius: 50,
@@ -159,7 +171,7 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     borderWidth: 1,
     borderColor: "#808090",
-    width: width - 2
+    width: width - 2,
   },
   input: {
     height: 50,

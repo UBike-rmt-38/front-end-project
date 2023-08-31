@@ -10,7 +10,7 @@ import {
   ImageBackground,
   Dimensions,
 } from "react-native";
-import { FontAwesome } from "@expo/vector-icons";
+import { FontAwesome, Ionicons } from "@expo/vector-icons";
 import { useDispatch } from "react-redux";
 import { LinearGradient } from "expo-linear-gradient";
 import { setIsSignedIn } from "../stores/reducers/authSlice";
@@ -20,7 +20,6 @@ import { LOGIN } from "../constants/mutation";
 import Toast from "react-native-toast-message";
 const image = require("../assets/background.png");
 const { height, width } = Dimensions.get("screen");
-
 
 export default function LoginScreen({ navigation }) {
   const [username, setUsername] = useState("");
@@ -41,12 +40,11 @@ export default function LoginScreen({ navigation }) {
       console.log(response, "ini responde");
       if (response.errors) throw response.errors;
       else {
-
         Toast.show({
-          type: 'success',
+          type: "success",
           text1: `Welcome, ${username}`,
           position: "top",
-          visibilityTime: 2000
+          visibilityTime: 2000,
         });
         await saveAccessToken(response.data.login);
         dispatch(setIsSignedIn(true));
@@ -61,7 +59,12 @@ export default function LoginScreen({ navigation }) {
   };
 
   return (
-    <ImageBackground source={image} resizeMode="cover" style={styles.image} blurRadius={8}>
+    <ImageBackground
+      source={image}
+      resizeMode="cover"
+      style={styles.image}
+      blurRadius={8}
+    >
       <View style={styles.container}>
         <Image
           source={require("../assets/Logo.png")}
@@ -103,7 +106,11 @@ export default function LoginScreen({ navigation }) {
                       name={showPassword ? "eye" : "eye-slash"}
                       size={20}
                       color="grey"
-                      style={{ position: "absolute", right: width - 310, top: height - 835 }}
+                      style={{
+                        position: "absolute",
+                        right: width - 310,
+                        top: height - 835,
+                      }}
                     />
                   </TouchableOpacity>
                 </View>
@@ -111,6 +118,9 @@ export default function LoginScreen({ navigation }) {
               <View style={styles.item_box}>
                 <TouchableOpacity onPress={handleLogin} style={styles.btn_div}>
                   <Text style={styles.btn}>Sign In</Text>
+                  <View>
+                    <Ionicons name="chevron-forward" size={28} color="white" />
+                  </View>
                 </TouchableOpacity>
               </View>
               <View style={styles.signUpContainer}>
@@ -137,7 +147,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingHorizontal: width - 380,
     marginTop: width - 180,
-    width: width
+    width: width,
   },
   item_box: {
     marginVertical: width - 380,
@@ -145,7 +155,7 @@ const styles = StyleSheet.create({
   blurring: {
     flex: 1,
     backgroundColor: "#808080",
-    opacity: 0.
+    opacity: 0,
   },
   label: {
     color: "white",
@@ -158,10 +168,10 @@ const styles = StyleSheet.create({
   box: {
     alignItems: "center",
     marginBottom: 10,
-    paddingHorizontal: width - 400
+    paddingHorizontal: width - 400,
   },
   icon: {
-    marginRight: 30
+    marginRight: 30,
   },
   inline_box: {
     borderRadius: 50,
@@ -176,7 +186,7 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     borderWidth: 1,
     borderColor: "#808090",
-    width: width - 2
+    width: width - 2,
   },
   input: {
     height: 50,
@@ -203,7 +213,9 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     borderColor: "#808080",
     borderWidth: 1,
-    paddingTop: 10
+    // paddingTop: 0,
+    paddingRight: 10,
+    flexDirection: "row"
   },
   btn: {
     color: "#ffff",
@@ -226,18 +238,18 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   signUpContainer: {
-    marginTop: 5
+    marginTop: 5,
   },
   regularText: {
-    textAlign: 'center',
+    textAlign: "center",
     fontSize: 20,
-    color: 'white'
+    color: "white",
   },
   signUpText: {
     marginTop: 5,
     fontSize: 20,
     fontWeight: "bold",
-    color: '#4FFFB0',
-    textDecorationLine: 'underline',
+    color: "#4FFFB0",
+    textDecorationLine: "underline",
   },
 });

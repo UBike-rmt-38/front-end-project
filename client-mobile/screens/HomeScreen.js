@@ -179,6 +179,7 @@ export default function HomeScreen() {
         <ImageBackground
           source={require("../assets/background.png")}
           style={styles.backgroundImage}
+          blurRadius={8}
         >
           <View style={styles.avatarContainer}>
             <Image

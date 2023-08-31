@@ -8,7 +8,7 @@ import {
   ScrollView,
   TouchableOpacity,
 } from "react-native";
-import { useEffect } from 'react'
+import { useEffect } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useQuery } from "@apollo/client";
 import { GET_USERS_DETAIL } from "../constants/query";
@@ -58,11 +58,10 @@ export default function ProfileScreen({ navigation }) {
 
   return (
     <>
-      <StatusBar barStyle="light-content" backgroundColor="#000" />
+      <StatusBar barStyle="light-content" backgroundColor="#272b2a" />
       <ScrollView style={styles.scrollView}>
         <SafeAreaView style={[styles.container, styles.bg_dark]}>
           <View style={{ flex: 1, paddingBottom: 30 }}>
-
             <View style={styles.profile_box}>
               <View style={styles.profileContent}>
                 <View style={styles.profileTextContainer}>
@@ -75,19 +74,25 @@ export default function ProfileScreen({ navigation }) {
                   />
                 </View>
                 <TouchableOpacity style={styles.btn} onPress={handleEdit}>
-                  <Text style={[styles.btnText, { color: '#000' }]}>Change Password</Text>
+                  <Text style={[styles.btnText, { color: "#000" }]}>
+                    Change Password
+                  </Text>
                 </TouchableOpacity>
                 <View style={styles.profile_data}>
                   <View style={styles.profileDataContainer}>
                     <Text style={styles.profile_distance_text}>
-                      {user.Rentals.travelledDistance ? user.Rentals?.travelledDistance : "0"}
+                      {user.Rentals.travelledDistance
+                        ? user.Rentals?.travelledDistance
+                        : "0"}
                     </Text>
                     <Text style={styles.profile_distance}>Last Ride</Text>
                   </View>
                   <View style={styles.profileDataSeparator}></View>
                   <View style={styles.profileDataContainer}>
                     <Text style={styles.profile_distance_text}>
-                    {user.Rentals.travelledDistance ? user.Rentals?.travelledDistance : "0"}
+                      {user.Rentals.travelledDistance
+                        ? user.Rentals?.travelledDistance
+                        : "0"}
                     </Text>
                     <Text style={styles.profile_distance}>Total Distance:</Text>
                   </View>
@@ -109,8 +114,10 @@ export default function ProfileScreen({ navigation }) {
             <View style={styles.balanceContainer}>
               <Text style={styles.balanceHeading}>My Balance</Text>
               <View style={styles.balanceContent}>
-                <Text style={styles.infoText}>Rp. {user?.balance.toLocaleString("id-ID") || 0}</Text>
-                <TouchableOpacity onPress={() => handleTopupPress()} >
+                <Text style={styles.infoText}>
+                  Rp. {user?.balance.toLocaleString("id-ID") || 0}
+                </Text>
+                <TouchableOpacity onPress={() => handleTopupPress()}>
                   <Text style={styles.topUp}>TOP UP</Text>
                 </TouchableOpacity>
               </View>
@@ -120,9 +127,7 @@ export default function ProfileScreen({ navigation }) {
                     onPress={handleHistory}
                     style={styles.BaseButton}
                   >
-                    <Text style={styles.actionText} >
-                      Rent history
-                    </Text>
+                    <Text style={styles.actionText}>Rent history</Text>
                   </TouchableOpacity>
                 </View>
                 <View style={styles.actionContainer}>
@@ -130,9 +135,7 @@ export default function ProfileScreen({ navigation }) {
                     onPress={handleTransaction}
                     style={styles.BaseButton}
                   >
-                    <Text style={styles.actionText} >
-                      Transaction
-                    </Text>
+                    <Text style={styles.actionText}>Transaction</Text>
                   </TouchableOpacity>
                 </View>
               </View>
@@ -157,8 +160,8 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#322D3A",
-    paddingBottom: 70
+    backgroundColor: "#272b2a",
+    paddingBottom: 70,
   },
   scrollView: {
     flex: 1,
@@ -206,7 +209,7 @@ const styles = StyleSheet.create({
   btnText: {
     fontSize: 15,
     fontWeight: "bold",
-    color: "white"
+    color: "white",
   },
   profile_data: {
     display: "flex",
@@ -215,7 +218,6 @@ const styles = StyleSheet.create({
     paddingVertical: 30,
     borderBottomWidth: 2,
     borderBottomColor: "#80FFCC",
-
   },
   profileDataContainer: {
     alignItems: "center",
@@ -226,7 +228,7 @@ const styles = StyleSheet.create({
   profile_distance_text: {
     color: "#80FFCC",
     fontSize: 25,
-    marginBottom: 10
+    marginBottom: 10,
   },
   profile_distance: {
     fontSize: 25,
@@ -275,7 +277,7 @@ const styles = StyleSheet.create({
   actionText: {
     color: "#000",
     fontSize: 20,
-    fontWeight: "600"
+    fontWeight: "600",
   },
   logoutContainer: {
     marginTop: 50,

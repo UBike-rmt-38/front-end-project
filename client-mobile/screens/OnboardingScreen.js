@@ -7,7 +7,8 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { FontAwesome5 } from "@expo/vector-icons";
+import { FontAwesome5, Ionicons } from "@expo/vector-icons";
+import { height, width } from "../constants/dimension";
 
 export default function OnboardingScreen({ navigation }) {
   const navigateToLogin = () => {
@@ -19,7 +20,7 @@ export default function OnboardingScreen({ navigation }) {
       <ImageBackground
         style={styles.imageBackground}
         source={require("../assets/—Pngtree—green_luxury_silk_cloth_pattern_1324718.png")}
-        blurRadius={8}
+        blurRadius={4}
       />
       <View style={styles.gridRow}>
         <Image
@@ -35,11 +36,11 @@ export default function OnboardingScreen({ navigation }) {
           <TouchableOpacity style={styles.button} onPress={navigateToLogin}>
             <Text style={styles.buttonText}>Get Started</Text>
             <View style={styles.icon}>
-              <FontAwesome5 name="greater-than" size={24} color="white" />
+              {/* <FontAwesome5 name="greater-than" size={24} color="white" /> */}
+              <Ionicons name="chevron-forward" size={28} color="white" />
             </View>
           </TouchableOpacity>
         </View>
-        {/* <StatusBar style="auto" /> */}
       </View>
     </View>
   );
@@ -51,7 +52,9 @@ const styles = StyleSheet.create({
     height: 334,
   },
   icon: {
-    marginRight: 10
+    marginRight: 0,
+    alignItems: "center",
+    justifyContent: "center"
   },
   item_box: {
     marginVertical: 30,
@@ -69,8 +72,8 @@ const styles = StyleSheet.create({
   },
   imageBackground: {
     position: "absolute",
-    height: 932,
-    width: 430,
+    height: 1700,
+    width: width,
   },
   gridRow: {
     flex: 1,
