@@ -1,2 +1,3 @@
-export const baseURL = "https://e557-2001-448a-2030-95b-1e4-a16a-1642-3bbf.ngrok-free.app/";
+export const baseURL = "https://5ec1-202-46-68-117.ngrok-free.app";
+
 export const ROUTES_API ="https://routes.googleapis.com/directions/v2:computeRoutes";

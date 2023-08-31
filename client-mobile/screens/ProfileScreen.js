@@ -24,6 +24,14 @@ export default function ProfileScreen({ navigation }) {
 
   const user = data.getUsersDetails;
 
+  if (loading) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="#1AD3C1" />
+      </View>
+    );
+  }
+
   const handleTransaction = () => {
     navigation.navigate("Transaction");
   };
@@ -101,7 +109,7 @@ export default function ProfileScreen({ navigation }) {
             <View style={styles.balanceContainer}>
               <Text style={styles.balanceHeading}>My Balance</Text>
               <View style={styles.balanceContent}>
-                <Text style={styles.infoText}>Rp. {user?.balance || 0}</Text>
+                <Text style={styles.infoText}>Rp. {user?.balance.toLocaleString("id-ID") || 0}</Text>
                 <TouchableOpacity onPress={() => handleTopupPress()} >
                   <Text style={styles.topUp}>TOP UP</Text>
                 </TouchableOpacity>
@@ -293,5 +301,11 @@ const styles = StyleSheet.create({
     borderColor: "black",
     marginTop: 10,
     paddingHorizontal: 10,
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "black",
   },
 });
