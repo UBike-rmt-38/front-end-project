@@ -2,17 +2,16 @@
 import { useEffect, useState } from "react";
 import { useMutation, useQuery } from "@apollo/client";
 import { ADD_BICYCLE, EDIT_BICYCLE } from "../constants/mutation";
-import { GET_BICYCLE_BY_ID, GET_CATEGORIES, GET_STATIONS } from "../constants/query";
+import { GET_BICYCLES, GET_BICYCLE_BY_ID, GET_CATEGORIES, GET_STATIONS } from "../constants/query";
 import { useNavigate, useParams } from "react-router-dom";
 
 export default function BicycleForm() {
   const { id } = useParams();
   const navigate = useNavigate()
-  console.log(id);
   const bicycle = {
     name: "",
     feature: "",
-    imageURL: "",
+    imageUrl: "",
     description: "",
     price: 0,
     stationId: "",
@@ -25,6 +24,7 @@ export default function BicycleForm() {
   
   const { loading: categoriesLoading, error: categoriesError, data: categoriesData } = useQuery(GET_CATEGORIES);
   const { loading: stationsLoading, error: stationsError, data: stationsData } = useQuery(GET_STATIONS);
+  const { refetch } = useQuery(GET_BICYCLES)
 
   const { loading: bicycleLoading, error: bicycleError, data: bicycleData } = useQuery(GET_BICYCLE_BY_ID, {
     variables: { 
@@ -33,8 +33,8 @@ export default function BicycleForm() {
     
   useEffect(() => {
     if (id && bicycleData) {
-      const updateBicycle = bicycleData.getBicycleById;
-      setInput(updateBicycle);
+      const { name, feature, imageURL, description, price, stationId, categoryId  } = bicycleData.getBicycleById;
+      setInput({ name, feature, imageUrl: imageURL, description, price, stationId, categoryId  });
     }
   }, [bicycleData, id]);
 
@@ -49,7 +49,6 @@ export default function BicycleForm() {
         categoryId: Number(input.categoryId),
       };
       const bicycleId = Number(id)
-      console.log(typeof bicycleId, "<<<<<<< ini id");
       if (id) {
         await editBicycle({
           variables: {
@@ -66,6 +65,7 @@ export default function BicycleForm() {
         });
       }
       setInput(bicycle);
+      refetch()
       navigate('/bicycles');
     } catch (error) {
       console.log("Error:", error);
@@ -124,7 +124,7 @@ export default function BicycleForm() {
       <div className="relative z-0 w-full mb-6 group">
         <input
           onChange={handleInputChange}
-          value={input.imageURL || ""}
+          value={input.imageUrl || ""}
           type="text"
           name="imageUrl"
           className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-teal-500 focus:outline-none focus:ring-0 focus:border-teal-600 peer"
@@ -132,7 +132,7 @@ export default function BicycleForm() {
           required
         />
         <label
-          htmlFor="imageURL"
+          htmlFor="imageUrl"
           className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
         >
           Image URL
