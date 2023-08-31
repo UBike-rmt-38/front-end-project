@@ -147,7 +147,7 @@ export default function HomeScreen() {
 
   const nearbyStations = stations.filter((station) => {
     const distance = calculateDistance(station.latitude, station.longitude);
-    return distance !== null && distance < 900;
+    return distance !== null && distance < 10000000000;
   });
 
   const getGreeting = () => {
@@ -225,7 +225,7 @@ export default function HomeScreen() {
                 <View style={styles.row}>
                   <Text style={styles.header}>Balance</Text>
                   <Text style={styles.balance}>
-                    {user && user.balance
+                    Rp. {user && user.balance
                       ? user.balance.toLocaleString("id-ID")
                       : 0}
                   </Text>
