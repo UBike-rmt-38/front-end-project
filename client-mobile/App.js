@@ -23,7 +23,7 @@ const getAuthToken = async () => {
 
 const authLink = setContext(async (_, { headers }) => {
   const access_token = await getAuthToken();
-  console.log(access_token);
+  // console.log(access_token);
   return {
     headers: {
       ...headers,

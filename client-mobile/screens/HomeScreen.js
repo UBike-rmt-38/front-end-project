@@ -9,12 +9,17 @@ import {
   ScrollView,
   ActivityIndicator,
   RefreshControl,
+  FlatList,
 } from "react-native";
+import Swiper from "react-native-swiper";
+
 import * as Location from "expo-location";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { Distance } from "../components/Distance";
 import { useNavigation } from "@react-navigation/native";
 import { useQuery } from "@apollo/client";
 import { GET_STATIONS, GET_USERS_DETAIL } from "../constants/query";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function HomeScreen() {
   const [isRefreshing, setIsRefreshing] = useState(false);
@@ -27,7 +32,7 @@ export default function HomeScreen() {
     loading: usersLoading,
     error: usersError,
     data,
-    refetch: refetchUsers
+    refetch: refetchUsers,
   } = useQuery(GET_USERS_DETAIL, {
     onCompleted: (data) => {
       setUser(data.getUsersDetails);
@@ -40,14 +45,14 @@ export default function HomeScreen() {
     loading: stationsLoading,
     error: stationsError,
     data: stationsData,
-    refetch: refetchStations
+    refetch: refetchStations,
   } = useQuery(GET_STATIONS);
 
   const handleRefresh = () => {
     setIsRefreshing(true);
     refetchUsers()
       .then(() => refetchStations())
-      .catch(error => {
+      .catch((error) => {
         console.error("Error refreshing data:", error);
       })
       .finally(() => {
@@ -78,14 +83,29 @@ export default function HomeScreen() {
     "Friday",
     "Saturday",
   ];
+  const monthNames = [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
+  ];
+
   const dayName = daysOfWeek[currentTime.getDay()];
   const day = currentTime.getDate();
-  const month = currentTime.getMonth() + 1;
+  const monthName = monthNames[currentTime.getMonth()];
 
-  const formattedDate = `${dayName}, ${day < 10 ? "0" + day : day}.${
-    month < 10 ? "0" + month : month
-  }`;
-
+  const formattedDate = `${dayName}, ${
+    day < 10 ? "0" + day : day
+  } ${monthName}`;
+  // console.log(monthName);
   useEffect(() => {
     const getUserLocation = async () => {
       const { status } = await Location.requestForegroundPermissionsAsync();
@@ -127,7 +147,7 @@ export default function HomeScreen() {
 
   const nearbyStations = stations.filter((station) => {
     const distance = calculateDistance(station.latitude, station.longitude);
-    return distance !== null && distance < 1000000;
+    return distance !== null && distance < 900;
   });
 
   const getGreeting = () => {
@@ -152,99 +172,130 @@ export default function HomeScreen() {
   };
 
   return (
-    <ImageBackground
-      source={require("../assets/background.png")}
-      style={styles.backgroundImage}
-    >
-      <View style={styles.avatarContainer}>
-        <Image
-          source={require("../assets/Logo.png")}
-          style={{
-            height: 80,
-            width: 80,
-            marginTop: 20,
-          }}
-          resizeMode="contain"
-        />
-        <TouchableOpacity
-          onPress={() => {
-            navigation.navigate("Profile");
-          }}
-          style={styles.icon}
+    <SafeAreaView style={styles.safeAreaView}>
+      <View style={{ flex: 1, paddingBottom: 30 }}>
+        <ImageBackground
+          source={require("../assets/background.png")}
+          style={styles.backgroundImage}
         >
-          <Image
-            source={{
-              uri: "https://twirpz.files.wordpress.com/2015/06/twitter-avi-gender-balanced-figure.png",
-            }}
-            style={styles.iconImage}
-          />
-        </TouchableOpacity>
-      </View>
-
-      <ScrollView
-        style={styles.scrollContainer}
-        refreshControl={
-          <RefreshControl refreshing={isRefreshing} onRefresh={handleRefresh} />
-        }
-      >
-        <View style={styles.greetingBox}>
-          <Text style={styles.dateText}>{formattedDate}</Text>
-          <Text style={styles.timeText}>
-            {currentTime.toLocaleTimeString()}
-          </Text>
-          <Text style={styles.greetingText}>
-            {getGreeting()}{user.username}!
-          </Text>
-          <Text style={styles.navigationText}>Where do you want to go?</Text>
-        </View>
-        <View style={styles.container}>
-          <View style={styles.box}>
-            <Text style={styles.header}>Balance</Text>
-            <Text style={styles.balance}>Rp. {user.balance}</Text>
+          <View style={styles.avatarContainer}>
+            <Image
+              source={require("../assets/Logo.png")}
+              style={{
+                height: 80,
+                width: 80,
+                marginTop: 20,
+              }}
+              resizeMode="contain"
+            />
             <TouchableOpacity
-              style={styles.topUpButton}
-              onPress={handleTopupPress}
+              onPress={() => {
+                navigation.navigate("Profile");
+              }}
+              style={styles.icon}
             >
-              <Text style={styles.buttonText}>Top Up</Text>
+              <Image
+                source={require("../assets/dummy_user.png")}
+                style={styles.iconImage}
+              />
             </TouchableOpacity>
           </View>
-          <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-            {images.map((imageUrl, index) => (
-              <Image
-                key={index}
-                source={{ uri: imageUrl }}
-                style={styles.horizontalImage}
+
+          <ScrollView
+            style={styles.scrollContainer}
+            refreshControl={
+              <RefreshControl
+                refreshing={isRefreshing}
+                onRefresh={handleRefresh}
               />
-            ))}
-          </ScrollView>
-          <View style={styles.overlay}>
-            <Text style={styles.header}>Stations near me:</Text>
-            <ScrollView>
-              {userLocation &&
-                nearbyStations.map((item) => (
-                  <View key={item.id} style={styles.stationContainer}>
-                    <Text style={styles.stationName}>{item.name}</Text>
-                    <Text style={styles.stationDistance}>
-                      {` ${calculateDistance(
-                        item.latitude,
-                        item.longitude
-                      ).toFixed()} m`}
-                    </Text>
-                    <Text style={styles.bicyclesCategory}>
-                      Available bikes:{" "}
-                      {item.Bicycles.map((bike) => bike.name).join(", ")}
-                    </Text>
-                  </View>
+            }
+          >
+            <View style={styles.greetingBox}>
+              <Text style={styles.dateText}>{formattedDate}</Text>
+              <Text style={styles.greetingText}>
+                {getGreeting()}
+                {user.username}!
+              </Text>
+              <Text style={styles.navigationText}>
+                Where do you want to go?
+              </Text>
+            </View>
+            <View style={styles.container}>
+              <View style={styles.box}>
+                <View style={styles.row}>
+                  <Text style={styles.header}>Balance</Text>
+                  <Text style={styles.balance}>
+                    {user && user.balance
+                      ? user.balance.toLocaleString("id-ID")
+                      : "Loading..."}
+                  </Text>
+                </View>
+                <TouchableOpacity
+                  style={styles.topUpButton}
+                  onPress={handleTopupPress}
+                >
+                  <Text style={styles.buttonText}>Top Up</Text>
+                </TouchableOpacity>
+              </View>
+
+              <View style={styles.headerContainer}>
+                <Text style={styles.header1}>Happening right now</Text>
+              </View>
+              <Swiper
+                autoplay
+                autoplayTimeout={5}
+                showsPagination={false}
+                loop
+                height={120}
+              >
+                {images.map((image, index) => (
+                  <Image
+                    key={index}
+                    source={{ uri: image }}
+                    style={styles.images}
+                  />
                 ))}
-            </ScrollView>
-          </View>
-        </View>
-      </ScrollView>
-    </ImageBackground>
+              </Swiper>
+
+              <View style={styles.nearStations}>
+                <Text style={styles.header}>Stations near me:</Text>
+                <ScrollView style={{ height: 300 }}>
+                  {nearbyStations.map((item) => (
+                    <View key={item.id} style={styles.stationContainer}>
+                      <Text style={styles.stationName}>{item.name}</Text>
+                      <Text style={styles.stationDistance}>
+                        {` ${calculateDistance(
+                          item.latitude,
+                          item.longitude
+                        ).toFixed()} m`}
+                      </Text>
+                      <Text style={styles.bicyclesCategory}>
+                        <MaterialCommunityIcons
+                          name="bike"
+                          size={18}
+                          color="black"
+                        />{" "}
+                        {item.Bicycles.length === 0
+                          ? "No bikes available"
+                          : item.Bicycles.map((bike) => bike.name).join(", ")}
+                      </Text>
+                    </View>
+                  ))}
+                </ScrollView>
+              </View>
+            </View>
+          </ScrollView>
+        </ImageBackground>
+      </View>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
+  safeAreaView: {
+    flex: 1,
+    backgroundColor: "black",
+  },
   backgroundImage: {
     flex: 1,
     resizeMode: "cover",
@@ -254,41 +305,50 @@ const styles = StyleSheet.create({
     padding: 16,
     backgroundColor: "transparent",
   },
-  overlay: {
-    backgroundColor: "rgba(255, 255, 255, 0.2)",
-    flex: 1,
-    padding: 16,
-    borderRadius: 5,
-  },
-  box: {
-    backgroundColor: "rgba(255, 255, 255, 0.3)",
-    borderRadius: 8,
-    padding: 16,
-    marginBottom: 16,
-    width: "50%",
-  },
   header: {
     fontSize: 20,
     fontWeight: "bold",
     marginBottom: 8,
     color: "white",
   },
-  balance: {
-    fontSize: 16,
+  header1: {
+    fontSize: 20,
     fontWeight: "bold",
-    marginBottom: 8,
+    color: "white",
+  },
+  box: {
+    backgroundColor: "rgba(255, 255, 255, 0.3)",
+    borderRadius: 8,
+    padding: 16,
+    width: "100%",
+  },
+  row: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  balance: {
+    fontSize: 29,
     color: "white",
   },
   topUpButton: {
     backgroundColor: "black",
-    padding: 10,
-    borderRadius: 20,
-    alignItems: "center",
+    borderRadius: 30,
+    marginTop: 16,
+    paddingVertical: 8,
+    paddingHorizontal: 16,
   },
   buttonText: {
     color: "white",
-    fontSize: 16,
     fontWeight: "bold",
+    textAlign: "center",
+  },
+  nearStations: {
+    backgroundColor: "rgba(255, 255, 255, 0.2)",
+    flex: 1,
+    padding: 16,
+    borderRadius: 5,
+    height: 230,
   },
   stationContainer: {
     marginBottom: 5,
@@ -309,28 +369,31 @@ const styles = StyleSheet.create({
   stationDistance: {
     fontSize: 14,
     color: "#666666",
+    marginTop: 5,
   },
   bicyclesCategory: {
-    fontSize: 14,
+    fontSize: 12,
     color: "green",
     marginTop: 8,
+    fontWeight: "bold",
+    marginLeft: 5,
   },
   greetingBox: {
     backgroundColor: "black",
     padding: 16,
-    marginBottom: 16,
-    height: "22%",
+    height: "22%", //ganti aja ini
   },
   greetingText: {
-    fontSize: 40,
+    fontSize: 34,
     fontWeight: "bold",
     color: "white",
-    marginTop: 40,
-    marginBottom: 20,
+    marginTop: 10,
+    marginBottom: 5,
   },
   navigationText: {
     fontSize: 18,
     color: "white",
+    top: 5,
   },
   avatarContainer: {
     backgroundColor: "black",
@@ -346,8 +409,11 @@ const styles = StyleSheet.create({
   },
   icon: {
     position: "absolute",
-    top: 20,
-    right: 20,
+    top: 30,
+    right: 25,
+    borderWidth: 3,
+    borderColor: "#3FDA9C",
+    borderRadius: 40,
   },
   iconImage: {
     width: 35,
@@ -359,8 +425,8 @@ const styles = StyleSheet.create({
     height: 35,
     borderRadius: 50,
   },
-  horizontalImage: {
-    width: 200,
+  images: {
+    width: 350,
     height: 100,
     marginHorizontal: 5,
     marginBottom: 20,
@@ -380,5 +446,8 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: "black",
+  },
+  headerContainer: {
+    marginVertical: 16,
   },
 });
