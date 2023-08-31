@@ -64,9 +64,14 @@ export default function HistoryScreen() {
                 </Text>
                 <Text>Total: Rp.{item.totalPrice.toLocaleString("id-ID")}</Text>
                 <Text>{item.transaction}</Text>
-                <Text style={styles.status}>
-                  {item.status ? "Complete" : "Ongoing"}
-                </Text>
+                <Text
+                style={[
+                  styles.status,
+                  { color: item.status ? "#4CAF50" : "#3498db" },
+                ]}
+              >
+                {item.status ? "Complete" : "Ongoing"}
+              </Text>
               </View>
               <Image
                 source={{ uri: bicycleInfo.imageURL }}
@@ -155,7 +160,6 @@ const styles = StyleSheet.create({
   status: {
     fontSize: 14,
     marginTop: 10,
-    color: "#3498db",
     fontWeight: "bold",
   },
   bicycleImage: {
