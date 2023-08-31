@@ -59,56 +59,62 @@ export default function ChangePassword({ navigation }) {
             style={styles.backgroundImage}
         >
             <View style={styles.container}>
-                <LinearGradient
-                    colors={["rgba(0, 0, 0, 1)", "transparent"]}
-                    style={styles.inline_box}
-                >
-                    <View style={{ flex: 1, justifyContent: "center", alignItems: "center", maxHeight: 250, borderRadius: 15, opacity: 0.7, padding: 10 }}>
-                        <View  >
-                            <TextInput
-                                style={styles.input}
-                                placeholder="Old Password"
-                                secureTextEntry={!showOldPassword}
-                                value={oldPassword}
-                                onChangeText={setOldPassword}
-                            />
-                            <TouchableOpacity
-                                style={styles.eyeIcon}
-                                onPress={() => setShowOldPassword(!showOldPassword)}
-                            >
-                                <FontAwesome
-                                    name={showOldPassword ? "eye-slash" : "eye"}
-                                    size={20}
-                                    color="grey"
+                <View style={styles.box}>
+                    <LinearGradient
+                        colors={["rgba(0, 0, 0, 1)", "transparent"]}
+                        style={styles.inline_box}
+                    >
+                        <View style={styles.inline_box}>
+                            <View style={styles.item_box} >
+                                <Text style={styles.label}>New Password</Text>
+                                <View style={styles.input_container}>
+                                    <TextInput
+                                        style={styles.input}
+                                        placeholder="Old Password"
+                                        secureTextEntry={!showOldPassword}
+                                        value={oldPassword}
+                                        onChangeText={setOldPassword}
+                                    />
+                                    <TouchableOpacity
+                                        style={styles.eyeIcon}
+                                        onPress={() => setShowOldPassword(!showOldPassword)}
+                                    >
+                                        <FontAwesome
+                                            name={showOldPassword ? "eye-slash" : "eye"}
+                                            size={20}
+                                            color="grey"
+                                        />
+                                    </TouchableOpacity>
+                                </View>
+                            </View>
+                            <View>
+                                {/* <Text style={styles.label}>New Password</Text> */}
+                                <TextInput
+                                    style={styles.input}
+                                    placeholder="New Password"
+                                    secureTextEntry={!showNewPassword}
+                                    value={newPassword}
+                                    onChangeText={setNewPassword}
                                 />
+                                <TouchableOpacity
+                                    style={styles.eyeIcon}
+                                    onPress={() => setShowNewPassword(!showNewPassword)}
+                                >
+                                    <FontAwesome
+                                        name={showNewPassword ? "eye-slash" : "eye"}
+                                        size={20}
+                                        color="grey"
+                                    />
+                                </TouchableOpacity>
+                            </View>
+                            <TouchableOpacity style={styles.button} onPress={handleChangePassword} >
+                                <Text style={styles.buttonText}>Submit</Text>
                             </TouchableOpacity>
                         </View>
-                        <View>
-                            <TextInput
-                                style={styles.input}
-                                placeholder="New Password"
-                                secureTextEntry={!showNewPassword}
-                                value={newPassword}
-                                onChangeText={setNewPassword}
-                            />
-                            <TouchableOpacity
-                                style={styles.eyeIcon}
-                                onPress={() => setShowNewPassword(!showNewPassword)}
-                            >
-                                <FontAwesome
-                                    name={showNewPassword ? "eye-slash" : "eye"}
-                                    size={20}
-                                    color="grey"
-                                />
-                            </TouchableOpacity>
-                        </View>
-                        <TouchableOpacity style={styles.button} onPress={handleChangePassword} >
-                            <Text style={styles.buttonText}>Submit</Text>
-                        </TouchableOpacity>
-                    </View>
-                </LinearGradient>
+                    </LinearGradient>
+                </View>
             </View>
-        </ImageBackground>
+        </ImageBackground >
     )
 }
 
@@ -121,17 +127,26 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: "center",
         alignItems: "center",
-        paddingHorizontal: 20
+        // paddingHorizontal: 50
+        padding: 50
     },
+    image: {
+        flex: 1,
+        justifyContent: "flex-end",
+      },
     input: {
-        marginBottom: 10,
-        paddingVertical: 10,
-        paddingHorizontal: 15,
+        height: 50,
+        margin: 12,
         borderWidth: 1,
-        borderColor: "#ddd",
-        borderRadius: 8,
-        backgroundColor: "white",
-        width: 270
+        padding: 10,
+        backgroundColor: "#ffff",
+        width: "70%",
+        borderRadius: 10,
+        fontSize: 20,
+    },
+    input_container: {
+        flex: 1,
+        alignItems: "center",
     },
     eyeIcon: {
         position: "absolute",
@@ -139,13 +154,14 @@ const styles = StyleSheet.create({
         right: 15,
     },
     buttonText: {
-        color: "#fff",
-        fontSize: 18,
+        color: "#ffff",
         fontWeight: "bold",
+        fontSize: 23,
+        marginHorizontal: width - 370,
         textAlign: "center",
     },
     button: {
-        backgroundColor: "#006241",
+        backgroundColor: "#ffff",
         paddingVertical: 12,
         paddingHorizontal: 20,
         borderRadius: 8,
@@ -153,13 +169,16 @@ const styles = StyleSheet.create({
         marginHorizontal: 80,
         borderRadius: 40,
     },
+    item_box: {
+        marginVertical: width - 370,
+    },
     inline_box: {
         borderRadius: 50,
         height: 500,
-        backgroundColor: "rgba(120, 120, 120, 0.4)",
+        backgroundColor: "rgba(120, 120, 120, 0.8)",
         shadowColor: "#000",
         shadowOffset: {
-            height: 30,
+            height: 50,
             width: 30,
         },
         shadowOpacity: 0.25,
@@ -168,5 +187,17 @@ const styles = StyleSheet.create({
         borderColor: "#808090",
         width: width - 2,
         marginTop: 500
+    },
+    label: {
+        color: "white",
+        fontSize: 25,
+        lineHeight: 84,
+        fontWeight: "bold",
+        marginLeft: "15%",
+    },
+    box: {
+        alignItems: "center",
+        marginBottom: 10,
+        paddingHorizontal: width - 450
     }
 });
