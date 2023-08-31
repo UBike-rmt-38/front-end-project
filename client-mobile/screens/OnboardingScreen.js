@@ -19,6 +19,7 @@ export default function OnboardingScreen({ navigation }) {
       <ImageBackground
         style={styles.imageBackground}
         source={require("../assets/—Pngtree—green_luxury_silk_cloth_pattern_1324718.png")}
+        blurRadius={8}
       />
       <View style={styles.gridRow}>
         <Image
