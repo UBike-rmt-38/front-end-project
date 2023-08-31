@@ -11,6 +11,8 @@ import {
   RefreshControl,
   FlatList,
 } from "react-native";
+import Swiper from "react-native-swiper";
+
 import * as Location from "expo-location";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { Distance } from "../components/Distance";
@@ -18,7 +20,6 @@ import { useNavigation } from "@react-navigation/native";
 import { useQuery } from "@apollo/client";
 import { GET_STATIONS, GET_USERS_DETAIL } from "../constants/query";
 import { SafeAreaView } from "react-native-safe-area-context";
-import Carousel from 'react-native-snap-carousel';
 
 export default function HomeScreen() {
   const [isRefreshing, setIsRefreshing] = useState(false);
@@ -51,7 +52,7 @@ export default function HomeScreen() {
     setIsRefreshing(true);
     refetchUsers()
       .then(() => refetchStations())
-      .catch(error => {
+      .catch((error) => {
         console.error("Error refreshing data:", error);
       })
       .finally(() => {
@@ -96,13 +97,15 @@ export default function HomeScreen() {
     "November",
     "December",
   ];
-  
+
   const dayName = daysOfWeek[currentTime.getDay()];
   const day = currentTime.getDate();
-  const monthName = monthNames[currentTime.getMonth()];  
-  
-  const formattedDate = `${dayName}, ${day < 10 ? "0" + day : day} ${monthName}`;  
-  console.log(monthName);
+  const monthName = monthNames[currentTime.getMonth()];
+
+  const formattedDate = `${dayName}, ${
+    day < 10 ? "0" + day : day
+  } ${monthName}`;
+  // console.log(monthName);
   useEffect(() => {
     const getUserLocation = async () => {
       const { status } = await Location.requestForegroundPermissionsAsync();
@@ -171,110 +174,119 @@ export default function HomeScreen() {
   return (
     <SafeAreaView style={styles.safeAreaView}>
       <View style={{ flex: 1, paddingBottom: 30 }}>
-
-    <ImageBackground
-      source={require("../assets/background.png")}
-      style={styles.backgroundImage}
-    >
-      <View style={styles.avatarContainer}>
-        <Image
-          source={require("../assets/Logo.png")}
-          style={{
-            height: 80,
-            width: 80,
-            marginTop: 20,
-          }}
-          resizeMode="contain"
-        />
-        <TouchableOpacity
-          onPress={() => {
-            navigation.navigate("Profile");
-          }}
-          style={styles.icon}
+        <ImageBackground
+          source={require("../assets/background.png")}
+          style={styles.backgroundImage}
         >
-          <Image
-            source={require("../assets/dummy_user.png")}
-            style={styles.iconImage}
-          />
-        </TouchableOpacity>
-      </View>
-
-      <ScrollView
-        style={styles.scrollContainer}
-        refreshControl={
-          <RefreshControl refreshing={isRefreshing} onRefresh={handleRefresh} />
-        }
-      >
-        <View style={styles.greetingBox}>
-          <Text style={styles.dateText}>{formattedDate}</Text>
-          <Text style={styles.greetingText}>
-            {getGreeting()}
-            {user.username}!
-          </Text>
-          <Text style={styles.navigationText}>Where do you want to go?</Text>
-        </View>
-        <View style={styles.container}>
-        <View style={styles.box}>
-  <View style={styles.row}>
-    <Text style={styles.header}>Balance</Text>
-    <Text style={styles.balance}>
-      {user && user.balance ? user.balance.toLocaleString("id-ID") : "Loading..."}
-    </Text>
-  </View>
-  <TouchableOpacity
-    style={styles.topUpButton}
-    onPress={handleTopupPress}
-  >
-    <Text style={styles.buttonText}>Top Up</Text>
-  </TouchableOpacity>
-</View>
-
-
-          <View style={styles.headerContainer}>
-            <Text style={styles.header1}>Happening right now</Text>
-          </View>
-          <Carousel
-            data={images}
-            sliderWidth={500}  
-            itemWidth={500} 
-            renderItem={({ item }) => (
+          <View style={styles.avatarContainer}>
+            <Image
+              source={require("../assets/Logo.png")}
+              style={{
+                height: 80,
+                width: 80,
+                marginTop: 20,
+              }}
+              resizeMode="contain"
+            />
+            <TouchableOpacity
+              onPress={() => {
+                navigation.navigate("Profile");
+              }}
+              style={styles.icon}
+            >
               <Image
-                source={{ uri: item }}
-                style={styles.images}
+                source={require("../assets/dummy_user.png")}
+                style={styles.iconImage}
               />
-            )}
-            autoplay
-            loop
-            autoplayInterval={5000}  
-          />
-
-
-          <View style={styles.nearStations}>
-            <Text style={styles.header}>Stations near me:</Text>
-            <ScrollView style={{ height: 300 }}>
-  {nearbyStations.map((item) => (
-    <View key={item.id} style={styles.stationContainer}>
-      <Text style={styles.stationName}>{item.name}</Text>
-      <Text style={styles.stationDistance}>
-        {` ${calculateDistance(item.latitude, item.longitude).toFixed()} m`}
-      </Text>
-      <Text style={styles.bicyclesCategory}>
-        <MaterialCommunityIcons name="bike" size={18} color="black" />{" "}
-        {item.Bicycles.length === 0
-          ? "No bikes available"
-          : item.Bicycles.map((bike) => bike.name).join(", ")}
-      </Text>
-    </View>
-  ))}
-  
-</ScrollView>
-
+            </TouchableOpacity>
           </View>
-        </View>
-      </ScrollView>
-    </ImageBackground>
-    </View>
 
+          <ScrollView
+            style={styles.scrollContainer}
+            refreshControl={
+              <RefreshControl
+                refreshing={isRefreshing}
+                onRefresh={handleRefresh}
+              />
+            }
+          >
+            <View style={styles.greetingBox}>
+              <Text style={styles.dateText}>{formattedDate}</Text>
+              <Text style={styles.greetingText}>
+                {getGreeting()}
+                {user.username}!
+              </Text>
+              <Text style={styles.navigationText}>
+                Where do you want to go?
+              </Text>
+            </View>
+            <View style={styles.container}>
+              <View style={styles.box}>
+                <View style={styles.row}>
+                  <Text style={styles.header}>Balance</Text>
+                  <Text style={styles.balance}>
+                    {user && user.balance
+                      ? user.balance.toLocaleString("id-ID")
+                      : "Loading..."}
+                  </Text>
+                </View>
+                <TouchableOpacity
+                  style={styles.topUpButton}
+                  onPress={handleTopupPress}
+                >
+                  <Text style={styles.buttonText}>Top Up</Text>
+                </TouchableOpacity>
+              </View>
+
+              <View style={styles.headerContainer}>
+                <Text style={styles.header1}>Happening right now</Text>
+              </View>
+              <Swiper
+                autoplay
+                autoplayTimeout={5}
+                showsPagination={false}
+                loop
+                height={120}
+              >
+                {images.map((image, index) => (
+                  <Image
+                    key={index}
+                    source={{ uri: image }}
+                    style={styles.images}
+                  />
+                ))}
+              </Swiper>
+
+              <View style={styles.nearStations}>
+                <Text style={styles.header}>Stations near me:</Text>
+                <ScrollView style={{ height: 300 }}>
+                  {nearbyStations.map((item) => (
+                    <View key={item.id} style={styles.stationContainer}>
+                      <Text style={styles.stationName}>{item.name}</Text>
+                      <Text style={styles.stationDistance}>
+                        {` ${calculateDistance(
+                          item.latitude,
+                          item.longitude
+                        ).toFixed()} m`}
+                      </Text>
+                      <Text style={styles.bicyclesCategory}>
+                        <MaterialCommunityIcons
+                          name="bike"
+                          size={18}
+                          color="black"
+                        />{" "}
+                        {item.Bicycles.length === 0
+                          ? "No bikes available"
+                          : item.Bicycles.map((bike) => bike.name).join(", ")}
+                      </Text>
+                    </View>
+                  ))}
+                </ScrollView>
+              </View>
+            </View>
+          </ScrollView>
+        </ImageBackground>
+      </View>
     </SafeAreaView>
   );
 }
@@ -320,7 +332,7 @@ const styles = StyleSheet.create({
     color: "white",
   },
   topUpButton: {
-    backgroundColor: 'black',
+    backgroundColor: "black",
     borderRadius: 30,
     marginTop: 16,
     paddingVertical: 8,
@@ -381,7 +393,7 @@ const styles = StyleSheet.create({
   navigationText: {
     fontSize: 18,
     color: "white",
-    top: 5
+    top: 5,
   },
   avatarContainer: {
     backgroundColor: "black",
