@@ -93,9 +93,10 @@ export default function LoginScreen({ navigation }) {
                       onPress={() => setShowPassword(!showPassword)}
                     >
                       <FontAwesome
-                        name={showPassword ? "eye-slash" : "eye"}
+                        name={showPassword ? "eye" : "eye-slash"}
                         size={20}
                         color="grey"
+                        style={{ position: "absolute", right: width - 310, top: height - 835 }}
                       />
                     </TouchableOpacity>
                   </View>

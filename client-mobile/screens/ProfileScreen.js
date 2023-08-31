@@ -8,6 +8,7 @@ import {
   ScrollView,
   TouchableOpacity,
 } from "react-native";
+import { useEffect } from 'react'
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useQuery } from "@apollo/client";
 import { GET_USERS_DETAIL } from "../constants/query";
@@ -16,7 +17,7 @@ import { setIsSignedIn } from "../stores/reducers/authSlice";
 import { useDispatch, useSelector } from "react-redux";
 
 export default function ProfileScreen({ navigation }) {
-  const { loading, error, data } = useQuery(GET_USERS_DETAIL);
+  const { loading, error, data, refetch } = useQuery(GET_USERS_DETAIL);
 
   if (loading) return <Text>Loading...</Text>;
   if (error) return <Text>Error: {error.message}</Text>;
