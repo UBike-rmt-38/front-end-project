@@ -1,0 +1,65 @@
+{
+    "Stations": [
+        {
+            "id": 1,
+            "name": "Station A",
+            "address": "Monas, Jakarta Pusat",
+            "latitude": -6.175392,
+            "longitude": 106.827153
+        },
+        {
+            "id": 2,
+            "name": "Station B",
+            "address": "Museum Indonesia, Jakarta Utara",
+            "latitude": -6.128028,
+            "longitude": 106.845054
+        },
+        {
+            "id": 3,
+            "name": "Station C",
+            "address": "Gambir, Jakarta Pusat",
+            "latitude": -7.2275321,
+            "longitude": 107.9471923
+        },
+        {
+            "id": 4,
+            "name": "Station D",
+            "address": "GBK, Jakarta Pusat",
+            "latitude": -6.175722002021239, 
+            "longitude": 106.98778086408721
+        },
+        {
+            "id": 5,
+            "name": "Station E",
+            "address": "Taman Mini Indonesia Indah, Jakarta Timur",
+            "latitude": -6.177736, 
+            "longitude": 106.984639
+        },
+        {
+            "id": 6,
+            "name": "Station F",
+            "address": "Ancol, Jakarta Utara",
+            "latitude": -6.181425359613258, 
+            "longitude": 106.97733155848161
+        },
+        {
+            "id": 7,
+            "name": "Station G",
+            "address": "Pasar Minggu, Jakarta Selatan",
+            "latitude": -6.178667440054476, 
+            "longitude": 106.98133318988171
+        }
+    ],
+    "Bicycles": [
+        {
+            "id": 1,
+            "name": "Sepeda 1",
+            "feature": "Feature A",
+            "imageUrl": "image",
+            "description": "description",
+            "price": 100,
+            "StationId": 1,
+            "status": false
+        }
+    ]
+}
